@@ -1,0 +1,23 @@
+# Backend
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+/env/
+/venv/
+.flaskenv
+.env
+
+# Frontend
+node_modules/
+dist/
+.vite/
+
+# OS and IDE
+.DS_Store
+.vscode/
+*.iml
+.idea/
+
+# Docker
+.dockerignore
