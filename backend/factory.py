@@ -1,4 +1,5 @@
 from flask import Flask
+import logging
 from dotenv import load_dotenv
 import os
 
@@ -16,6 +17,14 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    # Add database connection validation log
+    with app.app_context():
+        try:
+            db.engine.connect()
+            app.logger.info("Base de datos conectada exitosamente!")
+        except Exception as e:
+            app.logger.error(f"Error al conectar con la base de datos: {e}")
+
     from extensions.jwt import jwt
     jwt.init_app(app)
 
@@ -28,6 +37,6 @@ def create_app():
 
     @app.route('/')
     def index():
-        return "Welcome to ProjectHub Backend!"
+        return "Bienvenido al Backend de ProjectHub!"
 
     return app

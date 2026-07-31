@@ -8,6 +8,15 @@ __pycache__/
 .flaskenv
 .env
 
+# Python
+venv/
+backend/venv/
+
+__pycache__/
+*.pyc
+
+
+
 # Frontend
 node_modules/
 dist/
@@ -21,3 +30,9 @@ dist/
 
 # Docker
 .dockerignore
+
+# Build
+dist/
+build/
+
+repomix-output.xml

@@ -30,7 +30,12 @@ pip install -r backend/requirements.txt
 ```bash
 # En desarrollo
 cd backend
-flask run
+py -m flask --app factory.py run --debug
+```
+
+```bash
+# En producción (ejemplo con Gunicorn)
+gunicorn -w 4 wsgi:app
 ```
 
 ## Frontend (Vue 3)
