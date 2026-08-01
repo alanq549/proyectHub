@@ -1,9 +1,9 @@
+# modules/__init__.py
 from flask import Blueprint
 
 # Main blueprint for all modules
 modules_bp = Blueprint('modules', __name__, url_prefix='/api/v1')
 
-# Import and register blueprints for each module
 from .auth.routes import auth_bp
 from .users.routes import users_bp
 

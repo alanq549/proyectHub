@@ -1,5 +1,5 @@
 from models.user import User
-from extensions.db import db
+from modules.users.user_repository import UserRepository
 from flask_jwt_extended import create_access_token, create_refresh_token
 
 class AuthService:
@@ -7,24 +7,23 @@ class AuthService:
     @staticmethod
     def register_user(username, email, password):
         # Validar si ya existe usuario o email
-        if User.query.filter_by(email=email).first():
+        if UserRepository.get_by_email(email):
             raise ValueError('El correo electrónico ya está registrado')
 
-        if User.query.filter_by(username=username).first():
+        if UserRepository.get_by_username(username):
             raise ValueError('El nombre de usuario ya está en uso')
 
         # Crear nuevo usuario
         user = User(username=username, email=email)
         user.set_password(password)
 
-        db.session.add(user)
-        db.session.commit()
+        UserRepository.add(user)
 
         return user
 
     @staticmethod
     def authenticate_user(email, password):
-        user = User.query.filter_by(email=email).first()
+        user = UserRepository.get_by_email(email)
 
         if not user or not user.check_password(password):
             raise ValueError('Credenciales inválidas')
@@ -44,4 +43,4 @@ class AuthService:
 
     @staticmethod
     def refresh_access_token(user_id):
-        return create_access_token(identity=str(user_id))
+        return create_access_token(identity=str(user.id))

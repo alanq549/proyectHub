@@ -48,7 +48,7 @@ def create_app():
     )
 
     # Register Blueprints
-    from modules import modules_bp
+    from src.modules import modules_bp
     app.register_blueprint(modules_bp)
 
     @app.route('/')
