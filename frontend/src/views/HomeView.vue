@@ -40,7 +40,7 @@
           <div class="hero-image-wrap w-100">
             <div class="hero-image-glow"></div>
             <div class="hero-image-frame glass-card">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVhzXjOgaz6erhGe0mhEzs1bXxiig37koEP9MFiH9Og8Ua9CkaM_ryHPe37Ma-aZOFH3x9o4C2SPO9_mCJ4tiJBmE8OU_6Nz972KRUvsYbOer5ReMZl_sO1OgSzEAVUBJMrkz0BaJyiwvqkVK8JZN2XC97yHD7MbN8NTNGQ4y1WVc8Ik-Q8DjW9wG_jw2RMYohLOcMp7Lm6IyVvFS1FsIUzQZZhSgAO64JRovP_zR3hV1UZT4qHRbOYg" alt="Dashboard académico ProjectHub">
+              <img src="../assets/Dashboard_académico.png" alt="Dashboard académico ProjectHub">
             </div>
           </div>
         </div>
@@ -122,7 +122,7 @@
 
             <div class="col-12 col-lg-6">
               <div class="process-image-wrap">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtMIMexHhRzdMmMuF3-0pEdUuPRN9swOxsz42JWJhOfqYMhJhQZ5726O9jQerBdS0_n_4-9lW_3igNxD-7S-jp78hEYDjBCgfDJ_VGybTtQm8fDm_IecIC3eVD9JDefbzGEkObTjLV4mhGmHJzwS58I2hNDje3Ixj7W-1NRwvfulGUv9703s8-uos_c_HMmOhTkR6AOH58FPJ6_8-OXlF8ZgIeXnVZGCegeO4vjWFGEtthWk9osgw9Tw" alt="Espacio de trabajo académico organizado">
+                <img src="..\assets\Espacio_de_trabajo_académico_organizado.png" alt="Espacio de trabajo académico organizado">
                 <div class="process-image-overlay"></div>
               </div>
             </div>
@@ -209,6 +209,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+
 /* Variables will be handled by global CSS or a theme */
 
 .container-max{

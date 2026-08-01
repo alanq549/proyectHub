@@ -1,0 +1,43 @@
+<template>
+  <!-- ERROR -->
+  <div v-if="errorMessage" class="error-alert">
+    <span class="material-symbols-outlined">
+      error
+    </span>
+    <p>
+      Credenciales incorrectas. Por favor, intenta de nuevo.
+    </p>
+  </div>
+</template>
+
+<script setup lang="ts">
+
+
+const props = defineProps<{
+  errorMessage: boolean;
+}>();
+</script>
+
+<style scoped>
+.error-alert {
+  /* display: none; */
+  /* Handled by Vue's :style binding */
+  margin-bottom: 24px;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 218, 214, 0.5);
+  border: 1px solid rgba(186, 26, 26, 0.10);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.error-alert .material-symbols-outlined {
+  color: var(--error, #ba1a1a);
+}
+
+.error-alert p {
+  color: var(--on-error-container, #93000a);
+  font-size: 14px;
+  margin: 0;
+}
+</style>

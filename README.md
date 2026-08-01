@@ -27,6 +27,9 @@ pip install -r backend/requirements.txt
 
 ### Ejecución
 
+Activa el entorno virtual antes de ejecutar cualquier comando.
+  -  venv\Scripts\activate 
+
 ```bash
 # En desarrollo
 cd backend

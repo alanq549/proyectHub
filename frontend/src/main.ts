@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import 'material-symbols';
 
 // Estilos de Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'

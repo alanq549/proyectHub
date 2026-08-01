@@ -29,7 +29,23 @@ def create_app():
     jwt.init_app(app)
 
     from extensions.cors import cors
-    cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
+
+    # Get CORS origins from environment variable
+    cors_origins_env = os.getenv("CORS_ORIGINS")
+    if cors_origins_env:
+        # Split by comma and strip whitespace for each origin
+        allowed_origins = [origin.strip() for origin in cors_origins_env.split(',')]
+    else:
+        # Default to all origins if not specified
+        allowed_origins = ["*"]
+
+    cors.init_app(
+        app, 
+        resources={r"/api/.*": {"origins": allowed_origins}}, # <-- Se agrega .* para incluir subrutas como /v1/
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Headers"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    )
 
     # Register Blueprints
     from modules import modules_bp
