@@ -1,0 +1,23 @@
+/* frontend/src/assets/main.css o styles.css */
+:root {
+  /* Paleta extraída de design_system.md */
+  --ph-surface: #f7f9fb;
+  --ph-surface-container: #eceef0;
+  --ph-primary: #0f172a;
+  --ph-primary-container: #131b2e;
+  --ph-secondary: #4b41e1;
+  --ph-on-primary-container: #7c839b;
+  --ph-outline-variant: #c6c6cd;
+  
+  /* Radios de borde característicos */
+  --ph-radius-lg: 0.75rem;
+  --ph-radius-xl: 1rem;
+  --ph-radius-2xl: 2rem;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
