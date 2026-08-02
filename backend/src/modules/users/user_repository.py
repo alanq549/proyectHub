@@ -1,5 +1,6 @@
+# backend/src/modules/users/user_repository.py
 from src.models.user import User
-from src.extensions.db import db
+from extensions.db import db
 
 class UserRepository:
     @staticmethod

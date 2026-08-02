@@ -1,19 +1,17 @@
 import os
 
 class Config:
-# Si no existe DATABASE_URL en el .env, no asignamos un usuario/password real por defecto
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-#JWT Configuration
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     CORS_HEADERS = 'Content-Type'
-# Opcional: Configurar tiempo de expiración
-    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
-    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
-# AWS Configuration
+    STORAGE_PROVIDER = os.getenv('STORAGE_PROVIDER', 'local')
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    BOOTSTRAP_FIRST_USER_AS_ADMIN = os.getenv('BOOTSTRAP_FIRST_USER_AS_ADMIN', 'true').lower() == 'true'
+
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')

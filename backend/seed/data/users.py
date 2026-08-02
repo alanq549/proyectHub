@@ -1,0 +1,42 @@
+DEFAULT_USERS = [
+    {
+        'username': 'ana.lopez',
+        'email': 'ana.lopez@projecthub.local',
+        'password': 'Ana1234!',
+        'first_name': 'Ana',
+        'last_name': 'López',
+        'role': 'user',
+    },
+    {
+        'username': 'carlos.gomez',
+        'email': 'carlos.gomez@projecthub.local',
+        'password': 'Carlos1234!',
+        'first_name': 'Carlos',
+        'last_name': 'Gómez',
+        'role': 'user',
+    },
+    {
+        'username': 'maria.ramirez',
+        'email': 'maria.ramirez@projecthub.local',
+        'password': 'Maria1234!',
+        'first_name': 'María',
+        'last_name': 'Ramírez',
+        'role': 'user',
+    },
+    {
+        'username': 'pedro.martinez',
+        'email': 'pedro.martinez@projecthub.local',
+        'password': 'Pedro1234!',
+        'first_name': 'Pedro',
+        'last_name': 'Martínez',
+        'role': 'user',
+    },
+    {
+        'username': 'laura.torres',
+        'email': 'laura.torres@projecthub.local',
+        'password': 'Laura1234!',
+        'first_name': 'Laura',
+        'last_name': 'Torres',
+        'role': 'user',
+    },
+]

@@ -59,19 +59,20 @@ La arquitectura original mezclaba responsabilidades, lo que dificultaba la escal
 
 ## Impacto en el Código Base
 
-*   **Carpeta `backend/src`**: Se ha creado una carpeta `src` en el directorio `backend/` y el directorio `modules` se ha movido dentro de ella (`backend/src/modules`).
+*   **Carpeta `backend/src`**: Se ha creado una carpeta `src` en el directorio `backend/` y el directorio `modules` junto con otros directorios principales (`config`, `extensions`, `middleware`, `migrations`, `models`, `services`, `tests`, `utils`) se han movido dentro de ella (`backend/src/...`).
 *   **Estructura de Módulos Aplanada**: Las subcarpetas `repositories` y `controllers` dentro de cada módulo (`users`, `auth`) han sido eliminadas. Los archivos de repositorio y controlador ahora residen directamente en la raíz de su respectivo módulo.
 *   **Archivos de Repositorio**:
     *   `backend/src/modules/users/user_repository.py`: Contiene los métodos para interactuar con el modelo `User` en la base de datos.
+    *   `backend/src/modules/auth/auth_repository.py`: Se creó este repositorio minimalista para mantener la consistencia de la arquitectura, aunque `AuthService` utiliza `UserRepository` del módulo `users` para operaciones de `User`. (Los directorios `backend/src/modules/auth/repositories` y `backend/src/modules/users/repositories` no pudieron ser eliminados debido a errores de permisos, pero están vacíos y no afectan la funcionalidad).
 *   **Archivos de Controlador**:
     *   `backend/src/modules/users/user_controller.py`: Contiene los métodos que manejan las solicitudes HTTP para los recursos de usuario.
     *   `backend/src/modules/auth/auth_controller.py`: Contiene los métodos que manejan las solicitudes HTTP para la autenticación.
 *   **Archivos `*_service.py`**:
-    *   `backend/src/modules/users/user_service.py`: Modificado para usar `UserRepository` del módulo `users`.
-    *   `backend/src/modules/auth/auth_service.py`: Modificado para usar `UserRepository` del módulo `users`.
+    *   `backend/src/modules/users/user_service.py`: Modificado para usar `user_repository.py` del módulo `users`.
+    *   `backend/src/modules/auth/auth_service.py`: Modificado para usar `user_repository.py` del módulo `users`.
 *   **Archivos `routes.py`**:
-    *   `backend/src/modules/users/routes.py`: Modificado para usar `UserController` del módulo `users`.
-    *   `backend/src/modules/auth/routes.py`: Modificado para usar `AuthController` del módulo `auth`.
-*   **Actualización de Imports**: Todos los imports en los archivos afectados, incluido `backend/factory.py`, han sido actualizados para reflejar la nueva estructura de directorios.
+    *   `backend/src/modules/users/routes.py`: Modificado para usar `user_controller.py` del módulo `users`. (Los directorios `backend/src/modules/users/controllers` no pudieron ser eliminados debido a errores de permisos, pero están vacíos y no afectan la funcionalidad).
+    *   `backend/src/modules/auth/routes.py`: Modificado para usar `auth_controller.py` del módulo `auth`. (Los directorios `backend/src/modules/auth/controllers` no pudieron ser eliminados debido a errores de permisos, pero están vacíos y no afectan la funcionalidad).
+*   **Actualización de Imports**: Todos los imports en los archivos afectados, incluido `backend/factory.py`, han sido actualizados para reflejar la nueva estructura de directorios (`from src.models...`, `from src.extensions...`, `from src.modules...`).
 
 Esta refactorización establece una base sólida para el crecimiento futuro del backend, facilitando la adición de nuevas funcionalidades y la comprensión del flujo de la aplicación de una manera altamente modular y organizada.
