@@ -15,9 +15,9 @@
                     <span class="material-symbols-outlined notranslate">notifications</span>
                     <span class="notif-dot"></span>
                 </button>
-                <div class="avatar-sm">
-                    <img :src="authStore.avatarUrl" :alt="`Perfil ${authStore.user?.username}`" />
-                </div>
+
+                <!-- Punto 2.8: User Dropdown Menu -->
+                <user-menu :user="user" @profile="router.push({ name: 'users-list' })" @logout="handleLogout" />
             </div>
 
             <div class="search-overlay" :class="{ open: searchOpen }">
@@ -37,6 +37,7 @@
             </a>
             <a href="#" class="rail-link mt-auto" :class="{ active: activeRail === 'settings' }"
                 @click.prevent="navigateRail({ key: 'settings', icon: 'settings' })">
+                
                 <span class="material-symbols-outlined notranslate">settings</span>
             </a>
         </aside>
@@ -81,12 +82,13 @@
 import { ref, nextTick, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import UserMenu from './components/UserMenu.vue'
 
 
-const VITE_STATIC_URL = import.meta.env.VITE_STATIC_URL
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
+
 
 // ==============================
 // Tipos
@@ -107,12 +109,23 @@ interface BottomNavItem {
 
 interface UserDisplay {
     name: string
-    role: string
+    email?: string
     avatarUrl: string
 }
 
+
 // ==============================
-// Mapeos de Navegación (key → route.name)
+// Acción de Logout
+// ==============================
+
+function handleLogout(): void {
+    authStore.logout()
+    router.push({ name: 'login' })
+}
+
+
+// ==============================
+// Mapeos de Navegación
 // ==============================
 
 const ROUTE_NAME_BY_KEY: Record<string, string> = {
@@ -128,6 +141,7 @@ const ROUTE_NAME_BY_KEY: Record<string, string> = {
     admin_users: 'users-list',
 }
 
+
 // ==============================
 // Elementos de Navegación
 // ==============================
@@ -139,6 +153,7 @@ const railItems: RailItem[] = [
     { key: 'documents', icon: 'group', routeName: 'users-list' },
 ]
 
+
 const bottomNavItems: BottomNavItem[] = [
     { key: 'home', icon: 'home', label: 'Inicio', routeName: 'dashboard' },
     { key: 'explore', icon: 'explore', label: 'Explorar', routeName: 'dashboard' },
@@ -146,90 +161,136 @@ const bottomNavItems: BottomNavItem[] = [
     { key: 'profile', icon: 'person', label: 'Perfil', routeName: 'users-list' },
 ]
 
+
 // ==============================
-// Estado Activo (sincronizado con vue-router)
+// Estado Activo
 // ==============================
 
 const activeRail = computed<string>(() => {
     const currentName = String(route.name ?? '')
-    const matched = railItems.find((it) => it.routeName === currentName)
-    if (matched) return matched.key
-    if (currentName === '') return 'dashboard'
-    // settings si no coincide nada
-    return 'dashboard'
+
+    const matched = railItems.find(
+        item => item.routeName === currentName
+    )
+
+    return matched?.key ?? 'dashboard'
 })
+
 
 const activeBottomNav = computed<string>(() => {
     const currentName = String(route.name ?? '')
-    const matched = bottomNavItems.find((it) => it.routeName === currentName)
+
+    const matched = bottomNavItems.find(
+        item => item.routeName === currentName
+    )
+
     return matched?.key ?? 'home'
 })
 
+
 // ==============================
-// Acciones de Navegación
+// Acciones Navegación
 // ==============================
 
 function navigateRail(item: RailItem): void {
-    const target = item.routeName ?? ROUTE_NAME_BY_KEY[item.key] ?? 'dashboard'
+
+    const target =
+        item.routeName ??
+        ROUTE_NAME_BY_KEY[item.key] ??
+        'dashboard'
+
+
     if (route.name !== target) {
-        router.push({ name: target }).catch(() => undefined)
+        router.push({ name: target })
+            .catch(() => undefined)
     }
 }
 
+
 function navigateBottomNav(item: BottomNavItem): void {
-    const target = item.routeName ?? ROUTE_NAME_BY_KEY[item.key] ?? 'dashboard'
+
+    const target =
+        item.routeName ??
+        ROUTE_NAME_BY_KEY[item.key] ??
+        'dashboard'
+
+
     if (route.name !== target) {
-        router.push({ name: target }).catch(() => undefined)
+        router.push({ name: target })
+            .catch(() => undefined)
     }
 }
+
 
 // ==============================
 // Búsqueda expandible
 // ==============================
 
-const searchOpen = ref<boolean>(false)
-const searchQuery = ref<string>('')
+const searchOpen = ref(false)
+const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 
-watch(searchOpen, async (open: boolean) => {
+
+watch(searchOpen, async (open) => {
+
     if (open) {
         await nextTick()
         searchInput.value?.focus()
     }
+
 })
 
+
 // ==============================
-// Usuario (conectado al authStore)
+// Usuario
 // ==============================
 
-const DEFAULT_AVATAR = `${VITE_STATIC_URL}/static/defaults/icon_default.png`
+const DEFAULT_AVATAR =
+    `${import.meta.env.VITE_STATIC_URL}/static/defaults/icon_default.png`
 
-const ROLE_LABELS: Record<'admin' | 'user', string> = {
-    admin: 'Administrador',
-    user: 'Usuario',
-}
 
 function buildDisplayName(): string {
+
     const u = authStore.user
+
     if (!u) return 'Usuario'
-    const parts: string[] = []
-    if (u.first_name) parts.push(u.first_name)
-    if (u.last_name) parts.push(u.last_name)
-    if (parts.length > 0) return parts.join(' ')
-    return u.username
+
+
+    const parts = []
+
+    if (u.first_name)
+        parts.push(u.first_name)
+
+    if (u.last_name)
+        parts.push(u.last_name)
+
+
+    return parts.length
+        ? parts.join(' ')
+        : u.username
 }
 
-function buildRoleLabel(): string {
-    const u = authStore.user
-    if (!u) return 'Usuario'
-    return ROLE_LABELS[u.role] ?? u.role
+
+interface UserDisplay {
+    name: string
+    email?: string
+    role: string
+    avatarUrl: string
 }
+
 
 const user = computed<UserDisplay>(() => ({
     name: buildDisplayName(),
-    role: buildRoleLabel(),
-    avatarUrl: authStore.user?.profile_picture_url || DEFAULT_AVATAR,
+
+    email: authStore.user?.email,
+
+    role: authStore.user?.role ?? 'Usuario',
+
+    avatarUrl: authStore.avatarUrl
 }))
+
+console.log(user.value)
+
 
 // ==============================
 // Emits
@@ -239,6 +300,7 @@ defineEmits<{
     (event: 'new-project'): void
     (event: 'upload-file'): void
 }>()
+
 </script>
 
 <style scoped>
@@ -295,20 +357,24 @@ defineEmits<{
     translate: no;
 }
 
-.glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(226, 232, 240, 0.5);
+.avatar-btn {
+    cursor: pointer;
+    outline: none;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
+.avatar-btn::after {
     display: none;
+    /* Elimina la flecha predeterminada de Bootstrap dropdown */
 }
 
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+.dropdown-item {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-item:active {
+    background-color: var(--surface-container-high);
+    color: var(--on-surface);
 }
 
 /* Top navbar */
@@ -326,19 +392,6 @@ defineEmits<{
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-}
-
-.logo-box {
-    width: 32px;
-    height: 32px;
-    background-color: var(--primary);
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-weight: 700;
-    font-size: 20px;
 }
 
 .brand-name {
@@ -381,7 +434,6 @@ defineEmits<{
     border-radius: 50%;
     background-color: #e0e3e5;
     overflow: hidden;
-    margin-left: 0.25rem;
 }
 
 .avatar-sm img {

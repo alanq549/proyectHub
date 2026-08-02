@@ -3,9 +3,11 @@
     <div class="af-hero-banner d-flex justify-content-center align-items-center"></div>
     <div class="af-hero-body">
       <div class="af-hero-left">
-        <div class="af-avatar-96">
-          <img :src="authStore.avatarUrl" :alt="`Perfil ${authStore.user?.username}`" />
-        </div>
+        <UserAvatar 
+  :src="user.avatarUrl"
+  :alt="`Perfil ${user.name}`"
+  size="lg"
+/>
         <div class="mb-2">
           <h2 class="af-hero-title notranslate">¡Hola de nuevo, {{ user.name }}! 👋</h2>
           <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-3 mt-1">
@@ -28,26 +30,29 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/authStore'
+import UserAvatar from '@/layouts/components/UserAvatar.vue'
 
-
-const VITE_STATIC_URL = import.meta.env.VITE_STATIC_URL
-const authStore = useAuthStore()
 
 export interface DashboardHeroUser {
   name: string
   role: string
-  heroAvatarUrl: string
+  avatarUrl: string
 }
 
-defineProps<{
+
+const props = defineProps<{
   user: DashboardHeroUser
 }>()
+
+
+console.log('DashboardHeroCard user:', props.user)
+
 
 defineEmits<{
   (event: 'download-report'): void
   (event: 'new-audit'): void
 }>()
+
 </script>
 
 <style scoped>
@@ -76,7 +81,7 @@ defineEmits<{
   gap: .5rem;
   cursor: pointer;
   transition: all .2s ease;
-  
+
 }
 
 .af-btn-black:hover {
@@ -93,17 +98,17 @@ defineEmits<{
   border-radius: 1.25rem;
   overflow: hidden;
 
-   /* Mezcla de gradiente horizontal primario + fundido vertical hacia blanco en la base */
-  background: 
+  /* Mezcla de gradiente horizontal primario + fundido vertical hacia blanco en la base */
+  background:
     linear-gradient(to top, var(--af-surface-container-lowest, #ffffff) 0%, transparent 60%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, var(--af-surface-container-low, #f2f4f6) 100%);
 
 
-  border: 1px solid rgba(0,0,0,.08);
+  border: 1px solid rgba(0, 0, 0, .08);
 
   box-shadow:
-    0 1px 2px rgba(0,0,0,.04),
-    0 12px 32px rgba(0,0,0,.08);
+    0 1px 2px rgba(0, 0, 0, .04),
+    0 12px 32px rgba(0, 0, 0, .08);
 }
 
 .af-hero-banner {

@@ -1,5 +1,6 @@
 // src/api/axios.ts
 import axios from 'axios';
+import { useAuthStore } from '@/stores/authStore';
 
 const api = axios.create({
   // En desarrollo usará '/api' (aprovechando el proxy de Vite) o la variable de entorno si está definida
@@ -9,7 +10,7 @@ const api = axios.create({
   },
 });
 
-// Interceptor REQUEST: Adjunta el Token JWT si existe
+// Interceptor REQUEST: Adjunta el Token JWT si existe[cite: 1]
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -18,17 +19,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor RESPONSE: Manejo centralizado de errores (401, 403, 500, etc.)
+// Interceptor RESPONSE: Manejo centralizado de errores (401, 403, 500, etc.)[cite: 1]
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
 
     if (status === 401) {
-      // Token expirado o inválido: limpiar sesión y redirigir
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
+      // Punto 2.9: Limpiar store, token y redirigir a login[cite: 1]
+      const authStore = useAuthStore();
+      authStore.logout();
+
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }

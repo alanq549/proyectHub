@@ -77,7 +77,7 @@ function buildRoleLabel(): string {
 const heroUser = computed<DashboardHeroUser>(() => ({
   name: buildDisplayName(),
   role: buildRoleLabel(),
-  heroAvatarUrl: authStore.user?.profile_picture_url || DEFAULT_AVATAR,
+  avatarUrl: authStore.avatarUrl,
 }))
 
 // -- KPIs --
