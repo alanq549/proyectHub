@@ -1,3 +1,5 @@
+# src/modules/auth/auth_service.py
+# AuthService para manejar la autenticación de usuarios
 from src.models.user import User
 from src.modules.users.user_repository import UserRepository
 from flask_jwt_extended import create_access_token, create_refresh_token

@@ -1,3 +1,4 @@
+// src/modules/auth/routes/index.ts
 import type { RouteRecordRaw } from 'vue-router'
 
 export const authRoutes: RouteRecordRaw[] = [

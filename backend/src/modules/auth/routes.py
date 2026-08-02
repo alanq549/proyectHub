@@ -1,3 +1,4 @@
+# src/modules/auth/routes.py
 from flask_jwt_extended import jwt_required
 from . import auth_bp
 from .auth_controller import AuthController

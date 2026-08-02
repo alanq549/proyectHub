@@ -170,7 +170,7 @@ Todos creados via `POST /api/v1/users` autenticados como admin → password viaj
 ```bash
 # 1. Levantar el backend
 cd backend
-python run.py runserver -h 0.0.0.0 -p 5000
+py -m flask --app factory.py run --debug
 
 # 2. Ejecutar el seed (otra terminal o SSH en EC2)
 cd backend

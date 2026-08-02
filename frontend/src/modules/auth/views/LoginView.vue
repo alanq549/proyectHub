@@ -32,22 +32,26 @@
               </p>
             </div>
 
-            <!-- Alerta de Error -->
-            <ErrorAlert v-if="errorMessage" :errorMessage="true" class="mb-3" />
+            <!-- Alerta de Error Global / Backend -->
+            <ErrorAlert v-if="errorMessage" :errorMessage="errorMessage" class="mb-3" />
 
-            <form id="login-form" @submit.prevent="handleLogin" class="d-flex flex-column gap-3">
+            <form id="login-form" @submit.prevent="handleLogin" class="d-flex flex-column gap-3" novalidate>
               <!-- Input Email -->
               <div class="form-group">
                 <label class="form-label-custom mb-1 d-block">Correo Electrónico</label>
                 <div class="input-icon-wrap">
-                  <span class="material-symbols-outlined">mail</span>
+                  <span class="material-symbols-outlined notranslate">mail</span>
                   <input 
-                    v-model="email" 
+                    v-model.trim="email" 
                     type="email" 
                     class="form-control-custom w-100" 
-                    required 
+                    :class="{ 'is-invalid': errors.email }"
                     placeholder="correo@universidad.edu" 
+                    @input="clearFieldError('email')"
                   />
+                </div>
+                <div v-if="errors.email" class="invalid-feedback d-block mt-1">
+                  {{ errors.email }}
                 </div>
               </div>
 
@@ -60,19 +64,23 @@
                   </a>
                 </div>
                 <div class="input-icon-wrap">
-                  <span class="material-symbols-outlined">lock</span>
+                  <span class="material-symbols-outlined notranslate">lock</span>
                   <input 
                     v-model="password" 
                     :type="showPassword ? 'text' : 'password'" 
                     class="form-control-custom has-toggle w-100" 
-                    required 
+                    :class="{ 'is-invalid': errors.password }"
                     placeholder="••••••••"
+                    @input="clearFieldError('password')"
                   />
-                  <button type="button" class="toggle-icon d-flex align-items-center justify-content-center" @click="togglePassword">
-                    <span class="material-symbols-outlined fs-5">
+                  <button type="button" class="toggle-icon" @click="togglePassword">
+                    <span class="material-symbols-outlined notranslate fs-5">
                       {{ showPassword ? 'visibility_off' : 'visibility' }}
                     </span>
                   </button>
+                </div>
+                <div v-if="errors.password" class="invalid-feedback d-block mt-1">
+                  {{ errors.password }}
                 </div>
               </div>
 
@@ -102,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -110,7 +118,6 @@ import AuthSidebar from '@/modules/auth/components/AuthSidebar.vue'
 import AuthLoginMobileHeader from '@/modules/auth/components/AuthLoginMobileHeader.vue'
 import ErrorAlert from '@/modules/auth/components/ErrorAlert.vue'
 import SSOButtons from '@/modules/auth/components/SSOButtons.vue'
-import SecureBadge from '@/modules/auth/components/SecureBadge.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -119,16 +126,51 @@ const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 
+// Objeto reactivo de errores por campo
+const errors = reactive({
+  email: '',
+  password: ''
+})
+
 // Estados de la UI
 const showPassword = ref(false)
 const isLoading = ref(false)
-const errorMessage = ref('') // Cambiado a string para guardar el mensaje del backend
+const errorMessage = ref('')
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value
 }
 
-// Disparar animación de sacudida en caso de error de credenciales
+const clearFieldError = (field: 'email' | 'password') => {
+  errors[field] = ''
+}
+
+// Regex para validación de email
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Validación programática antes de enviar
+const validateForm = (): boolean => {
+  let isValid = true;
+  errors.email = ''
+  errors.password = ''
+
+  if (!email.value) {
+    errors.email = 'El correo electrónico es obligatorio.'
+    isValid = false
+  } else if (!emailRegex.test(email.value)) {
+    errors.email = 'Ingresa un formato de correo electrónico válido.'
+    isValid = false
+  }
+
+  if (!password.value) {
+    errors.password = 'La contraseña es obligatoria.'
+    isValid = false
+  }
+
+  return isValid
+}
+
+// Disparar animación de sacudida en caso de error
 const triggerShakeAnimation = () => {
   const form = document.getElementById('login-form')
   if (form) {
@@ -141,8 +183,14 @@ const triggerShakeAnimation = () => {
 
 // Petición Real al Backend Flask mediante el AuthStore
 const handleLogin = async () => {
-  isLoading.value = true
   errorMessage.value = ''
+  
+  if (!validateForm()) {
+    triggerShakeAnimation()
+    return
+  }
+
+  isLoading.value = true
 
   try {
     await authStore.login({
@@ -150,11 +198,13 @@ const handleLogin = async () => {
       password: password.value
     })
 
-    // Si el login es exitoso, redirigir al Dashboard o Vista Principal
-    router.push({ name: 'home' }) // O la ruta principal de tu sistema
+    if (authStore.isAdmin) {
+      router.push({ name: 'users-list' })
+    } else {
+      router.push({ name: 'dashboard' })
+    }
   } catch (error: any) {
-    // Si la API en Flask devuelve un error (ej. 401 Credenciales Inválidas)
-    errorMessage.value = error.response?.data?.message || 'Correo o contraseña incorrectos. Inténtalo de nuevo.'
+    errorMessage.value = error.response?.data?.message || error.response?.data?.error || 'Correo o contraseña incorrectos. Inténtalo de nuevo.'
     triggerShakeAnimation()
   } finally {
     isLoading.value = false
@@ -229,8 +279,6 @@ const handleLogin = async () => {
 }
 
 
-
-
 @media (max-width: 767.98px) {
   .right-panel {
     padding: 2rem;
@@ -267,7 +315,8 @@ const handleLogin = async () => {
   position: relative;
 }
 
-.input-icon-wrap .material-symbols-outlined {
+/* Icono izquierdo (candado) */
+.input-icon-wrap > .material-symbols-outlined {
   position: absolute;
   left: 16px;
   top: 50%;
@@ -276,18 +325,32 @@ const handleLogin = async () => {
   pointer-events: none;
 }
 
-.input-icon-wrap .toggle-icon {
+
+/* Botón de mostrar/ocultar contraseña */
+.toggle-icon {
   position: absolute;
-  right: 16px;
-  left: auto;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--outline-variant, #c6c6cd);
   cursor: pointer;
-  pointer-events: auto;
-  background: none;
+  background: transparent;
   border: none;
 }
+
+
+/* Icono dentro del botón */
+.toggle-icon .material-symbols-outlined {
+  font-size: 20px;
+  line-height: 1;
+}
+
 
 .form-control-custom {
   height: 48px;

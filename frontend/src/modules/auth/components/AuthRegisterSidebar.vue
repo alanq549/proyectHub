@@ -3,7 +3,7 @@
     <div>
       <div class="d-flex align-items-center gap-3 mb-5">
         <div class="logo-badge">
-          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+          <span class="material-symbols-outlined notranslate" style="font-variation-settings: 'FILL' 1;">account_tree</span>
         </div>
         <span class="sidebar-brand-name">ProjectHub</span>
       </div>

@@ -1,21 +1,21 @@
 <template>
-  <!-- ERROR -->
   <div v-if="errorMessage" class="error-alert">
-    <span class="material-symbols-outlined">
+    <span class="material-symbols-outlined notranslate">
       error
     </span>
+
     <p>
-      Credenciales incorrectas. Por favor, intenta de nuevo.
+      {{ errorMessage }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 
-
-const props = defineProps<{
-  errorMessage: boolean;
+defineProps<{
+  errorMessage: string;
 }>();
+
 </script>
 
 <style scoped>

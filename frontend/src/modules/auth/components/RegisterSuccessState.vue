@@ -2,7 +2,7 @@
   <!-- Success State -->
   <div id="success-state" class="show">
     <div class="success-icon-wrap">
-      <span class="material-symbols-outlined" style="font-size:48px; font-variation-settings: 'FILL' 1;">check_circle</span>
+      <span class="material-symbols-outlined notranslate" style="font-size:48px; font-variation-settings: 'FILL' 1;">check_circle</span>
     </div>
     <h2 class="reg-title">¡Registro Exitoso!</h2>
     <p class="reg-subtitle mx-auto" style="max-width: 20rem;">Hemos enviado un enlace de verificación a tu

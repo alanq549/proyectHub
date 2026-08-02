@@ -5,7 +5,7 @@
       ProjectHub
     </span>
     <button class="btn-back-home" @click="router.push({ name: 'home' })">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined notranslate">
         arrow_back
       </span>
       Inicio

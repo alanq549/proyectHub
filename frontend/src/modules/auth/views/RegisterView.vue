@@ -11,7 +11,7 @@
 
         <!-- Registration Section -->
         <div class="col-12 col-lg-7 form-section">
-          <div class="w-100 form-container" style="max-width:480px;">
+          <div class="w-100 form-container" style="max-width: 480px;">
             <AuthRegisterMobileHeader />
 
             <!-- Register Form -->
@@ -23,19 +23,73 @@
                 </p>
               </header>
 
-              <!-- Mensaje de error -->
-              <div v-if="errorMessage" class="alert alert-danger py-2 small mb-3">
-              {{ errorMessage }}
-            </div>
+              <!-- Mensaje de error global -->
+              <div v-if="errorMessage" class="alert alert-danger py-2 small mb-3" role="alert">
+                {{ errorMessage }}
+              </div>
 
-              <form @submit.prevent="handleRegistration">
+              <form @submit.prevent="handleRegistration" novalidate>
+                <!-- Nombres y Apellidos -->
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <label class="form-label-custom">Nombre(s)</label>
+                    <div class="input-icon-wrap">
+                      <span class="material-symbols-outlined notranslate icon-left">badge</span>
+                      <input
+                        v-model.trim="firstName"
+                        type="text"
+                        class="form-control form-control-custom"
+                        :class="{ 'is-invalid': fieldErrors.firstName, 'is-valid': firstName && !fieldErrors.firstName }"
+                        placeholder="ej. Alan"
+                        @blur="validateFirstName"
+                        @input="fieldErrors.firstName = ''"
+                        required
+                      />
+                    </div>
+                    <div v-if="fieldErrors.firstName" class="invalid-feedback d-block mt-1">
+                      {{ fieldErrors.firstName }}
+                    </div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="form-label-custom">Apellido(s)</label>
+                    <div class="input-icon-wrap">
+                      <span class="material-symbols-outlined notranslate icon-left">badge</span>
+                      <input
+                        v-model.trim="lastName"
+                        type="text"
+                        class="form-control form-control-custom"
+                        :class="{ 'is-invalid': fieldErrors.lastName, 'is-valid': lastName && !fieldErrors.lastName }"
+                        placeholder="ej. Arriaga"
+                        @blur="validateLastName"
+                        @input="fieldErrors.lastName = ''"
+                        required
+                      />
+                    </div>
+                    <div v-if="fieldErrors.lastName" class="invalid-feedback d-block mt-1">
+                      {{ fieldErrors.lastName }}
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Username -->
                 <div class="mb-3">
                   <label class="form-label-custom">Nombre de usuario</label>
                   <div class="input-icon-wrap">
-                    <span class="material-symbols-outlined icon-left">person</span>
-                    <input v-model="username" type="text" class="form-control form-control-custom"
-                      placeholder="ej. jdoe_research" required />
+                    <span class="material-symbols-outlined notranslate icon-left">person</span>
+                    <input
+                      v-model.trim="username"
+                      type="text"
+                      class="form-control form-control-custom"
+                      :class="{ 'is-invalid': fieldErrors.username, 'is-valid': username && !fieldErrors.username }"
+                      placeholder="ej. alan_dev"
+                      @blur="validateUsername"
+                      @input="fieldErrors.username = ''"
+                      required
+                    />
+                  </div>
+                  <div v-if="fieldErrors.username" class="invalid-feedback d-block mt-1">
+                    {{ fieldErrors.username }}
                   </div>
                 </div>
 
@@ -43,9 +97,20 @@
                 <div class="mb-3">
                   <label class="form-label-custom">Correo electrónico</label>
                   <div class="input-icon-wrap">
-                    <span class="material-symbols-outlined icon-left">mail</span>
-                    <input v-model="email" type="email" class="form-control form-control-custom"
-                      placeholder="correo@universidad.edu" required />
+                    <span class="material-symbols-outlined notranslate icon-left">mail</span>
+                    <input
+                      v-model.trim="email"
+                      type="email"
+                      class="form-control form-control-custom"
+                      :class="{ 'is-invalid': fieldErrors.email, 'is-valid': email && !fieldErrors.email }"
+                      placeholder="correo@universidad.edu"
+                      @blur="validateEmail"
+                      @input="fieldErrors.email = ''"
+                      required
+                    />
+                  </div>
+                  <div v-if="fieldErrors.email" class="invalid-feedback d-block mt-1">
+                    {{ fieldErrors.email }}
                   </div>
                 </div>
 
@@ -53,28 +118,45 @@
                 <div class="mb-3">
                   <label class="form-label-custom">Contraseña</label>
                   <div class="input-icon-wrap">
-                    <span class="material-symbols-outlined icon-left">lock</span>
-                    <input v-model="password" :type="showPassword ? 'text' : 'password'"
-                      class="form-control form-control-custom has-toggle" placeholder="••••••••" required
-                      @input="checkStrength(password)" />
+                    <span class="material-symbols-outlined notranslate icon-left">lock</span>
+                    <input
+                      v-model="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      class="form-control form-control-custom has-toggle"
+                      :class="{ 'is-invalid': fieldErrors.password, 'is-valid': password && !fieldErrors.password }"
+                      placeholder="••••••••"
+                      @input="onPasswordInput"
+                      @blur="validatePassword"
+                      required
+                    />
                     <button type="button" class="toggle-icon" @click="togglePassword">
-                      <span class="material-symbols-outlined">
+                      <span class="material-symbols-outlined notranslate">
                         {{ showPassword ? 'visibility_off' : 'visibility' }}
                       </span>
                     </button>
                   </div>
-                  <div class="pt-1">
-                    <div class="strength-row">
-                      <span class="strength-text">Seguridad de la contraseña</span>
-                      <span class="strength-label" :style="{ color: strengthColor }">
+                  <div v-if="fieldErrors.password" class="invalid-feedback d-block mt-1">
+                    {{ fieldErrors.password }}
+                  </div>
+
+                  <!-- Indicador de Fuerza de Contraseña -->
+                  <div class="pt-2">
+                    <div class="strength-row d-flex justify-content-between align-items-center mb-1">
+                      <span class="strength-text small text-muted">Seguridad de la contraseña</span>
+                      <span class="strength-label small fw-bold" :style="{ color: strengthColor }">
                         {{ strengthText }}
                       </span>
                     </div>
-                    <div class="strength-track">
-                      <div class="password-strength-bar" :style="{
-                        width: strength + '%',
-                        backgroundColor: strengthColor
-                      }"></div>
+                    <div class="strength-track rounded overflow-hidden" style="height: 6px; background-color: var(--outline-variant, #e0e0e0);">
+                      <div
+                        class="password-strength-bar"
+                        :style="{
+                          width: strength + '%',
+                          backgroundColor: strengthColor,
+                          height: '100%',
+                          transition: 'width 0.3s ease, background-color 0.3s ease'
+                        }"
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -83,63 +165,69 @@
                 <div class="mb-3">
                   <label class="form-label-custom">Confirmar contraseña</label>
                   <div class="input-icon-wrap">
-                    <span class="material-symbols-outlined icon-left">verified_user</span>
-                    <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'"
-                      class="form-control form-control-custom has-toggle" placeholder="••••••••" required />
+                    <span class="material-symbols-outlined notranslate icon-left">verified_user</span>
+                    <input
+                      v-model="confirmPassword"
+                      :type="showConfirmPassword ? 'text' : 'password'"
+                      class="form-control form-control-custom has-toggle"
+                      :class="{ 'is-invalid': fieldErrors.confirmPassword, 'is-valid': confirmPassword && !fieldErrors.confirmPassword }"
+                      placeholder="••••••••"
+                      @input="onConfirmPasswordInput"
+                      @blur="validateConfirmPassword"
+                      required
+                    />
                     <button type="button" class="toggle-icon" @click="toggleConfirmPassword">
-                      <span class="material-symbols-outlined">
+                      <span class="material-symbols-outlined notranslate">
                         {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
                       </span>
                     </button>
+                  </div>
+                  <div v-if="fieldErrors.confirmPassword" class="invalid-feedback d-block mt-1">
+                    {{ fieldErrors.confirmPassword }}
                   </div>
                 </div>
 
                 <!-- Button -->
                 <div class="pt-2">
-                  <button class="btn-register" type="submit" :disabled="isLoading">
+                  <button class="btn-register w-100" type="submit" :disabled="isLoading || !isFormValid">
                     <span>{{ isLoading ? 'Creando cuenta...' : 'Registrarse' }}</span>
-                    <span v-if="isLoading" class="spinner-border spinner-border-sm"></span>
-                    <span v-else class="material-symbols-outlined" style="font-size:18px;">
+                    <span v-if="isLoading" class="spinner-border spinner-border-sm ms-2" role="status"></span>
+                    <span v-else class="material-symbols-outlined notranslate ms-1" style="font-size: 18px;">
                       arrow_forward
                     </span>
                   </button>
                 </div>
               </form>
 
-              <footer class="form-footer">
+              <footer class="form-footer mt-4">
                 <p class="reg-subtitle mb-0">
                   ¿Ya tienes cuenta?
                   <a href="#" @click.prevent="router.push({ name: 'login' })">Inicia sesión</a>
                 </p>
               </footer>
             </div>
-           <!-- Success State -->
-<div v-else id="success-state" class="success-card text-center py-4 px-3">
-  <!-- Glowing Icon Wrapper -->
-  <div class="success-icon-badge mx-auto mb-4">
-    <span class="material-symbols-outlined success-icon">
-      check_circle
-    </span>
-  </div>
 
-  <!-- Content -->
-  <h2 class="reg-title mb-2">¡Registro Exitoso!</h2>
-  <p class="reg-subtitle mx-auto mb-4" style="max-width: 22rem;">
-    Hemos enviado un enlace de verificación a tu correo. Por favor, revisa tu bandeja de entrada para activar tu cuenta.
-  </p>
+            <!-- Success State -->
+            <div v-else id="success-state" class="success-card text-center py-4 px-3">
+              <div class="success-icon-badge mx-auto mb-4">
+                <span class="material-symbols-outlined notranslate success-icon">
+                  check_circle
+                </span>
+              </div>
 
-  <!-- Action Buttons -->
-  <div class="d-flex flex-column gap-2 w-100 mx-auto" style="max-width: 320px;">
-    <button class="btn-primary-custom w-100" @click="router.push({ name: 'login' })">
-      <span>Ir a Iniciar Sesión</span>
-      <span class="material-symbols-outlined fs-5">arrow_forward</span>
-    </button>
-    
-    <button class="btn-ghost-custom w-100" @click="router.push({ name: 'home' })">
-      Volver al inicio
-    </button>
-  </div>
-</div>
+              <h2 class="reg-title mb-2">¡Registro Exitoso!</h2>
+              <p class="reg-subtitle mx-auto mb-4" style="max-width: 22rem;">
+                Tu cuenta ha sido creada con éxito. Ya puedes iniciar sesión con tus credenciales.
+              </p>
+
+              <div class="d-flex flex-column gap-2 w-100 mx-auto" style="max-width: 320px;">
+                <button class="btn-register w-100" @click="router.push({ name: 'login' })">
+                  <span>Ir a Iniciar Sesión</span>
+                  <span class="material-symbols-outlined notranslate fs-5">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -148,7 +236,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import AuthRegisterSidebar from '@/modules/auth/components/AuthRegisterSidebar.vue';
@@ -158,10 +246,22 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 // Form data
+const firstName = ref('');
+const lastName = ref('');
 const username = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+
+// Errors State
+const fieldErrors = reactive({
+  firstName: '',
+  lastName: '',
+  username: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+});
 
 // UI states
 const showPassword = ref(false);
@@ -170,12 +270,11 @@ const isLoading = ref(false);
 const registrationSuccess = ref(false);
 const errorMessage = ref('');
 
-// Password strength
+// Password strength properties
 const strength = ref(0);
-const strengthText = ref('Baja');
-const strengthColor = ref('var(--outline-variant)');
+const strengthText = ref('Sin evaluar');
+const strengthColor = ref('var(--outline-variant, #9e9e9e)');
 
-// Toggle password visibility
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
@@ -184,42 +283,160 @@ const toggleConfirmPassword = () => {
   showConfirmPassword.value = !showConfirmPassword.value;
 };
 
-// Password security checker
+// --- Validaciones por Campo ---
+const validateFirstName = (): boolean => {
+  if (!firstName.value.trim()) {
+    fieldErrors.firstName = 'El nombre es obligatorio.';
+    return false;
+  }
+  if (firstName.value.trim().length < 2) {
+    fieldErrors.firstName = 'El nombre debe tener al menos 2 caracteres.';
+    return false;
+  }
+  fieldErrors.firstName = '';
+  return true;
+};
+
+const validateLastName = (): boolean => {
+  if (!lastName.value.trim()) {
+    fieldErrors.lastName = 'El apellido es obligatorio.';
+    return false;
+  }
+  if (lastName.value.trim().length < 2) {
+    fieldErrors.lastName = 'El apellido debe tener al menos 2 caracteres.';
+    return false;
+  }
+  fieldErrors.lastName = '';
+  return true;
+};
+
+const validateUsername = (): boolean => {
+  const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+  if (!username.value.trim()) {
+    fieldErrors.username = 'El nombre de usuario es obligatorio.';
+    return false;
+  }
+  if (!usernameRegex.test(username.value.trim())) {
+    fieldErrors.username = 'Entre 3 y 20 caracteres (solo letras, números y guion bajo).';
+    return false;
+  }
+  fieldErrors.username = '';
+  return true;
+};
+
+const validateEmail = (): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email.value.trim()) {
+    fieldErrors.email = 'El correo electrónico es obligatorio.';
+    return false;
+  }
+  if (!emailRegex.test(email.value.trim())) {
+    fieldErrors.email = 'Introduce un correo electrónico válido.';
+    return false;
+  }
+  fieldErrors.email = '';
+  return true;
+};
+
+const validatePassword = (): boolean => {
+  if (!password.value) {
+    fieldErrors.password = 'La contraseña es obligatoria.';
+    return false;
+  }
+  if (password.value.length < 8) {
+    fieldErrors.password = 'Debe tener al menos 8 caracteres.';
+    return false;
+  }
+  fieldErrors.password = '';
+  return true;
+};
+
+const validateConfirmPassword = (): boolean => {
+  if (!confirmPassword.value) {
+    fieldErrors.confirmPassword = 'Debes confirmar la contraseña.';
+    return false;
+  }
+  if (confirmPassword.value !== password.value) {
+    fieldErrors.confirmPassword = 'Las contraseñas no coinciden.';
+    return false;
+  }
+  fieldErrors.confirmPassword = '';
+  return true;
+};
+
+// --- Cálculo de Fuerza de Contraseña ---
 const checkStrength = (pwd: string) => {
-  if (!pwd.length) {
+  if (!pwd) {
     strength.value = 0;
-    strengthText.value = 'Baja';
-    strengthColor.value = 'var(--outline-variant)';
+    strengthText.value = 'Sin evaluar';
+    strengthColor.value = 'var(--outline-variant, #9e9e9e)';
     return;
   }
 
-  let newStrength = 0;
+  let score = 0;
+  if (pwd.length >= 8) score += 25;
+  if (/[A-Z]/.test(pwd)) score += 25;
+  if (/[0-9]/.test(pwd)) score += 25;
+  if (/[^A-Za-z0-9]/.test(pwd)) score += 25;
 
-  if (pwd.length > 5) newStrength += 25;
-  if (pwd.length > 10) newStrength += 25;
-  if (/[A-Z]/.test(pwd)) newStrength += 25;
-  if (/[0-9]/.test(pwd)) newStrength += 25;
+  strength.value = score;
 
-  if (newStrength <= 25) {
+  if (score <= 25) {
     strengthText.value = 'Débil';
-    strengthColor.value = 'var(--error)';
-  } else if (newStrength <= 75) {
+    strengthColor.value = 'var(--error, #dc3545)';
+  } else if (score <= 75) {
     strengthText.value = 'Media';
-    strengthColor.value = 'var(--secondary)';
+    strengthColor.value = 'var(--secondary, #ffc107)';
   } else {
     strengthText.value = 'Fuerte';
     strengthColor.value = '#22c55e';
   }
-
-  strength.value = newStrength;
 };
 
-// Petición Real al Backend Flask
+const onPasswordInput = () => {
+  fieldErrors.password = '';
+  checkStrength(password.value);
+  if (confirmPassword.value) {
+    validateConfirmPassword();
+  }
+};
+
+const onConfirmPasswordInput = () => {
+  fieldErrors.confirmPassword = '';
+  if (confirmPassword.value === password.value) {
+    fieldErrors.confirmPassword = '';
+  }
+};
+
+// --- Validación Global del Formulario ---
+const validateAllFields = (): boolean => {
+  const isFirstValid = validateFirstName();
+  const isLastValid = validateLastName();
+  const isUsernameValid = validateUsername();
+  const isEmailValid = validateEmail();
+  const isPasswordValid = validatePassword();
+  const isConfirmValid = validateConfirmPassword();
+
+  return isFirstValid && isLastValid && isUsernameValid && isEmailValid && isPasswordValid && isConfirmValid;
+};
+
+const isFormValid = computed(() => {
+  return (
+    firstName.value.trim().length >= 2 &&
+    lastName.value.trim().length >= 2 &&
+    /^[a-zA-Z0-9_]{3,20}$/.test(username.value.trim()) &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()) &&
+    password.value.length >= 8 &&
+    confirmPassword.value === password.value &&
+    !Object.values(fieldErrors).some((err) => err !== '')
+  );
+});
+
+// --- Registro ---
 const handleRegistration = async () => {
   errorMessage.value = '';
 
-  if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'Las contraseñas no coinciden';
+  if (!validateAllFields()) {
     return;
   }
 
@@ -227,14 +444,19 @@ const handleRegistration = async () => {
 
   try {
     await authStore.register({
-      username: username.value,
-      email: email.value,
-      password: password.value // Se enviará de manera segura por HTTPS
+      first_name: firstName.value.trim(),
+      last_name: lastName.value.trim(),
+      username: username.value.trim(),
+      email: email.value.trim(),
+      password: password.value
     });
 
     registrationSuccess.value = true;
   } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || 'Error al conectar con el servidor';
+    errorMessage.value =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      'Error al conectar con el servidor';
   } finally {
     isLoading.value = false;
   }
@@ -242,6 +464,7 @@ const handleRegistration = async () => {
 </script>
 
 <style scoped>
+/* Mantén tus estilos exactamente como están */
 :global(:root) {
   --outline: #76777d;
   --surface-container: #eceef0;
@@ -266,7 +489,6 @@ const handleRegistration = async () => {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  /* Evita el scroll global en la ventana */
   font-family: 'Inter', sans-serif;
   background-color: var(--background);
   color: var(--on-surface);
@@ -280,7 +502,6 @@ const handleRegistration = async () => {
     'opsz' 24;
 }
 
-/* Base Wrapper */
 .registration-wrapper {
   height: 100vh;
   width: 100vw;
@@ -288,7 +509,6 @@ const handleRegistration = async () => {
   position: relative;
 }
 
-/* Background */
 .bg-blobs {
   position: fixed;
   inset: 0;
@@ -325,7 +545,6 @@ const handleRegistration = async () => {
   height: 100vh;
 }
 
-/* Form Section con Scroll Interno Limpio */
 .form-section {
   display: flex;
   flex-direction: column;
@@ -334,10 +553,8 @@ const handleRegistration = async () => {
   padding: 24px 16px;
   height: 100vh;
   overflow-y: auto;
-  /* Permite scroll local únicamente si la pantalla es muy pequeña */
 }
 
-/* Estilo moderno para el scrollbar en caso de ser necesario */
 .form-section::-webkit-scrollbar {
   width: 6px;
 }
@@ -353,7 +570,6 @@ const handleRegistration = async () => {
 
 .form-container {
   margin: auto 0;
-  /* Centra verticalmente el contenido dentro del contenedor scrollable */
 }
 
 @media(min-width: 768px) {
@@ -440,7 +656,6 @@ const handleRegistration = async () => {
   box-shadow: 0 0 0 4px rgba(75, 65, 225, .10);
 }
 
-/* Strength */
 .strength-row {
   display: flex;
   justify-content: space-between;
@@ -474,7 +689,6 @@ const handleRegistration = async () => {
   transition: .3s ease;
 }
 
-/* Button */
 .btn-register {
   width: 100%;
   height: 48px;
@@ -499,7 +713,6 @@ const handleRegistration = async () => {
   transform: scale(.98);
 }
 
-/* Footer */
 .form-footer {
   padding-top: 1.5rem;
   margin-top: 1rem;
@@ -515,5 +728,10 @@ const handleRegistration = async () => {
 
 .form-footer a:hover {
   text-decoration: underline;
+}
+
+.success-icon {
+  font-size: 64px;
+  color: #22c55e;
 }
 </style>

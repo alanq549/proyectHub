@@ -17,7 +17,7 @@
 
     <div class="col-6">
       <button class="sso-btn">
-        <span class="material-symbols-outlined">
+        <span class="material-symbols-outlined notranslate">
           school
         </span>
         Institucional

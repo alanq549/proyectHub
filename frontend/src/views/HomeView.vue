@@ -23,7 +23,7 @@
       <section class="hero-section hero-gradient" :style="heroGradientStyle">
         <div class="container-max d-flex flex-column align-items-center text-center">
           <div class="badge-pill mb-3">
-            <span class="material-symbols-outlined" style="font-size:18px;">verified</span>
+            <span class="material-symbols-outlined notranslate" style="font-size:18px;">verified</span>
             <span>Nueva versión académica 2.0</span>
           </div>
           <h1 class="display-title mb-3">Gestión académica de alto nivel</h1>
@@ -57,28 +57,28 @@
           <div class="row g-4">
             <div class="col-12 col-md-6 col-lg-3">
               <div class="glass-card feature-card">
-                <div class="feature-icon"><span class="material-symbols-outlined">account_tree</span></div>
+                <div class="feature-icon"><span class="material-symbols-outlined notranslate">account_tree</span></div>
                 <h3 class="feature-title">Gestión de Proyectos</h3>
                 <p class="feature-desc">Organiza flujos de trabajo complejos con cronogramas dinámicos y asignación de hitos.</p>
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
               <div class="glass-card feature-card">
-                <div class="feature-icon"><span class="material-symbols-outlined">campaign</span></div>
+                <div class="feature-icon"><span class="material-symbols-outlined notranslate">campaign</span></div>
                 <h3 class="feature-title">Convocatorias</h3>
                 <p class="feature-desc">Publica y gestiona convocatorias de investigación con procesos de evaluación automatizados.</p>
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
               <div class="glass-card feature-card">
-                <div class="feature-icon"><span class="material-symbols-outlined">encrypted</span></div>
+                <div class="feature-icon"><span class="material-symbols-outlined notranslate">encrypted</span></div>
                 <h3 class="feature-title">Documentación Segura</h3>
                 <p class="feature-desc">Repositorio cifrado para archivos sensibles con control de versiones y firmas digitales.</p>
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
               <div class="glass-card feature-card">
-                <div class="feature-icon"><span class="material-symbols-outlined">monitoring</span></div>
+                <div class="feature-icon"><span class="material-symbols-outlined notranslate">monitoring</span></div>
                 <h3 class="feature-title">Métricas en Tiempo Real</h3>
                 <p class="feature-desc">Analítica avanzada para monitorizar el impacto y progreso de cada iniciativa académica.</p>
               </div>

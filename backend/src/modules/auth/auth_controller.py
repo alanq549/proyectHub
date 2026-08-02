@@ -1,3 +1,4 @@
+# src/modules/auth/auth_controller.py
 from flask import request, jsonify
 from flask_jwt_extended import get_jwt_identity
 from .auth_service import AuthService

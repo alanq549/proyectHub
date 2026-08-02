@@ -1,63 +1,71 @@
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
-import { authRoutes } from '@/modules/auth/routes'
-import HomeView from '@/views/HomeView.vue'
 import { useAuthStore } from '@/stores/authStore'
+
+import HomeView from '@/views/HomeView.vue'
+import AppLayout from '@/layouts/AppLayout.vue'
+
+import { authRoutes } from '@/modules/auth/routes'
+import { userRoutes } from '@/modules/user/routes'
+import { dashboardRoutes } from '@/modules/dashboard/routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // 1. Redirección por defecto en la raíz
     {
       path: '/',
       name: 'home',
       component: HomeView
     },
 
-    // 2. Módulo de Autenticación
-    ...authRoutes,
-
-    // Ruta de ejemplo protegida
+    // Rutas Privadas / Protegidas (Envueltas en AppLayout)
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('@/views/HomeView.vue'), // Usar HomeView temporalmente
-      meta: { requiresAuth: true, title: 'Dashboard' }
+      path: '/',
+      component: AppLayout,
+      meta: { requiresAuth: true },
+      children: [
+        ...dashboardRoutes,
+        ...userRoutes
+      ]
     },
 
-    // 3. Puedes ir sumando otros módulos aquí en el futuro:
-    // dashboardRoutes,
-    // projectsRoutes,
+    ...authRoutes,
 
-    // 4. Ruta para capturar 404 Not Found
-    // {
-    //  path: '/:pathMatch(.*)*',
-    //  name: 'not-found',
-    //  component: () => import('@/views/NotFoundView.vue')
-    // }
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/'
+    }
   ]
 })
 
-// Opcional: Modificar el título del documento según las rutas
-// Navigation Guard (Protección de rutas)
+// Navigation Guard
 router.beforeEach((to, from) => {
   const authStore = useAuthStore()
 
-  // Cambiar título de la ventana
   if (to.meta.title) {
     document.title = `${to.meta.title} | ProjectHub`
   }
 
-  // Si intenta ir al login/register estando ya logueado
-  if (to.path.startsWith('/auth') && authStore.isAuthenticated) {
-    return { name: 'home' }
+  const isAuthRoute = to.name === 'login' || to.name === 'register'
+
+  // A. Si intenta ir a Login o Register estando AUTENTICADO
+  if (isAuthRoute && authStore.isAuthenticated) {
+    if (authStore.isAdmin) {
+      return { name: 'users-list' }
+    }
+    return { name: 'dashboard' }
   }
 
-  // Si la ruta requiere autenticación y el usuario no está autenticado
+  // B. Si intenta ir a una ruta privada sin estar autenticado
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return { name: 'login' }
   }
 
-  // Continuar la navegación
+  // C. Si la ruta requiere ser Admin y es un usuario común
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    return { name: 'dashboard' }
+  }
+
   return true
 })
 

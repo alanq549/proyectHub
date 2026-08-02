@@ -1,3 +1,4 @@
+# src/lib/auth.py
 from ..lib.http_client import request
 from ..config import DEFAULT_ADMIN
 
@@ -59,7 +60,7 @@ def ensure_admin():
     admin_login = login(DEFAULT_ADMIN)
 
     if admin_login and admin_login.get('token'):
-        me = request('GET', '/auth/me', {'token': admin_login['token']})
+        me = request('GET', '/me', {'token': admin_login['token']})
         user = me.get('json') or {}
         if user.get('role') == 'admin':
             return {
