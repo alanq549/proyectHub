@@ -1,28 +1,331 @@
-/* frontend/src/assets/main.css o styles.css */
+/* ============================================================
+   main.css — Sistema Unificado de Design Tokens ProjectHub
+   Versión 2.1 (Monochrome Glass Spec 2026-08-03)
+   ============================================================ */
+
+/* ============================================================
+   [1/4] TOKENS GLOBALES — Modificar aquí para cambiar el tema
+   ============================================================ */
 :root {
-  /* Paleta extraída de design_system.md */
-  --ph-surface: #f7f9fb;
-  --ph-surface-container: #eceef0;
-  --ph-primary: #0f172a;
-  --ph-primary-container: #131b2e;
-  --ph-secondary: #4b41e1;
-  --ph-on-primary-container: #7c839b;
-  --ph-outline-variant: #c6c6cd;
-  
-  /* Radios de borde característicos */
-  --ph-radius-lg: 0.75rem;
-  --ph-radius-xl: 1rem;
-  --ph-radius-2xl: 2rem;
+  /* ------------------------------
+     PALETA BASE (semántica - Blanco / Negro / Grises)
+     ------------------------------ */
+  --app-primary: #0f172a;               /* Slate 900 */
+  --app-primary-dark: #000000;          /* Negro */
+  --app-primary-light: #334155;         /* Slate 700 */
+  --app-secondary: #475569;           /* Slate 600 */
+  --app-secondary-light: #f1f5f9;     /* Slate 100 */
+  --app-black: #000000;
+  --app-slate-900: #0f172a;
+  --app-slate-800: #1e293b;
+  --app-slate-700: #334155;
+  --app-slate-600: #475569;
+  --app-slate-500: #64748b;
+  --app-slate-400: #94a3b8;
+  --app-slate-300: #cbd5e1;
+  --app-slate-200: #e2e8f0;
+  --app-slate-100: #f1f5f9;
+  --app-slate-50: #f8fafc;
+  --app-on-primary: #ffffff;
+  --app-on-surface: #0f172a;
+  --app-on-surface-variant: #475569;
+  --app-outline: #76777d;
+  --app-outline-variant: #c6c6cd;
+  --app-error: #ba1a1a;
+  --app-error-bg: rgba(254, 226, 226, 0.8);
+  --app-success: #15803d;
+  --app-success-bg: rgba(220, 252, 231, 0.8);
+  --app-warning: #b45309;
+  --app-warning-bg: rgba(254, 243, 199, 0.8);
+
+  /* ------------------------------
+     FONDO PRINCIPAL DE LA APLICACIÓN
+     Soporta: color sólido | linear-gradient | url(textura)
+     ------------------------------ */
+  --app-bg-main: #f1f5f9;
+  /* Degradado suave blanco-gris con matiz charcoal en las esquinas */
+  --app-bg-gradient: 
+    radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.06) 0%, transparent 50%),
+    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+  /* Blobs decorativos de fondo (AppLayout) */
+--app-bg-blob-primary: rgba(15, 23, 42, 0.18);      /* Slate oscuro más marcado */
+--app-bg-blob-secondary: rgba(100, 116, 139, 0.25);  /* Slate medio para mayor contraste */
+--app-bg-blob-blur: blur(90px);                     /* Blur ligeramente menor para que el haz de luz no se diluya por completo */
+--app-bg-blob-opacity: 0.85;
+
+  /* ------------------------------
+     SUPERFICIES / SURFACES (Material Design)
+     ------------------------------ */
+  --app-surface: #f7f9fb;
+  --app-surface-container-lowest: #ffffff;
+  --app-surface-container-low: #f2f4f6;
+  --app-surface-container: #eceef0;
+  --app-surface-container-high: #e6e8ea;
+  --app-surface-container-highest: #e0e3e5;
+
+  /* ------------------------------
+     ESTÁNDAR GLASSMORPHISM — Todas las tarjetas
+     ------------------------------ */
+  --app-glass-bg: rgba(255, 255, 255, 0.72);
+  --app-glass-bg-hover: rgba(255, 255, 255, 0.88);
+  --app-glass-bg-light: rgba(255, 255, 255, 0.55);
+  --app-glass-blur: blur(20px);
+  --app-glass-blur-sm: blur(12px);
+  --app-glass-border: 1px solid rgba(255, 255, 255, 0.9);
+  --app-glass-border-subtle: 1px solid rgba(255, 255, 255, 0.5);
+  --app-glass-bottom-border: 1px solid rgba(0, 0, 0, 0.06);
+  --app-glass-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.02),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  --app-glass-shadow-hover:
+    0 16px 32px -6px rgba(15, 23, 42, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px #ffffff;
+  --app-glass-radius-sm: 0.75rem;
+  --app-glass-radius-md: 1.1rem;
+  --app-glass-radius-lg: 1.25rem;
+  --app-glass-radius-xl: 1.5rem;
+  --app-glass-padding-md: 22px 24px;
+  --app-glass-padding-lg: 28px 32px;
+
+  /* ------------------------------
+     ESTÁNDAR CARDS PLANO (sin glass) — Admin Users
+     ------------------------------ */
+  --app-flat-bg: #ffffff;
+  --app-flat-border: 1px solid var(--app-slate-200);
+  --app-flat-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  --app-flat-radius: 1rem;
+
+  /* ------------------------------
+     NAVBAR / RAIL / ELEMENTOS FLOTANTES
+     ------------------------------ */
+  --app-topbar-bg: rgba(255, 255, 255, 0.82);
+  --app-bottomnav-bg: rgba(255, 255, 255, 0.90);
+  --app-rail-bg: var(--app-surface-container-low);
+  --app-rail-border: 1px solid rgba(198, 198, 205, 0.3);
+
+  /* ------------------------------
+     FORMULARIOS / INPUTS
+     ------------------------------ */
+  --app-input-bg: #ffffff;
+  --app-input-border: var(--app-slate-200);
+  --app-input-border-focus: var(--app-primary);
+  --app-input-focus-ring: 0 0 0 3px rgba(15, 23, 42, 0.12);
+  --app-input-radius: 0.5rem;
+  --app-input-padding-y: 0.55rem;
+  --app-input-padding-x: 0.75rem;
+  --app-input-focus-accent: #0f172a;
+
+  /* ------------------------------
+     BOTONES ESTÁNDAR (Blanco y Negro)
+     ------------------------------ */
+  --app-btn-primary-bg: #0f172a;
+  --app-btn-primary-bg-hover: #000000;
+  --app-btn-primary-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --app-btn-primary-height: 42px;
+  --app-btn-radius-md: 0.75rem;
+
+  /* ------------------------------
+     TIPOGRAFÍA
+     ------------------------------ */
+  --app-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --app-radius-pill: 9999px;
 }
 
+/* ============================================================
+   [2/4] CLASES UTILITARIAS — Glassmorphism Reusable
+   ============================================================ */
+
+/* Card estándar — uso general (KPIs, Upload panel, SystemHealth, etc.) */
+.app-card-glass {
+  background: var(--app-glass-bg);
+  backdrop-filter: var(--app-glass-blur);
+  -webkit-backdrop-filter: var(--app-glass-blur);
+  border: var(--app-glass-border);
+  border-bottom: var(--app-glass-bottom-border);
+  box-shadow: var(--app-glass-shadow);
+  border-radius: var(--app-glass-radius-md);
+  padding: var(--app-glass-padding-md);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.app-card-glass:hover {
+  background: var(--app-glass-bg-hover);
+  box-shadow: var(--app-glass-shadow-hover);
+}
+
+/* Card más grande — Hero Card */
+.app-card-glass-xl {
+  background: var(--app-glass-bg);
+  backdrop-filter: var(--app-glass-blur);
+  -webkit-backdrop-filter: var(--app-glass-blur);
+  border: var(--app-glass-border);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+  box-shadow:
+    0 10px 30px -5px rgba(0, 0, 0, 0.05),
+    0 4px 12px rgba(0, 0, 0, 0.02),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  border-radius: var(--app-glass-radius-xl);
+  padding: 30px 36px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.app-card-glass-xl:hover {
+  box-shadow:
+    0 14px 35px -5px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+/* Card Tabla — Proyectos recientes */
+.app-card-glass-table {
+  background: var(--app-glass-bg);
+  backdrop-filter: var(--app-glass-blur);
+  -webkit-backdrop-filter: var(--app-glass-blur);
+  border-radius: var(--app-glass-radius-lg);
+  border: var(--app-glass-border);
+  border-bottom: var(--app-glass-bottom-border);
+  box-shadow: var(--app-glass-shadow);
+  overflow: hidden;
+}
+
+/* Card Ligera — Convocatorias (menos opacidad, más translúcida) */
+.app-card-glass-light {
+  background: var(--app-glass-bg-light);
+  backdrop-filter: var(--app-glass-blur-sm);
+  -webkit-backdrop-filter: var(--app-glass-blur-sm);
+  padding: 20px;
+  border-radius: var(--app-glass-radius-sm);
+  border: var(--app-glass-border-subtle);
+  transition: box-shadow .2s ease;
+}
+.app-card-glass-light:hover {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.06);
+}
+
+/* Card Plano — Users CRUD (Bootstrap style, sin glass) */
+.app-card-flat {
+  background: var(--app-flat-bg);
+  border: var(--app-flat-border);
+  box-shadow: var(--app-flat-shadow);
+  border-radius: var(--app-flat-radius);
+  overflow: hidden;
+}
+
+/* Alias: clase .glass-card mantenida por compatibilidad */
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--app-glass-bg);
+  backdrop-filter: var(--app-glass-blur-sm);
+  -webkit-backdrop-filter: var(--app-glass-blur-sm);
   border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: var(--app-glass-radius-md);
+  box-shadow: var(--app-glass-shadow);
 }
 
-/* Fuerza a que el traductor ignore todos los íconos */
+/* ============================================================
+   [3/4] CLASES UTILITARIAS — Inputs / Formularios
+   ============================================================ */
+.app-input-group-text {
+  background: transparent;
+  border-right: 0;
+  color: var(--app-slate-500);
+  border-color: var(--app-input-border);
+  border-radius: var(--app-input-radius) 0 0 var(--app-input-radius);
+}
+
+.app-input-control {
+  background: var(--app-input-bg);
+  border-radius: 0 var(--app-input-radius) var(--app-input-radius) 0 !important;
+  padding: var(--app-input-padding-y) var(--app-input-padding-x);
+  border-color: var(--app-input-border);
+  transition: all 0.2s ease;
+  border-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Focus anidado: input-group => ilumina borde y cambia color ícono */
+.app-input-group:focus-within .app-input-group-text {
+  border-color: var(--app-input-focus-accent);
+  color: var(--app-input-focus-accent) !important;
+}
+.app-input-group:focus-within .app-input-control {
+  border-color: var(--app-input-focus-accent);
+  box-shadow: var(--app-input-focus-ring);
+}
+
+/* ============================================================
+   [4/4] UTILIDADES GLOBALES (Bootstrap complementos)
+   ============================================================ */
+
+/* Fuerza a que el traductor Google ignore todos los íconos */
 .material-symbols-outlined {
   translate: no;
+}
+
+/* Alineación por defecto de íconos en botones y textos */
+.material-symbols-outlined {
+  vertical-align: middle;
+  font-family: 'Material Symbols Outlined' !important;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+.notranslate {
+  -webkit-translate: no;
+  translate: no;
+}
+
+/* ============ ALIAS DE COMPATIBILIDAD ==================== */
+:root {
+  /* --ph-* → --app-* */
+  --ph-surface: var(--app-surface);
+  --ph-surface-container: var(--app-surface-container);
+  --ph-primary: var(--app-slate-900);
+  --ph-primary-container: #131b2e;
+  --ph-secondary: var(--app-primary);
+  --ph-on-primary-container: #7c839b;
+  --ph-outline-variant: var(--app-outline-variant);
+  --ph-radius-lg: var(--app-glass-radius-sm);
+  --ph-radius-xl: var(--app-glass-radius-md);
+  --ph-radius-2xl: 2rem;
+
+  /* --af-* → --app-* */
+  --af-primary: var(--app-black);
+  --af-secondary: var(--app-primary);
+  --af-surface: var(--app-surface);
+  --af-on-surface: var(--app-on-surface);
+  --af-on-surface-variant: var(--app-on-surface-variant);
+  --af-surface-container-highest: var(--app-surface-container-highest);
+  --af-error: var(--app-error);
+
+  /* Variables sin prefijo (AppLayout anterior) → --app-* */
+  --primary: var(--app-black);
+  --secondary: var(--app-primary);
+  --background: var(--app-bg-main);
+  --tertiary-fixed: var(--app-secondary-light);
+  --on-tertiary-container: var(--app-secondary);
+  --surface-container-lowest: var(--app-surface-container-lowest);
+  --on-surface-variant: var(--app-on-surface-variant);
+  --surface-container-low: var(--app-surface-container-low);
+  --secondary-fixed: #e2dfff;
+  --on-primary: var(--app-on-primary);
+  --secondary-container: var(--app-primary-light);
+  --outline-variant: var(--app-outline-variant);
+  --outline: var(--app-outline);
+  --error: var(--app-error);
+  --on-surface: var(--app-on-surface);
+  --surface-container: var(--app-surface-container);
+  --surface-container-high: var(--app-surface-container-high);
+  --on-primary-container: #7c839b;
+  --surface: var(--app-surface);
 }

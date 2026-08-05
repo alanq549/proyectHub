@@ -11,7 +11,7 @@ import { computed } from 'vue'
 
 
 const props = defineProps<{
-    src: string
+    src?: string
     alt?: string
     size?: 'sm' | 'md' | 'lg'
 }>()

@@ -5,7 +5,6 @@
                 <UserAvatar :src="user.avatarUrl" :alt="`Perfil ${user.name}`" size="sm" />
         </button>
 
-
         <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3 py-2 border-0">
 
             <li class="px-3 py-2 border-bottom mb-1">
@@ -18,24 +17,24 @@
                 </div>
             </li>
 
-
             <li>
-                <button class="dropdown-item d-flex align-items-center gap-2 py-2 fs-6" @click="$emit('profile')">
+                <!-- Se usa button con evento click directo -->
+                <button 
+                    class="dropdown-item d-flex align-items-center gap-2 py-2 fs-6"
+                    @click="goToProfile"
+                >
                     <span class="material-symbols-outlined notranslate fs-5">
                         person
                     </span>
-
                     <span>
                         Perfil
                     </span>
                 </button>
             </li>
 
-
             <li>
                 <hr class="dropdown-divider">
             </li>
-
 
             <li>
                 <button class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 fs-6"
@@ -54,8 +53,8 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import UserAvatar from './UserAvatar.vue';
 
 interface User {
@@ -64,21 +63,22 @@ interface User {
     avatarUrl: string
 }
 
-
 defineProps<{
     user: User
 }>()
 
-
 defineEmits<{
-    profile: []
     logout: []
 }>()
 
+const router = useRouter();
+
+const goToProfile = () => {
+    router.push({ name: 'user-profile' });
+};
 </script>
 
 <style scoped>
-
 .avatar-btn::after {
     display: none;
 }
@@ -87,5 +87,4 @@ defineEmits<{
     cursor: pointer;
     outline: none;
 }
-
 </style>

@@ -45,9 +45,10 @@ def create_app():
     else:
         allowed_origins = ["*"]
 
+    # FIX CRÍTICO 3: Regex corregido para incluir /api y /api/v1
     cors.init_app(
         app,
-        resources={r"/api/.*": {"origins": allowed_origins}},
+        resources={r"/api(?:/v1)?/.*": {"origins": allowed_origins}},
         supports_credentials=True,
         allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Headers"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]

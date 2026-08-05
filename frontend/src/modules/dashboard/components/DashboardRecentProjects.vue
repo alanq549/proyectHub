@@ -1,138 +1,401 @@
 <template>
-  <div class="af-table-card">
+  <div class="app-card-glass-table af-table-card">
+    <!-- Encabezado de la Sección -->
     <div class="af-table-header">
-      <h3 class="af-section-title mb-0">Proyectos Recientes</h3>
-      <button class="af-link-btn" @click="$emit('view-all')">Ver todos</button>
+      <div class="d-flex align-items-center gap-2">
+        <h3 class="af-section-title mb-0">Proyectos Recientes Globales</h3>
+        <span v-if="!loading && projects.length" class="af-count-badge">
+          {{ projects.length }}
+        </span>
+      </div>
+      <button class="af-link-btn" @click="$emit('view-all')">
+        Ver todos
+        <span class="material-symbols-outlined notranslate" style="font-size: 16px;">arrow_forward</span>
+      </button>
     </div>
-    <div class="table-responsive">
-      <table class="af-table">
-        <thead>
-          <tr>
-            <th>Proyecto</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="project in projects" :key="project.name">
-            <td>
-              <div class="d-flex align-items-center gap-3">
-                <div class="af-project-icon" :style="{ backgroundColor: project.iconBg }">
-                  <span class="material-symbols-outlined notranslate" style="font-size:20px;">{{ project.icon }}</span>
+
+    <!-- State 1: Skeleton Loader (UX Cargando) -->
+    <div v-if="loading" class="p-4">
+      <div v-for="i in 3" :key="i" class="af-skeleton-row mb-3"></div>
+    </div>
+
+    <!-- State 2: Estado Vacío (UX No hay datos) -->
+    <div v-else-if="!projects || projects.length === 0" class="af-empty-state text-center py-5">
+      <span class="material-symbols-outlined notranslate af-empty-icon mb-2">folder_off</span>
+      <p class="mb-1 fw-bold text-dark">No hay proyectos recientes</p>
+      <span class="text-muted small">Los nuevos proyectos asignados aparecerán aquí.</span>
+    </div>
+
+    <!-- State 3: Datos Presentes -->
+    <template v-else>
+      <!-- VISTA DESKTOP / TABLET (Tabla Tradicional) -->
+      <div class="table-responsive d-none d-md-block">
+        <table class="af-table align-middle">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center" style="width: 50px;">#</th>
+              <scope col>Proyecto</scope>
+              <scope col>Equipo / Ámbito</scope>
+              <scope col>Fecha</scope>
+              <scope col>Estado</scope>
+              <th scope="col" class="text-end">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(project, idx) in projects" :key="project.id || project.name" class="af-table-row">
+              <td class="text-center af-index-col">{{ idx + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <div class="af-project-icon" :style="{ backgroundColor: project.iconBg || 'rgba(75, 65, 225, 0.1)', color: project.iconColor || '#4b41e1' }">
+                    <span class="material-symbols-outlined notranslate">{{ project.icon || 'folder' }}</span>
+                  </div>
+                  <div>
+                    <span class="af-project-name d-block">{{ project.name }}</span>
+                    <span v-if="project.subtitle" class="af-project-sub text-muted">{{ project.subtitle }}</span>
+                  </div>
                 </div>
-                <span class="af-project-name">{{ project.name }}</span>
+              </td>
+              <td>
+                <span class="af-team-badge">
+                  <span class="material-symbols-outlined notranslate" style="font-size: 13px;">groups</span>
+                  {{ project.team || 'Comunidad / Admin' }}
+                </span>
+              </td>
+              <td>
+                <span class="af-date-text">{{ project.date || 'Reciente' }}</span>
+              </td>
+              <td>
+                <span class="af-status-pill" :class="getStatusClass(project.status)">
+                  <span class="af-status-dot"></span>
+                  {{ project.status }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="af-view-btn" title="Ver detalles" @click="$emit('view-project', project)">
+                  <span class="material-symbols-outlined notranslate">visibility</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- VISTA MÓVIL (Tarjetas Adaptables UX Mobile First) -->
+      <div class="d-block d-md-none p-3">
+        <div 
+          v-for="(project, idx) in projects" 
+          :key="`mobile-${project.id || project.name}`"
+          class="af-mobile-card mb-3 p-3"
+        >
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <div class="af-project-icon sm" :style="{ backgroundColor: project.iconBg || 'rgba(75, 65, 225, 0.1)', color: project.iconColor || '#4b41e1' }">
+                <span class="material-symbols-outlined notranslate" style="font-size:16px;">{{ project.icon || 'folder' }}</span>
               </div>
-            </td>
-            <td class="af-project-date">{{ project.date }}</td>
-            <td>
-              <span
-                class="af-status-pill"
-                :class="project.status === 'Aprobado' ? 'approved' : 'review'"
-              >{{ project.status }}</span>
-            </td>
-            <td class="text-end">
-              <button class="af-view-btn" @click="$emit('view-project', project)">
-                <span class="material-symbols-outlined notranslate">visibility</span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+              <span class="af-project-name fs-6">{{ project.name }}</span>
+            </div>
+            <span class="af-status-pill" :class="getStatusClass(project.status)">
+              <span class="af-status-dot"></span>
+              {{ project.status }}
+            </span>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-light-subtle fs-7">
+            <span class="af-team-badge">
+              {{ project.team || 'Comunidad / Admin' }}
+            </span>
+            <button class="af-btn-mobile-action" @click="$emit('view-project', project)">
+              <span>Detalles</span>
+              <span class="material-symbols-outlined notranslate" style="font-size: 16px;">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
 export interface RecentProject {
+  id?: string | number
   name: string
-  date: string
-  status: 'Aprobado' | 'En Revisión' | string
-  icon: string
-  iconBg: string
+  subtitle?: string
+  date?: string
+  team?: string
+  status: 'Aprobado' | 'En Revisión' | 'Rechazado' | 'Pendiente' | string
+  icon?: string
+  iconBg?: string
+  iconColor?: string
 }
 
-defineProps<{
+withDefaults(defineProps<{
   projects: RecentProject[]
-}>()
+  loading?: boolean
+}>(), {
+  loading: false
+})
 
 defineEmits<{
   (event: 'view-all'): void
   (event: 'view-project', project: RecentProject): void
 }>()
+
+function getStatusClass(status: string) {
+  const normalized = status?.toLowerCase() || ''
+  if (normalized.includes('aprobado')) return 'approved'
+  if (normalized.includes('rechazado')) return 'rejected'
+  if (normalized.includes('revision') || normalized.includes('revisión') || normalized.includes('pendiente')) return 'review'
+  return 'default'
+}
 </script>
 
 <style scoped>
-.material-symbols-outlined { vertical-align: middle; font-family: 'Material Symbols Outlined' !important; }
+.material-symbols-outlined {
+  vertical-align: middle;
+  font-family: 'Material Symbols Outlined' !important;
+}
 .notranslate { -webkit-translate: no; translate: no; }
 
+/*
+  Contenedor principal hereda glassmorphism estandarizado desde
+  clase utilitaria GLOBAL .app-card-glass-table (main.css:183-192).
+  Los estilos locales solo agregan el overflow:hidden necesario
+  para tablas. Cualquier cambio de tema se aplica desde main.css.
+*/
 .af-table-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 0.75rem;
-  border: 1px solid rgba(198, 198, 205, 0.3);
-  box-shadow: 0px 10px 30px rgba(79, 70, 229, 0.04), 0px 2px 4px rgba(0, 0, 0, 0.02);
   overflow: hidden;
 }
+
+/* Header de la Tabla */
 .af-table-header {
-  padding: 24px;
-  border-bottom: 1px solid rgba(198, 198, 205, 0.2);
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.4);
 }
-.af-section-title { font-size: 20px; font-weight: 600; color: var(--af-primary, #000); }
+
+.af-section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--app-slate-900, #0f172a);
+  letter-spacing: -0.02em;
+}
+
+.af-count-badge {
+  background: rgba(75, 65, 225, 0.1);
+  color: var(--app-primary, #4b41e1);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--app-radius-pill, 9999px);
+}
+
 .af-link-btn {
   background: none;
   border: none;
-  color: var(--af-secondary, #4b41e1);
-  font-size: 14px;
+  color: var(--app-primary, #4b41e1);
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s ease;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
 }
-.af-link-btn:hover { text-decoration: underline; }
 
-.af-table { width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 0; }
-.af-table thead { background-color: rgba(242, 244, 246, 0.5); }
+.af-link-btn:hover {
+  background-color: rgba(75, 65, 225, 0.08);
+  color: var(--app-primary-dark, #4338ca);
+}
+
+/* Tabla Desktop */
+.af-table {
+  width: 100%;
+  margin-bottom: 0;
+}
+
 .af-table th {
   padding: 1rem 1.5rem;
-  font-size: 14px;
-  color: var(--af-on-surface-variant, #45464d);
+  font-size: 11px;
+  color: var(--app-slate-500, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  background: rgba(248, 250, 252, 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
-.af-table td { padding: 1.25rem 1.5rem; border-top: 1px solid rgba(198,198,205,0.1); vertical-align: middle; }
-.af-table tbody tr { transition: background-color .15s ease; }
-.af-table tbody tr:hover { background-color: var(--af-surface-container-low, #f2f4f6); }
-.af-table tbody tr:hover .af-view-btn { opacity: 1; }
+
+.af-table td {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 14px;
+}
+
+.af-table-row {
+  transition: background-color 0.2s ease;
+}
+
+.af-table-row:hover {
+  background-color: rgba(75, 65, 225, 0.02);
+}
+
+.af-index-col {
+  font-weight: 600;
+  color: var(--app-slate-400, #94a3b8);
+  font-size: 13px;
+}
 
 .af-project-icon {
-  width: 32px; height: 32px;
-  border-radius: 0.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
-.af-project-name { font-size: 16px; font-weight: 600; color: var(--af-primary, #000); }
-.af-project-date { font-size: 12px; color: var(--af-on-surface-variant, #45464d); }
-.af-status-pill {
-  padding: 0.25rem 0.75rem;
-  font-size: 10px;
+
+.af-project-icon.sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 0.4rem;
+}
+
+.af-project-name {
+  font-size: 14px;
   font-weight: 700;
-  border-radius: 9999px;
+  color: var(--app-slate-900, #0f172a);
 }
-.af-status-pill.approved { background-color: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
-.af-status-pill.review { background-color: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+
+.af-project-sub {
+  font-size: 11px;
+}
+
+.af-team-badge {
+  background: rgba(241, 245, 249, 0.8);
+  color: var(--app-slate-700, #475569);
+  padding: 0.3rem 0.65rem;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.af-date-text {
+  font-size: 13px;
+  color: var(--app-slate-500, #64748b);
+  font-weight: 500;
+}
+
+/* Status Pills — usan tokens semánticos --app-* del sistema unificado */
+.af-status-pill {
+  padding: 0.25rem 0.7rem;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--app-radius-pill, 9999px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.af-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.af-status-pill.approved {
+  background-color: var(--app-success-bg, rgba(220, 252, 231, 0.8));
+  color: var(--app-success, #15803d);
+  border: 1px solid rgba(187, 247, 208, 0.8);
+}
+
+.af-status-pill.review {
+  background-color: var(--app-warning-bg, rgba(254, 243, 199, 0.8));
+  color: var(--app-warning, #b45309);
+  border: 1px solid rgba(253, 230, 138, 0.8);
+}
+
+.af-status-pill.rejected {
+  background-color: var(--app-error-bg, rgba(254, 226, 226, 0.8));
+  color: var(--app-error, #b91c1c);
+  border: 1px solid rgba(254, 202, 202, 0.8);
+}
+
+.af-status-pill.default {
+  background-color: var(--app-slate-100, #f1f5f9);
+  color: var(--app-slate-700, #475569);
+  border: 1px solid var(--app-slate-200, #e2e8f0);
+}
+
+/* Botón de Acción */
 .af-view-btn {
-  opacity: 0;
-  transition: opacity .15s ease;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  width: 34px;
+  height: 34px;
+  border-radius: 0.5rem;
+  color: var(--app-primary, #4b41e1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.af-view-btn:hover {
+  background-color: var(--app-primary, #4b41e1);
+  color: var(--app-on-primary, #ffffff);
+  border-color: var(--app-primary, #4b41e1);
+  box-shadow: 0 4px 12px rgba(75, 65, 225, 0.25);
+}
+
+/* Adaptación MÓVIL (Cards) */
+.af-mobile-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 0.85rem;
+  transition: background 0.2s ease;
+}
+
+.af-mobile-card:active {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.af-btn-mobile-action {
   background: none;
   border: none;
-  padding: 0.5rem;
-  border-radius: 50%;
-  color: var(--af-secondary, #4b41e1);
+  color: var(--app-primary, #4b41e1);
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
 }
-.af-view-btn:hover { background-color: rgba(75,65,225,0.1); }
+
+/* Skeletons y Estados Vacíos */
+.af-empty-icon {
+  font-size: 42px;
+  color: var(--app-slate-300, #cbd5e1);
+}
+
+.af-skeleton-row {
+  height: 48px;
+  background: linear-gradient(90deg, var(--app-slate-100, #f1f5f9) 25%, var(--app-slate-200, #e2e8f0) 50%, var(--app-slate-100, #f1f5f9) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 </style>

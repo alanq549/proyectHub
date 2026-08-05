@@ -16,8 +16,40 @@
                     <span class="notif-dot"></span>
                 </button>
 
-                <!-- Punto 2.8: User Dropdown Menu -->
-                <user-menu :user="user" @profile="router.push({ name: 'users-list' })" @logout="handleLogout" />
+                <!-- Punto 3.2: User Dropdown Menu -->
+                <div class="dropdown ms-1">
+                    <button class="avatar-btn dropdown-toggle border-0 bg-transparent p-0" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-sm">
+                            <img :src="authStore.avatarUrl" :alt="`Perfil ${authStore.user?.username}`" />
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3 py-2 border-0">
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <div class="fw-semibold text-truncate small" style="max-width: 160px;">
+                                {{ user.name }}
+                            </div>
+                            <div class="text-muted text-lowercase small" style="font-size: 0.75rem;">
+                                {{ authStore.user?.email }}
+                            </div>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center gap-2 py-2 fs-6"
+                                @click="router.push({ name: 'user-profile' })">
+                                <span class="material-symbols-outlined notranslate fs-5">person</span>
+                                <span>Perfil</span>
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 fs-6"
+                                @click="handleLogout">
+                                <span class="material-symbols-outlined notranslate fs-5">logout</span>
+                                <span>Cerrar sesión</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="search-overlay" :class="{ open: searchOpen }">
@@ -28,16 +60,19 @@
             </div>
         </header>
 
-        <!-- Rail Navigation -->
+        <!-- Punto 3.3 & 3.4: Rail Navigation con filtrado por rol -->
         <aside class="rail-nav">
-            <a v-for="item in railItems" :key="item.icon" href="#" class="rail-link"
-                :class="{ active: activeRail === item.key }" @click.prevent="navigateRail(item)">
-                <span class="material-symbols-outlined notranslate"
-                    :style="activeRail === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
-            </a>
-            <a href="#" class="rail-link mt-auto" :class="{ active: activeRail === 'settings' }"
+            <template v-for="item in visibleRailItems" :key="item.key">
+                <a href="#" class="rail-link"
+                    :class="{ active: activeRail === item.key }" 
+                    :title="item.title"
+                    @click.prevent="navigateRail(item)">
+                    <span class="material-symbols-outlined notranslate"
+                        :style="activeRail === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
+                </a>
+            </template>
+            <a href="#" class="rail-link mt-auto" title="Configuración" :class="{ active: activeRail === 'settings' }"
                 @click.prevent="navigateRail({ key: 'settings', icon: 'settings' })">
-                
                 <span class="material-symbols-outlined notranslate">settings</span>
             </a>
         </aside>
@@ -49,11 +84,10 @@
 
         <!-- Bottom Navigation (Mobile) -->
         <nav class="bottom-nav">
-            <button v-for="item in bottomNavItems.slice(0, 2)" :key="item.key" class="bnav-item"
+            <button v-for="item in visibleBottomNavItems.slice(0, 2)" :key="item.key" class="bnav-item"
                 :class="{ active: activeBottomNav === item.key }" @click="navigateBottomNav(item)">
                 <span class="material-symbols-outlined notranslate"
-                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon
-                    }}</span>
+                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
                 <span class="lbl">{{ item.label }}</span>
             </button>
 
@@ -61,11 +95,10 @@
                 <span class="material-symbols-outlined notranslate fs-4">add</span>
             </button>
 
-            <button v-for="item in bottomNavItems.slice(2)" :key="item.key" class="bnav-item"
+            <button v-for="item in visibleBottomNavItems.slice(2)" :key="item.key" class="bnav-item"
                 :class="{ active: activeBottomNav === item.key }" @click="navigateBottomNav(item)">
                 <span class="material-symbols-outlined notranslate"
-                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon
-                    }}</span>
+                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
                 <span class="lbl">{{ item.label }}</span>
             </button>
         </nav>
@@ -82,13 +115,11 @@
 import { ref, nextTick, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import UserMenu from './components/UserMenu.vue'
 
-
+const VITE_STATIC_URL = import.meta.env.VITE_STATIC_URL
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
-
 
 // ==============================
 // Tipos
@@ -97,7 +128,9 @@ const route = useRoute()
 interface RailItem {
     key: string
     icon: string
+    title: string
     routeName?: string
+    adminOnly?: boolean
 }
 
 interface BottomNavItem {
@@ -105,14 +138,14 @@ interface BottomNavItem {
     icon: string
     label: string
     routeName?: string
+    adminOnly?: boolean
 }
 
 interface UserDisplay {
     name: string
-    email?: string
+    role: string
     avatarUrl: string
 }
-
 
 // ==============================
 // Acción de Logout
@@ -123,238 +156,132 @@ function handleLogout(): void {
     router.push({ name: 'login' })
 }
 
-
 // ==============================
-// Mapeos de Navegación
-// ==============================
-
-const ROUTE_NAME_BY_KEY: Record<string, string> = {
-    dashboard: 'dashboard',
-    research: 'dashboard',
-    calendar: 'dashboard',
-    documents: 'users-list',
-    settings: 'dashboard',
-    home: 'dashboard',
-    explore: 'dashboard',
-    inbox: 'dashboard',
-    profile: 'users-list',
-    admin_users: 'users-list',
-}
-
-
-// ==============================
-// Elementos de Navegación
+// Elementos de Navegación (Puntos 3.3 & 3.4)
 // ==============================
 
 const railItems: RailItem[] = [
-    { key: 'dashboard', icon: 'dashboard', routeName: 'dashboard' },
-    { key: 'research', icon: 'folder_open', routeName: 'dashboard' },
-    { key: 'calendar', icon: 'analytics', routeName: 'dashboard' },
-    { key: 'documents', icon: 'group', routeName: 'users-list' },
+    { key: 'dashboard', icon: 'dashboard', title: 'Dashboard', routeName: 'dashboard' },
+    { key: 'users', icon: 'group', title: 'Usuarios', routeName: 'users-list', adminOnly: true },
+    { key: 'calls', icon: 'campaign', title: 'Convocatorias', routeName: 'dashboard' },
+    { key: 'projects', icon: 'folder', title: 'Proyectos', routeName: 'dashboard' },
+    { key: 'documents', icon: 'description', title: 'Documentos', routeName: 'dashboard' },
+    { key: 'history', icon: 'history', title: 'Historial', routeName: 'dashboard' },
 ]
-
 
 const bottomNavItems: BottomNavItem[] = [
     { key: 'home', icon: 'home', label: 'Inicio', routeName: 'dashboard' },
-    { key: 'explore', icon: 'explore', label: 'Explorar', routeName: 'dashboard' },
-    { key: 'inbox', icon: 'mail', label: 'Inbox', routeName: 'dashboard' },
-    { key: 'profile', icon: 'person', label: 'Perfil', routeName: 'users-list' },
+    { key: 'users', icon: 'group', label: 'Usuarios', routeName: 'users-list', adminOnly: true },
+    { key: 'projects', icon: 'folder', label: 'Proyectos', routeName: 'dashboard' },
+    { key: 'profile', icon: 'person', label: 'Perfil', routeName: 'dashboard' },
 ]
 
+// Filtrar ítems visibles según rol
+const visibleRailItems = computed(() => {
+    return railItems.filter((item) => !item.adminOnly || authStore.isAdmin)
+})
+
+const visibleBottomNavItems = computed(() => {
+    return bottomNavItems.filter((item) => !item.adminOnly || authStore.isAdmin)
+})
 
 // ==============================
-// Estado Activo
+// Estado Activo (sincronizado con vue-router)
 // ==============================
 
 const activeRail = computed<string>(() => {
     const currentName = String(route.name ?? '')
-
-    const matched = railItems.find(
-        item => item.routeName === currentName
-    )
-
-    return matched?.key ?? 'dashboard'
+    const matched = visibleRailItems.value.find((it) => it.routeName === currentName)
+    return matched ? matched.key : 'dashboard'
 })
-
 
 const activeBottomNav = computed<string>(() => {
     const currentName = String(route.name ?? '')
-
-    const matched = bottomNavItems.find(
-        item => item.routeName === currentName
-    )
-
-    return matched?.key ?? 'home'
+    const matched = visibleBottomNavItems.value.find((it) => it.routeName === currentName)
+    return matched ? matched.key : 'home'
 })
 
-
 // ==============================
-// Acciones Navegación
+// Acciones de Navegación
 // ==============================
 
-function navigateRail(item: RailItem): void {
-
-    const target =
-        item.routeName ??
-        ROUTE_NAME_BY_KEY[item.key] ??
-        'dashboard'
-
-
+function navigateRail(item: Partial<RailItem>): void {
+    const target = item.routeName ?? 'dashboard'
     if (route.name !== target) {
-        router.push({ name: target })
-            .catch(() => undefined)
+        router.push({ name: target }).catch(() => undefined)
     }
 }
-
 
 function navigateBottomNav(item: BottomNavItem): void {
-
-    const target =
-        item.routeName ??
-        ROUTE_NAME_BY_KEY[item.key] ??
-        'dashboard'
-
-
+    const target = item.routeName ?? 'dashboard'
     if (route.name !== target) {
-        router.push({ name: target })
-            .catch(() => undefined)
+        router.push({ name: target }).catch(() => undefined)
     }
 }
-
 
 // ==============================
 // Búsqueda expandible
 // ==============================
 
-const searchOpen = ref(false)
-const searchQuery = ref('')
+const searchOpen = ref<boolean>(false)
+const searchQuery = ref<string>('')
 const searchInput = ref<HTMLInputElement | null>(null)
 
-
-watch(searchOpen, async (open) => {
-
+watch(searchOpen, async (open: boolean) => {
     if (open) {
         await nextTick()
         searchInput.value?.focus()
     }
-
 })
 
-
 // ==============================
-// Usuario
+// Usuario (conectado al authStore)
 // ==============================
 
-const DEFAULT_AVATAR =
-    `${import.meta.env.VITE_STATIC_URL}/static/defaults/icon_default.png`
+const DEFAULT_AVATAR = `${VITE_STATIC_URL}/static/defaults/icon_default.png`
 
+const ROLE_LABELS: Record<'admin' | 'user', string> = {
+    admin: 'Administrador',
+    user: 'Usuario',
+}
 
 function buildDisplayName(): string {
-
     const u = authStore.user
-
     if (!u) return 'Usuario'
-
-
-    const parts = []
-
-    if (u.first_name)
-        parts.push(u.first_name)
-
-    if (u.last_name)
-        parts.push(u.last_name)
-
-
-    return parts.length
-        ? parts.join(' ')
-        : u.username
+    const parts: string[] = []
+    if (u.first_name) parts.push(u.first_name)
+    if (u.last_name) parts.push(u.last_name)
+    if (parts.length > 0) return parts.join(' ')
+    return u.username
 }
 
-
-interface UserDisplay {
-    name: string
-    email?: string
-    role: string
-    avatarUrl: string
+function buildRoleLabel(): string {
+    const u = authStore.user
+    if (!u) return 'Usuario'
+    return ROLE_LABELS[u.role] ?? u.role
 }
-
 
 const user = computed<UserDisplay>(() => ({
     name: buildDisplayName(),
-
-    email: authStore.user?.email,
-
-    role: authStore.user?.role ?? 'Usuario',
-
-    avatarUrl: authStore.avatarUrl
+    role: buildRoleLabel(),
+    avatarUrl: authStore.user?.profile_picture_url || DEFAULT_AVATAR,
 }))
-
-console.log(user.value)
-
-
-// ==============================
-// Emits
-// ==============================
 
 defineEmits<{
     (event: 'new-project'): void
     (event: 'upload-file'): void
 }>()
-
 </script>
 
 <style scoped>
-:root,
 .dashboard-root {
-    --primary: #000000;
-    --on-primary-container: #7c839b;
-    --background: #f7f9fb;
-    --tertiary-fixed: #acedff;
-    --on-tertiary-container: #0090a9;
-    --surface-container-lowest: #ffffff;
-    --on-surface-variant: #45464d;
-    --surface-container-low: #f2f4f6;
-    --secondary-fixed: #e2dfff;
-    --on-primary: #ffffff;
-    --secondary: #4b41e1;
-    --outline-variant: #c6c6cd;
-    --outline: #76777d;
-    --error: #ba1a1a;
-    --on-surface: #191c1e;
-    --surface-container: #eceef0;
-    --surface-container-high: #e6e8ea;
-    --secondary-container: #645efb;
-}
-
-.dashboard-root {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--background);
-    color: var(--on-surface);
+    background-color: var(--app-bg-main, #f1f5f9);
+    background-image: var(--app-bg-gradient);
+    background-attachment: fixed; /* Evita que el degradado se corte al hacer scroll */
+    color: var(--app-on-surface, #0f172a);
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
-}
-
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    font-family: 'Material Symbols Outlined' !important;
-    font-style: normal;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    vertical-align: middle;
-}
-
-.notranslate {
-    -webkit-translate: no;
-    translate: no;
 }
 
 .avatar-btn {
@@ -364,7 +291,6 @@ defineEmits<{
 
 .avatar-btn::after {
     display: none;
-    /* Elimina la flecha predeterminada de Bootstrap dropdown */
 }
 
 .dropdown-item {
@@ -373,11 +299,11 @@ defineEmits<{
 }
 
 .dropdown-item:active {
-    background-color: var(--surface-container-high);
-    color: var(--on-surface);
+    background-color: var(--app-surface-container-high, #e6e8ea);
+    color: var(--app-on-surface, #191c1e);
 }
 
-/* Top navbar */
+/* Top navbar — Ahora consume tokens globales --app-topbar-* */
 .topbar {
     position: fixed;
     top: 0;
@@ -385,9 +311,9 @@ defineEmits<{
     right: 0;
     z-index: 1050;
     height: 64px;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background-color: var(--app-topbar-bg, rgba(255, 255, 255, 0.82));
+    backdrop-filter: var(--app-glass-blur, blur(16px));
+    -webkit-backdrop-filter: var(--app-glass-blur, blur(16px));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -397,7 +323,7 @@ defineEmits<{
 .brand-name {
     font-weight: 700;
     font-size: 20px;
-    color: var(--primary);
+    color: var(--app-black, #000);
 }
 
 .icon-btn {
@@ -410,11 +336,11 @@ defineEmits<{
 }
 
 .icon-btn:hover {
-    background-color: var(--surface-container-high);
+    background-color: var(--app-surface-container-high, #e6e8ea);
 }
 
 .icon-btn .material-symbols-outlined {
-    color: var(--on-surface-variant);
+    color: var(--app-on-surface-variant, #45464d);
 }
 
 .notif-dot {
@@ -423,7 +349,7 @@ defineEmits<{
     right: 8px;
     width: 8px;
     height: 8px;
-    background-color: var(--error);
+    background-color: var(--app-error, #ba1a1a);
     border-radius: 50%;
     border: 2px solid #fff;
 }
@@ -432,7 +358,7 @@ defineEmits<{
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: #e0e3e5;
+    background-color: var(--app-surface-container-highest, #e0e3e5);
     overflow: hidden;
 }
 
@@ -445,7 +371,7 @@ defineEmits<{
 .search-overlay {
     position: absolute;
     inset: 0;
-    background: #fff;
+    background: var(--app-surface-container-lowest, #fff);
     z-index: 1060;
     display: flex;
     align-items: center;
@@ -465,6 +391,7 @@ defineEmits<{
     border: none;
     font-size: 16px;
     padding: 0.5rem 0;
+    color: var(--app-on-surface, #191c1e);
 }
 
 .search-overlay input:focus {
@@ -475,43 +402,43 @@ defineEmits<{
 .search-close-btn {
     background: none;
     border: none;
-    color: var(--secondary);
+    color: var(--app-primary, #4b41e1);
     font-size: 14px;
     font-weight: 500;
     padding: 0.5rem;
 }
 
-/* Rail nav */
+/* Rail nav — Ahora consume tokens globales */
 .rail-nav {
     position: fixed;
     left: 0;
     top: 64px;
     bottom: 0;
     width: 64px;
-    background-color: var(--surface-container-low);
+    background-color: var(--app-rail-bg, var(--app-surface-container-low, #f2f4f6));
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 24px 0;
     gap: 24px;
     z-index: 1040;
-    border-right: 1px solid rgba(198, 198, 205, 0.3);
+    border-right: var(--app-rail-border, 1px solid rgba(198, 198, 205, 0.3));
 }
 
 .rail-link {
     padding: 12px;
-    border-radius: 0.75rem;
-    color: var(--on-surface-variant);
+    border-radius: var(--app-glass-radius-sm, 0.75rem);
+    color: var(--app-on-surface-variant, #45464d);
     transition: background-color .2s ease;
     text-decoration: none;
 }
 
 .rail-link:hover {
-    background-color: var(--surface-container-high);
+    background-color: var(--app-surface-container-high, #e6e8ea);
 }
 
 .rail-link.active {
-    color: var(--secondary);
+    color: var(--app-primary, #4b41e1);
     background-color: rgba(75, 65, 225, 0.08);
 }
 
@@ -524,16 +451,26 @@ defineEmits<{
     min-height: 100vh;
 }
 
-/* Bottom nav */
+/* Rail oculto en Mobile (<768px) */
+@media (max-width: 767.98px) {
+    .rail-nav {
+        display: none;
+    }
+    .main-content {
+        padding-left: 16px;
+    }
+}
+
+/* Bottom nav — Consume tokens globales --app-bottomnav-* */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     height: 64px;
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background-color: var(--app-bottomnav-bg, rgba(255, 255, 255, 0.90));
+    backdrop-filter: var(--app-glass-blur-sm, blur(12px));
+    -webkit-backdrop-filter: var(--app-glass-blur-sm, blur(12px));
     border-top: 1px solid rgba(198, 198, 205, 0.2);
     display: flex;
     align-items: center;
@@ -555,11 +492,11 @@ defineEmits<{
     gap: 0.25rem;
     background: none;
     border: none;
-    color: var(--on-surface-variant);
+    color: var(--app-on-surface-variant, #45464d);
 }
 
 .bnav-item.active {
-    color: var(--primary);
+    color: var(--app-black, #000);
 }
 
 .bnav-item .lbl {
@@ -570,14 +507,14 @@ defineEmits<{
 .bnav-fab {
     width: 56px;
     height: 56px;
-    background-color: var(--secondary);
+    background-color: var(--app-primary, #4b41e1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--app-on-primary, #fff);
     border: none;
-    box-shadow: 0 10px 15px -3px rgba(75, 65, 225, 0.3);
+    box-shadow: var(--app-btn-primary-shadow, 0 10px 15px -3px rgba(75, 65, 225, 0.3));
     position: relative;
     top: -16px;
     transition: transform .1s ease;
@@ -591,14 +528,16 @@ defineEmits<{
     font-size: 24px;
 }
 
-/* Background effect */
+/* Background effect — Blobs consumen tokens --app-bg-blob-* para fácilmente cambiables */
 .bg-effect {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: -1;
-    opacity: 0.30;
+    z-index: 0; /* Queda justo sobre el fondo del layout, pero debajo del contenido */
+    opacity: var(--app-bg-blob-opacity, 0.85);
 }
+
+
 
 .bg-blob-1 {
     position: absolute;
@@ -606,9 +545,9 @@ defineEmits<{
     right: -10%;
     width: 300px;
     height: 300px;
-    background-color: var(--secondary);
+    background-color: var(--app-bg-blob-primary, rgba(75, 65, 225, 0.25));
     border-radius: 50%;
-    filter: blur(120px);
+    filter: var(--app-bg-blob-blur, blur(120px));
 }
 
 .bg-blob-2 {
@@ -617,8 +556,8 @@ defineEmits<{
     left: -10%;
     width: 300px;
     height: 300px;
-    background-color: var(--tertiary-fixed);
+    background-color: var(--app-bg-blob-secondary, rgba(172, 237, 255, 0.30));
     border-radius: 50%;
-    filter: blur(120px);
+    filter: var(--app-bg-blob-blur, blur(120px));
 }
 </style>

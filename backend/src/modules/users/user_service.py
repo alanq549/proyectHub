@@ -18,7 +18,7 @@ class UserService:
         return user.to_dict()
 
     @staticmethod
-    def create_user(username, email, password, first_name=None, last_name=None, role='user'):
+    def create_user(username, email, password, first_name=None, last_name=None, role='user', is_active=True, file=None):
         if UserRepository.get_by_email(email):
             raise ValueError('El correo electrónico ya está registrado')
 
@@ -28,14 +28,27 @@ class UserService:
         if role not in ('user', 'admin'):
             raise ValueError('Rol inválido. Los valores permitidos son: user, admin')
 
+        # Convertir a booleano real por si viene como string desde FormData
+        if isinstance(is_active, str):
+            is_active = is_active.lower() in ('true', '1', 't')
+
         user = User(
             username=username,
             email=email,
             first_name=first_name,
             last_name=last_name,
-            role=role
+            role=role,
+            is_active=is_active
         )
         user.set_password(password)
+
+        # AGREGADO: Guardar la imagen si fue enviada en la creación
+        if file is not None:
+            try:
+                profile_url = StorageService.upload_file(file, folder='profiles')
+                user.profile_picture_url = profile_url
+            except ValueError:
+                pass
 
         UserRepository.add(user)
 
@@ -63,11 +76,13 @@ class UserService:
         if 'last_name' in data:
             user.last_name = data['last_name']
 
-        if 'password' in data and data['password']:
-            user.set_password(data['password'])
-
+        # CORRECCIÓN DE IS_ACTIVE: Parseo explícito de strings a booleano
         if 'is_active' in data:
-            user.is_active = bool(data['is_active'])
+            val = data['is_active']
+            if isinstance(val, str):
+                user.is_active = val.lower() in ('true', '1', 't')
+            else:
+                user.is_active = bool(val)
 
         if 'role' in data and data['role']:
             if not is_admin:
@@ -85,6 +100,22 @@ class UserService:
 
         UserRepository.update()
         return user.to_dict()
+
+    @staticmethod
+    def change_password(user_id, current_password, new_password):
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            raise ValueError('Usuario no encontrado')
+
+        if not user.check_password(current_password):
+            raise ValueError('La contraseña actual es incorrecta')
+
+        if len(new_password) < 6:
+            raise ValueError('La nueva contraseña debe tener al menos 6 caracteres')
+
+        user.set_password(new_password)
+        UserRepository.update()
+        return True
 
     @staticmethod
     def delete_user(user_id):

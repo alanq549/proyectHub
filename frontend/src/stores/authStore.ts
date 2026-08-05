@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { authService, type RegisterDTO, type LoginDTO } from '@/modules/auth/services/authService';
+import api from '@/api/axios';
 
 export interface User {
   id: number;
@@ -10,6 +11,7 @@ export interface User {
   first_name?: string;
   last_name?: string;
   role: 'admin' | 'user';
+  is_active?: boolean;
   profile_picture_url?: string;
 }
 
@@ -58,6 +60,23 @@ export const useAuthStore = defineStore('auth', () => {
     return response;
   }
 
+  function updateUserData(updatedUser: Partial<User>) {
+    if (user.value) {
+      user.value = { ...user.value, ...updatedUser };
+      localStorage.setItem('user', JSON.stringify(user.value));
+    }
+  }
+
+  async function fetchProfile() {
+    if (!user.value?.id) return;
+    try {
+      const response = await api.get(`/users/${user.value.id}`);
+      updateUserData(response.data);
+    } catch (error) {
+      console.error('Error sincronizando perfil:', error);
+    }
+  }
+
   function logout() {
     token.value = null;
     user.value = null;
@@ -70,9 +89,11 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     isAuthenticated,
     isAdmin,
-    avatarUrl, // 👈 Exportamos la propiedad computada
+    avatarUrl,
     register,
     login,
+    updateUserData,
+    fetchProfile,
     logout
   };
 });

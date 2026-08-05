@@ -1,17 +1,19 @@
 <template>
-  <section class="af-hero-card">
-    <div class="af-hero-banner d-flex justify-content-center align-items-center"></div>
+  <section class="app-card-glass-xl af-hero-card">
+    <div class="af-hero-glow"></div>
     <div class="af-hero-body">
       <div class="af-hero-left">
-        <UserAvatar 
-  :src="user.avatarUrl"
-  :alt="`Perfil ${user.name}`"
-  size="lg"
-/>
-        <div class="mb-2">
+        <div class="af-avatar-wrapper">
+          <UserAvatar 
+            :src="user.avatarUrl"
+            :alt="`Perfil ${user.name}`"
+            size="lg"
+          />
+        </div>
+        <div class="text-start">
           <h2 class="af-hero-title notranslate">¡Hola de nuevo, {{ user.name }}! 👋</h2>
-          <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-3 mt-1">
-            <span class="af-hero-subtitle">{{ user.role }}</span>
+          <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+            <span class="af-role-badge">{{ user.role }}</span>
             <span class="af-secure-badge">
               <span class="material-symbols-outlined notranslate" style="font-size:14px;">lock</span>
               Conexión Segura
@@ -19,9 +21,18 @@
           </div>
         </div>
       </div>
-      <div class="d-flex gap-3 mb-2">
-        <button class="af-btn-outline" @click="$emit('download-report')">Descargar Reporte</button>
+
+      <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0 align-items-center">
+        <button class="af-btn-primary" @click="$emit('manage-users')">
+          <span class="material-symbols-outlined notranslate" style="font-size: 18px;">manage_accounts</span>
+          Gestionar Usuarios
+        </button>
+        <button class="af-btn-outline" @click="$emit('download-report')">
+          <span class="material-symbols-outlined notranslate" style="font-size: 18px;">download</span>
+          Descargar Reporte
+        </button>
         <button class="af-btn-black" @click="$emit('new-audit')">
+          <span class="material-symbols-outlined notranslate" style="font-size: 18px;">add</span>
           Nueva Auditoría
         </button>
       </div>
@@ -32,196 +43,189 @@
 <script setup lang="ts">
 import UserAvatar from '@/layouts/components/UserAvatar.vue'
 
-
 export interface DashboardHeroUser {
   name: string
   role: string
   avatarUrl: string
 }
 
-
-const props = defineProps<{
+defineProps<{
   user: DashboardHeroUser
 }>()
-
-
-console.log('DashboardHeroCard user:', props.user)
-
 
 defineEmits<{
   (event: 'download-report'): void
   (event: 'new-audit'): void
+  (event: 'manage-users'): void
 }>()
-
 </script>
 
 <style scoped>
-.material-symbols-outlined {
-  vertical-align: middle;
-  font-family: 'Material Symbols Outlined' !important;
-}
+.material-symbols-outlined { vertical-align: middle; font-family: 'Material Symbols Outlined' !important; }
+.notranslate { -webkit-translate: no; translate: no; }
 
-.notranslate {
-  -webkit-translate: no;
-  translate: no;
-}
-
-.af-btn-black {
-  background: #000;
-  color: #fff;
-  border: none;
-  height: 42px;
-  padding: 0 1.25rem;
-  border-radius: 0.75rem;
-  font-size: 14px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-  cursor: pointer;
-  transition: all .2s ease;
-
-}
-
-.af-btn-black:hover {
-  background: #45464d;
-}
-
-.af-btn-black:active {
-  transform: scale(.98);
-}
-
+/*
+  El contenedor principal AHORA hereda glassmorphism de la clase global
+  .app-card-glass-xl definida en main.css (background, blur, border, shadow,
+  radius, padding, hover). El estilo local solo agrega:
+    - Degradé especial en el fondo (sobre-escribe el glass-bg por defecto)
+    - Gradiente glow esquina
+*/
 .af-hero-card {
-  margin-bottom: 48px;
-  position: relative;
-  border-radius: 1.25rem;
-  overflow: hidden;
-
-  /* Mezcla de gradiente horizontal primario + fundido vertical hacia blanco en la base */
-  background:
-    linear-gradient(to top, var(--af-surface-container-lowest, #ffffff) 0%, transparent 60%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, var(--af-surface-container-low, #f2f4f6) 100%);
-
-
-  border: 1px solid rgba(0, 0, 0, .08);
-
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, .04),
-    0 12px 32px rgba(0, 0, 0, .08);
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.85) 0%, 
+    rgba(245, 247, 255, 0.75) 60%, 
+    rgba(235, 233, 254, 0.6) 100%
+  );
 }
 
-.af-hero-banner {
-  height: 128px;
-  width: 100%;
-  background: linear-gradient(to right, rgba(19, 27, 46, 0.6), transparent);
+/* Destello sutil de fondo */
+.af-hero-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(75, 65, 225, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  border-radius: 50%;
 }
 
 .af-hero-body {
-  padding: 0 32px 32px;
-  margin-top: -40px;
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .af-hero-body {
     flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
+    align-items: center;
   }
 }
 
 .af-hero-left {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  text-align: center;
+  gap: 1.25rem;
 }
 
-@media (min-width: 768px) {
-  .af-hero-left {
-    flex-direction: row;
-    align-items: flex-end;
-    text-align: left;
-  }
-}
-
-.af-avatar-96 {
-  width: 96px;
-  height: 96px;
+.af-avatar-wrapper {
+  position: relative;
   border-radius: 50%;
-  border: 4px solid var(--af-surface, #f7f9fb);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  background: #fff;
-}
-
-.af-avatar-96 img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  padding: 3px;
+  background: linear-gradient(135deg, rgba(75, 65, 225, 0.3) 0%, rgba(255, 255, 255, 0.8) 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .af-hero-title {
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  color: var(--af-primary, #000);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--app-slate-900, #0f172a);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
-.af-hero-subtitle {
-  font-size: 14px;
-  color: var(--af-on-surface-variant, #45464d);
+/* Badges con diseño neumórfico/soft */
+.af-role-badge {
+  background: rgba(75, 65, 225, 0.08);
+  color: var(--app-primary, #4b41e1);
+  border: 1px solid rgba(75, 65, 225, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--app-radius-pill, 9999px);
+  font-size: 12px;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
 }
 
 .af-secure-badge {
   padding: 0.25rem 0.75rem;
-  background-color: #dcfce7;
-  color: #166534;
-  font-size: 10px;
+  background-color: var(--app-success-bg, rgba(220, 252, 231, 0.8));
+  color: var(--app-success, #15803d);
+  font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 9999px;
+  border-radius: var(--app-radius-pill, 9999px);
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  border: 1px solid #bbf7d0;
+  gap: 0.3rem;
+  border: 1px solid rgba(187, 247, 208, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Estilos de Botones — tokens --app-btn-* */
+.af-btn-primary {
+  background: var(--app-btn-primary-bg, linear-gradient(135deg, #5b50f6 0%, #4b41e1 100%));
+  color: var(--app-on-primary, #ffffff);
+  border: none;
+  height: var(--app-btn-primary-height, 42px);
+  padding: 0 1.25rem;
+  border-radius: var(--app-btn-radius-md, 0.75rem);
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: var(--app-btn-primary-shadow, 0 4px 14px rgba(75, 65, 225, 0.3));
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.af-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(75, 65, 225, 0.4);
+  background: var(--app-btn-primary-bg-hover, linear-gradient(135deg, #645bf7 0%, #4338ca 100%));
+}
+
+.af-btn-black {
+  background: var(--app-slate-900, #0f172a);
+  color: var(--app-on-primary, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: var(--app-btn-primary-height, 42px);
+  padding: 0 1.25rem;
+  border-radius: var(--app-btn-radius-md, 0.75rem);
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.af-btn-black:hover {
+  transform: translateY(-1px);
+  background: var(--app-slate-800, #1e293b);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
 }
 
 .af-btn-outline {
-  background-color: #fff;
-  border: 1px solid var(--af-outline-variant, #c6c6cd);
-  color: var(--af-primary, #000);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  color: var(--app-slate-700, #334155);
+  height: var(--app-btn-primary-height, 42px);
+  padding: 0 1.1rem;
+  border-radius: var(--app-btn-radius-md, 0.75rem);
   font-size: 14px;
-  transition: background-color .15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .af-btn-outline:hover {
-  background-color: var(--af-surface-container-low, #f2f4f6);
-}
-
-.af-btn-secondary {
-  background-color: var(--af-secondary, #4b41e1);
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 14px;
-  transition: opacity .15s ease;
-  box-shadow: 0 10px 15px -3px rgba(75, 65, 225, 0.2);
-}
-
-.af-btn-secondary:hover {
-  opacity: 0.9;
-  color: #fff;
+  background: #ffffff;
+  border-color: var(--app-slate-400, #94a3b8);
+  color: var(--app-slate-900, #0f172a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 </style>

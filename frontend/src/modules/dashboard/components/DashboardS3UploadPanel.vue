@@ -1,18 +1,30 @@
 <template>
-  <div class="af-panel-card">
+  <!--
+    Clase GLOBAL .app-card-glass (main.css:144-158) aporta:
+    glassmorphism uniforme (bg, blur, border, radius, padding, hover, shadow).
+    Los estilos locales en .af-panel-card solo definen detalles internos.
+  -->
+  <div class="app-card-glass af-panel-card">
     <h3 class="af-section-title mb-3 d-flex align-items-center gap-2">
-      <span class="material-symbols-outlined notranslate" style="color:#c2410c;">cloud_upload</span>
-      Subir a S3
+      <span class="material-symbols-outlined notranslate" style="color: var(--app-primary, #4b41e1);">cloud_upload</span>
+      Subir archivos a S3
     </h3>
+
+    <div class="mb-3">
+      <select class="form-select af-select" aria-label="Proyecto S3">
+        <option selected>Proyecto archivos a S3</option>
+      </select>
+    </div>
+
     <div class="af-dropzone" @click="$emit('browse')">
-      <div class="af-dropzone-icon">
-        <span class="material-symbols-outlined notranslate" style="font-size:40px; color: var(--af-secondary, #4b41e1);">file_upload</span>
-      </div>
       <div class="text-center">
-        <p class="af-dropzone-title mb-1">Arrastra tus archivos aquí</p>
-        <p class="af-dropzone-sub mb-0">Soporta ZIP, PDF y RAW (Máx 50GB)</p>
+        <p class="af-dropzone-title mb-1">Subir archivos a S3</p>
+        <p class="af-dropzone-sub mb-3">Con proyectos son dropzones</p>
       </div>
-      <button class="af-link-btn bold underline">o busca en tu equipo</button>
+      <button class="af-btn-upload">
+        <span class="material-symbols-outlined notranslate" style="font-size:18px;">upload</span>
+        Subir archivo
+      </button>
     </div>
   </div>
 </template>
@@ -27,50 +39,69 @@ defineEmits<{
 .material-symbols-outlined { vertical-align: middle; font-family: 'Material Symbols Outlined' !important; }
 .notranslate { -webkit-translate: no; translate: no; }
 
+/*
+  El contenedor principal ya recibe glassmorphism + padding
+  de la clase GLOBAL .app-card-glass. Sin definiciones locales duplicadas.
+*/
 .af-panel-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 24px;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(198, 198, 205, 0.3);
-  box-shadow: 0px 10px 30px rgba(79, 70, 229, 0.04), 0px 2px 4px rgba(0, 0, 0, 0.02);
+  /* Espacio específico S3 upload: si se necesita override futuro aquí */
 }
-.af-section-title { font-size: 20px; font-weight: 600; color: var(--af-primary, #000); }
+
+.af-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--app-black, #000);
+}
+
+.af-select {
+  font-size: 13px;
+  border-radius: var(--app-input-radius, 0.5rem);
+  border: 1px solid var(--app-input-border, #e2e8f0);
+  background-color: var(--app-input-bg, #ffffff);
+}
 
 .af-dropzone {
-  border: 2px dashed rgba(198,198,205,0.5);
-  border-radius: 0.75rem;
-  padding: 32px;
+  border: 2px dashed rgba(75, 65, 225, 0.25);
+  border-radius: var(--app-glass-radius-sm, 0.75rem);
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  background-color: rgba(242,244,246,0.3);
+  justify-content: center;
+  background-color: rgba(242, 244, 246, 0.4);
   cursor: pointer;
   transition: background-color .15s ease;
 }
-.af-dropzone:hover { background-color: rgba(242,244,246,0.6); }
-.af-dropzone-icon {
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  transition: transform .2s ease;
-}
-.af-dropzone:hover .af-dropzone-icon { transform: scale(1.1); }
-.af-dropzone-title { font-size: 14px; color: var(--af-primary, #000); font-weight: 700; }
-.af-dropzone-sub { font-size: 12px; color: var(--af-on-surface-variant, #45464d); }
-.af-link-btn {
-  background: none;
-  border: none;
-  color: var(--af-secondary, #4b41e1);
+
+.af-dropzone:hover { background-color: rgba(75, 65, 225, 0.04); }
+
+.af-dropzone-title {
   font-size: 14px;
+  color: var(--app-black, #000);
+  font-weight: 700;
 }
-.af-link-btn:hover { text-decoration: underline; }
-.af-link-btn.bold { font-weight: 700; }
-.af-link-btn.underline { text-decoration: underline; }
+
+.af-dropzone-sub {
+  font-size: 12px;
+  color: var(--app-slate-500, #64748b);
+}
+
+.af-btn-upload {
+  background-color: var(--app-primary, #4b41e1);
+  color: var(--app-on-primary, #fff);
+  border: none;
+  padding: 0.45rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 0 4px 12px rgba(75, 65, 225, 0.25);
+  cursor: pointer;
+}
+
+.af-btn-upload:hover {
+  background-color: var(--app-primary-dark, #4338ca);
+}
 </style>

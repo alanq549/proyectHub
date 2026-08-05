@@ -10,4 +10,4 @@ DEFAULT_ADMIN = {
     'last_name': os.getenv('PROJECTHUB_ADMIN_LASTNAME', 'Administrator'),
 }
 
-DEFAULT_PROFILE_PICTURE_URL = '/static/defaults/icon_default.png'
+DEFAULT_PROFILE_PICTURE_URL = '/static/defaults/icon_default.png' 

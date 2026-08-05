@@ -1,8 +1,9 @@
 # Checklist de Validación Técnica — Frontend (Vue.js + Bootstrap 5)
 
 **Documento:** `frontend/documentation/Checklist_Validacion_Frontend.md`  
-**Versión:** 1.1 (Auditoría: 2026-08-02)  
-**Referencia:** `documentation/Alcance.md` secciones 3.1, 5, 6, 7
+**Versión:** 1.2 (Re-Auditoría: 2026-08-02)  
+**Referencia:** `documentation/Alcance.md` secciones 3.1, 5, 6, 7  
+**Cambios desde v1.1:** Implementados: Axios response interceptor (401→logout+redirect, 403/500 log), vite proxy `/api`, .env.development+production, UserMenu dropdown funcional con logout, role filters en sidebar (adminOnly), rail-nav oculto <768px, redirect home si autenticado. Persisten: perfil/me 0%, modal/tabla users incompletos, módulos Calls/Projects/Docs/History 0%.
 
 ---
 
@@ -26,9 +27,9 @@
 | 1.3 | Bootstrap 5 integrado | Clases BS5 disponibles globalmente. Componentes usan estilos BS5. | ✅ | `main.ts:6-7` importa bootstrap.min.css y bootstrap.bundle.min.js. También `bootstrap-icons` y `material-symbols`. Vistas Login/Register/Users/Layout usan d-flex, row, col, card, btn, table, form-control, modal, alert. |
 | 1.4 | Routing | Vue Router configurado con rutas públicas y privadas | ✅ | `router/index.ts:12-38` crea router con `createWebHistory`. Rutas: home `/`, auth (login, register) públicas, children de AppLayout protegidas con `meta.requiresAuth`. 404 → redirect `/`. |
 | 1.5 | State Management | Pinia store para al menos `authStore` (usuario, token, login/logout) | ✅ | `stores/authStore.ts:16` `defineStore('auth', ...)` con `token`, `user`, `isAuthenticated`, `isAdmin`, `avatarUrl`, actions `register`, `login`, `logout`. |
-| 1.6 | Cliente HTTP | Axios configurado en `src/api/axios.ts` con `baseURL`, interceptor para adjuntar JWT en `Authorization: Bearer` | 🟧 | `api/axios.ts:4` Instancia con baseURL. Interceptor REQUEST adjunta Bearer token desde `localStorage`. ⚠️ FALTA RESPONSE INTERCEPTOR (401 → logout auto + redirect, 403 mensaje, 500 error genérico). No se limpia token al recibir 401. |
-| 1.7 | Proxy dev | Vite configura proxy `/api` → backend localhost para evitar CORS en desarrollo | ⬜ | `vite.config.ts` NO define `server.proxy`. Axios usa baseURL absoluta `http://127.0.0.1:5000/api`. Funciona pero hay riesgo CORS si no se configura bien el backend. Se recomienda agregar proxy `/api`. |
-| 1.8 | Variables de entorno | `.env.development`, `.env.production` definen `VITE_API_BASE_URL` y no están hardcodeadas | 🟧 | `axios.ts:6` usa `import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000/api'`. ⚠️ No existen archivos .env.development / .env.production explícitos en la raíz. Hacer fallback es ok pero deben documentarse y existir archivos. |
+| 1.6 | Cliente HTTP | Axios configurado en `src/api/axios.ts` con `baseURL`, interceptor para adjuntar JWT en `Authorization: Bearer` | ✅ | `api/axios.ts:4-44`. **REQUEST INTERCEPTOR ✅** lines 14-20 adjunta Bearer token. **RESPONSE INTERCEPTOR ✅ NUEVO** lines 23-44: status 401 → `authStore.logout()` + redirect `/login`; 403 → `console.error`; 500 → `console.error`. ⚠️ Mejora pendiente: 403/500 deberían mostrar toast UI, no solo console.error. |
+| 1.7 | Proxy dev | Vite configura proxy `/api` → backend localhost para evitar CORS en desarrollo | ✅ | [vite.config.ts:18-27](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/vite.config.ts#L18-L27) **NUEVO**: `server.proxy` define `/api` → `http://127.0.0.1:5000`. ⚠️ Importante: proxy reenvía `/api/*` a `http://127.0.0.1:5000/api/*` PERO blueprint backend es `/api/v1/*`. El proxy NO agrega `/v1` (sin rewrite rule). Funciona porque `.env.development` usa URL absoluta con `/api/v1`. |
+| 1.8 | Variables de entorno | `.env.development`, `.env.production` definen `VITE_API_BASE_URL` y no están hardcodeadas | ✅ | **NUEVO** existen ambos archivos: [.env.development:1-2](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/.env.development#L1-L2) `VITE_API_BASE_URL=http://127.0.0.1:5000/api/v1` + `VITE_STATIC_URL=http://127.0.0.1:5000`. [.env.production:1-2](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/.env.production#L1-L2) tiene placeholder `https://tu-dominio-backend.com/api` (válido, debe editarse en despliegue). |
 | 1.9 | Organización modular | Estructura: `src/modules/<feature>/{routes,views,components,services}` | ✅ | `src/modules/auth/`, `src/modules/dashboard/`, `src/modules/user/` cada uno con `routes/index.ts`, `views/`, `components/`, `services/`. |
 
 ---
@@ -44,8 +45,8 @@
 | 2.5 | Guard de rutas | Router guard `requiresAuth` redirige a `/login` si no hay token | ✅ | `router/index.ts:60-62` check `to.meta.requiresAuth && !authStore.isAuthenticated → login`. Perfecto. |
 | 2.6 | Guard de invitado | Rutas `/login` y `/register` redirigen a `/dashboard` si el usuario ya está logueado | ✅ | `router/index.ts:49-57` `isAuthRoute && authStore.isAuthenticated → admin→users-list, user→dashboard`. |
 | 2.7 | Token almacenado | Después de login exitoso: token guardado en `localStorage` o Pinia persistido | ✅ | `authStore.ts:52-56` `localStorage.setItem('token', accessToken)` + `localStorage.setItem('user', ...)`. Inicialización de stores leen desde localStorage (lines 17-18). |
-| 2.8 | Acción logout | Botón/menú "Cerrar sesión" limpia token, limpia store, redirige a `/login` | ⬜ | `authStore.logout()` existe en el store (lines 61-66). ⚠️ PERO: NO hay ningún botón/menú de logout en el Layout. El AppLayout.vue NO tiene dropdown de usuario, solo avatar. Debe agregarse menú dropdown "Cerrar sesión" y "Perfil". |
-| 2.9 | Expiración de sesión | Al recibir 401 del backend, limpiar estado y redirigir a login | ⬜ | No hay Axios response interceptor que capture 401. FALTA agregar en `api/axios.ts`: `api.interceptors.response.use(..., error => { if 401: logout + redirect })`. |
+| 2.8 | Acción logout | Botón/menú "Cerrar sesión" limpia token, limpia store, redirige a `/login` | ✅ | **NUEVO IMPLEMENTADO**. [AppLayout.vue:45-49](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/layouts/AppLayout.vue#L45-L49) Dropdown usuario navbar tiene botón rojo "Cerrar sesión" con icono logout. Función `handleLogout()` lines 154-157: `authStore.logout()` + `router.push({ name: 'login' })`. También existe [UserMenu.vue](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/layouts/components/UserMenu.vue) componente reusable con el mismo dropdown. |
+| 2.9 | Expiración de sesión | Al recibir 401 del backend, limpiar estado y redirigir a login | ✅ | **NUEVO IMPLEMENTADO**. [axios.ts:28-35](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L28-L35) Axios response interceptor captura `status === 401`: llama `authStore.logout()` (limpia token + user + localStorage) + `window.location.href = '/login'` (evita loop si ya está en login). |
 | 2.10 | Redirección post-login | Después de login exitoso, redirigir a `/dashboard` | ✅ | `LoginView.vue:152-159` Si admin → `users-list`; Si user → `dashboard`. RegisterView: después de éxito solo muestra mensaje, NO hace auto-login ni redirect. (Deseable pero opcional para la entrega). |
 
 ---
@@ -55,12 +56,12 @@
 | # | Item | Criterios de Aceptación | Estado | Evidencia / Notas |
 |---|------|--------------------------|--------|--------------------|
 | 3.1 | Layout principal | `AppLayout.vue` con: Navbar superior, Sidebar (menú), Content area | ✅ | `layouts/AppLayout.vue`: `<header .topbar>` + `<aside .rail-nav>` + `<main .main-content>` + `<RouterView />` + `<nav .bottom-nav>` mobile. Completo. |
-| 3.2 | Navbar | Muestra: nombre app, foto de perfil usuario, dropdown con "Perfil" + "Cerrar sesión" | 🟧 | Topbar muestra ProjectHub + avatar (lines 4-21). ⚠️ NO hay dropdown funcional de usuario. Avatar NO es clickeable. No hay botón logout ni link a perfil. FALTA implementar. |
-| 3.3 | Sidebar | Menú con enlaces a: Dashboard, Usuarios (si admin), Convocatorias, Proyectos, Documentos, Historial, Perfil | 🟧 | `railItems` lines 135-140: solo 4 items (dashboard, research→dashboard, calendar→dashboard, documents→users-list). ⚠️ ⚠️ FALTAN enlaces reales a: Convocatorias, Proyectos, Documentos, Historial, Perfil. "documents" apunta a users-list (incorrecto). Profile en bottom nav apunta también a users-list (incorrecto). |
-| 3.4 | Menú contextual por rol | Item "Usuarios" visible solo para `role === 'admin'` | ⬜ | NO hay `v-if="authStore.isAdmin"` sobre ningún item del rail/bottom. Todos los usuarios ven exactamente lo mismo incluso el botón que lleva a users-list (pero el router guard requiresAdmin lo redirige a dashboard después del click). Mejor ocultar. |
-| 3.5 | Responsive | Sidebar colapsa a offcanvas/drawer en mobile. Bootstrap breakpoints usados. | 🟧 | En desktop: `.rail-nav` (lateral 64px). En mobile <768px: `.bottom-nav` visible, rail sigue visible con 64px — ocupa demasiado espacio. ⚠️ Mejor: ocultar rail-nav en mobile y solo mostrar bottom nav. |
+| 3.2 | Navbar | Muestra: nombre app, foto de perfil usuario, dropdown con "Perfil" + "Cerrar sesión" | ✅ | **NUEVO FUNCIONAL COMPLETO**. [AppLayout.vue:20-52](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/layouts/AppLayout.vue#L20-L52): Topbar ProjectHub + iconos search/notifications + avatar dropdown. Dropdown muestra: nombre usuario, email, link "Perfil" (actualmente dashboard), divider, "Cerrar sesión" (funcional con handleLogout). También botones iconos search overlay expandible y notifications con badge. |
+| 3.3 | Sidebar | Menú con enlaces a: Dashboard, Usuarios (si admin), Convocatorias, Proyectos, Documentos, Historial, Perfil | 🟧 | `railItems` [AppLayout.vue:163-170](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/layouts/AppLayout.vue#L163-L170): 6 items (dashboard, users, calls, projects, documents, history) + settings icon abajo. **⚠️ FALTA**: items `calls`, `projects`, `documents`, `history`, `profile` APUNTAN TODOS a `routeName: 'dashboard'` — las rutas reales de esos módulos NO EXISTEN aún. Bottom nav: items home, users(adminOnly), projects, profile(→dashboard). |
+| 3.4 | Menú contextual por rol | Item "Usuarios" visible solo para `role === 'admin'` | ✅ | **NUEVO IMPLEMENTADO**. [AppLayout.vue:180-186](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/layouts/AppLayout.vue#L180-L186) computed `visibleRailItems` y `visibleBottomNavItems` con `.filter(item => !item.adminOnly \|\| authStore.isAdmin)`. Items con `adminOnly: true` (users) se OCULTAN completamente para usuario non-admin. Perfecto. |
+| 3.5 | Responsive | Sidebar colapsa a offcanvas/drawer en mobile. Bootstrap breakpoints usados. | ✅ | **NUEVO FIXADO**. [AppLayout.vue:497-504](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/layouts/AppLayout.vue#L497-L504) `@media (max-width: 767.98px)` → `.rail-nav { display: none; }` y `.main-content { padding-left: 16px; }`. Bottom nav visible solo <768px (lines 524-528). Desktop ≥768px: rail visible, bottom-nav oculto. Excelente. |
 | 3.6 | Ruta 404 | Cualquier ruta no definida muestra una página de "No encontrado" o redirige | ✅ | `router/index.ts:34-37` catch-all `/:pathMatch(.*)*` → redirect `/`. Válido. |
-| 3.7 | Ruta home `/` | Redirige a `/login` o `/dashboard` según estado de sesión | ⚠️ | HomeView.vue es el landing page marketing completo (navbar, hero, features, proceso, CTA, footer). Perfecto para usuarios NO autenticados. ⚠️ Pero si el usuario está autenticado y navega a `/` sigue viendo el landing. Debería redirigir a dashboard (agregar guard). |
+| 3.7 | Ruta home `/` | Redirige a `/login` o `/dashboard` según estado de sesión | ✅ | **NUEVO IMPLEMENTADO**. [router/index.ts:52-54](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/router/index.ts#L52-L54) Guard: `if (to.name === 'home' && authStore.isAuthenticated) return authStore.isAdmin ? { name: 'users-list' } : { name: 'dashboard' }`. Usuario autenticado NO ve landing, redirige correctamente. |
 
 ---
 
@@ -173,12 +174,12 @@
 
 | # | Item | Criterios de Aceptación | Estado | Evidencia / Notas |
 |---|------|--------------------------|--------|--------------------|
-| 11.1 | Interceptor JWT | Axios interceptor adjunta `Authorization: Bearer <token>` automáticamente | ✅ | `axios.ts:13-19` request interceptor lee `localStorage.getItem('token')` y adjunta en header. Correcto. |
-| 11.2 | Interceptor 401 | Al recibir 401: logout automático + redirect a login | ⬜ | FALTA. En `axios.ts` no hay `api.interceptors.response.use`. Si vence el token el usuario queda en una página sin datos, pero no se desloguea. |
-| 11.3 | Manejo 403 | Mostrar toast "No tienes permisos para esta acción" | ⬜ | Sin response interceptor. UserListView usa `alert()` en error — inconsistente. |
-| 11.4 | Manejo 400 / 422 | Mostrar mensajes de validación del servidor campo por campo si aplica | 🟧 | LoginView `catch` line 161: lee `error.response.data?.message || error`. RegisterView line 254: lee `.message || .error`. ⚠️ No mapea errores por campo a inputs específicos, solo mensaje global. |
-| 11.5 | Manejo 500 | Página o toast de "Error del servidor, intenta nuevamente" | ⬜ | Sin response interceptor. Errores 500 terminan en alert genérico o console.log. |
-| 11.6 | Network error | Si el backend está caído, mensaje claro de "No hay conexión con el servidor" | ⬜ | Sin response interceptor. |
+| 11.1 | Interceptor JWT | Axios interceptor adjunta `Authorization: Bearer <token>` automáticamente | ✅ | [axios.ts:14-20](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L14-L20) request interceptor lee `localStorage.getItem('token')` y adjunta en header. Correcto. |
+| 11.2 | Interceptor 401 | Al recibir 401: logout automático + redirect a login | ✅ | **NUEVO IMPLEMENTADO**. [axios.ts:28-35](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L28-L35) `if (status === 401) { authStore.logout(); window.location.href = '/login' }`. Limpia token+user+localStorage y redirige. |
+| 11.3 | Manejo 403 | Mostrar toast "No tienes permisos para esta acción" | 🟧 | [axios.ts:36-38](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L36-L38) `status === 403 → console.error('Acceso denegado...')`. **⚠️ Solo console.error, NO hay toast UI visible al usuario**. UserListView además usa `alert()` — inconsistente. Falta componente toast global. |
+| 11.4 | Manejo 400 / 422 | Mostrar mensajes de validación del servidor campo por campo si aplica | 🟧 | LoginView `catch` lee `error.response.data?.message \|\| error`. RegisterView lee `.message \|\| .error`. ⚠️ No mapea errores por campo a inputs específicos, solo mensaje global. |
+| 11.5 | Manejo 500 | Página o toast de "Error del servidor, intenta nuevamente" | 🟧 | [axios.ts:38-40](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L38-L40) `status >= 500 → console.error('Error en el servidor...')`. **⚠️ Solo console.error, NO hay toast/página visible al usuario**. |
+| 11.6 | Network error | Si el backend está caído, mensaje claro de "No hay conexión con el servidor" | ⬜ | Response interceptor NO maneja el caso `error.response === undefined` (network error, timeout, DNS fail). Si backend está caído, error llega sin `.status` → cae en `Promise.reject(error)` sin feedback al usuario. |
 | 11.7 | Loading por operación | Botones cambian a disabled + spinner durante submit | ✅ | LoginView `:disabled="isLoading"` + `spinner-border`. RegisterView `:disabled="isLoading"` + spinner. UserModal `:disabled="loading"` en submit button. |
 | 11.8 | Services por módulo | Cada módulo tiene `xxxService.ts` que encapsula llamadas API | ✅ | `auth/services/authService.ts` — register/login/getProfile. `user/services/userService.ts` — getUsers/createUser/updateUser/deleteUser. Encapsulación correcta. |
 
@@ -202,11 +203,11 @@
 
 | # | Item | Criterios de Aceptación | Estado | Evidencia / Notas |
 |---|------|--------------------------|--------|--------------------|
-| 13.1 | Build producción | `npm run build` genera carpeta `dist/` sin errores | 🟧 | Scripts configurados. ⚠️ ⚠️ **INCONSISTENCIA CRÍTICA**: Axios baseURL por defecto apunta a `http://127.0.0.1:5000/api` — esto en EC2 producción debe ser la IP pública de EC2 (o `/api` relativo si Nginx hace proxy). Requiere `.env.production` con `VITE_API_BASE_URL=https://<IP_EC2_PUBLICA>/api` o el path que corresponda. |
-| 13.2 | API base URL prod | `.env.production` configura `VITE_API_BASE_URL` con la IP/URL pública de EC2 | ⬜ | No existe archivo `.env.production`. Debes crearlo con la URL real del backend en EC2. |
+| 13.1 | Build producción | `npm run build` genera carpeta `dist/` sin errores | 🟧 | Scripts configurados. **Alineación .env.development ✅**: usa `/api/v1` que coincide con backend blueprint. ⚠️ `.env.production` tiene placeholder genérico — debe editarse con IP/Dominio real de EC2 antes de `npm run build`. |
+| 13.2 | API base URL prod | `.env.production` configura `VITE_API_BASE_URL` con la IP/URL pública de EC2 | 🟧 | **ARCHIVO EXISTE NUEVO**: [.env.production:1-2](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/.env.production#L1-L2) define `VITE_API_BASE_URL=https://tu-dominio-backend.com/api` + `VITE_STATIC_URL=https://tu-dominio-backend.com`. ⚠️ Es un PLACEHOLDER — debe reemplazarse con la URL real (IP pública EC2 o dominio). Importante: backend blueprint es `/api/v1` así que la URL productiva debería ser `https://<IP>/api/v1` (o Nginx rewrite). |
 | 13.3 | Assets con rutas correctas | Build sirve JS/CSS con rutas relativas o `/` según configuración de servidor web (Nginx) | ✅ | Por defecto Vite usa base `/`. Compatible con Nginx sirviendo `dist/` como root. |
-| 13.4 | Router history mode | Si se usa history mode, servidor (Nginx) configurado con fallback a `index.html` | 🟧 | `createWebHistory` usado. ⚠️ Documentación pendiente para Nginx EC2: `try_files $uri $uri/ /index.html;` |
-| 13.5 | Sin console.log excesivos | Limpiar `console.log` de debug antes de build producción (o usar linter) | ⚠️ | UserListView tiene `console.error` lines 76,113. ESLint configurado pero no hay regla `no-console` estricta. Válido. |
+| 13.4 | Router history mode | Si se usa history mode, servidor (Nginx) configurado con fallback a `index.html` | 🟧 | `createWebHistory` usado. ⚠️ Documentación pendiente para Nginx EC2: `location / { try_files $uri $uri/ /index.html; }`. También Nginx debe servir `/static/uploads/` desde backend o hacer proxy_pass. |
+| 13.5 | Sin console.log excesivos | Limpiar `console.log` de debug antes de build producción (o usar linter) | ⚠️ | UserListView tiene `console.error` lines 76,113. Axios interceptor tiene `console.error` 403/500 lines 37,39. Válidos para debugging; ESLint configurado sin regla `no-console` estricta. |
 
 ---
 
@@ -224,32 +225,32 @@
 
 | Área | Revisor | Fecha | Observaciones | Estado Final |
 |------|---------|-------|---------------|--------------|
-| Configuración / Estructura | | 2026-08-02 | Stack ✅ modular ✅; Faltan env files ⚠️; No hay response interceptor Axios ⚠️ Crítico | ⚠️ Observaciones |
-| Autenticación UI | | 2026-08-02 | Login/Register forms ✅; NO hay botón logout ⚠️ Crítico; NO auto-logout en 401 ⚠️ Crítico | 🟧 En Progreso |
-| Layout / Navegación | | 2026-08-02 | Layout completo ✅; Faltan menús a Calls/Projects/Docs/History/Profile; Faltan dropdown usuario+logout | 🟧 En Progreso |
-| Dashboard | | 2026-08-02 | UI completa ✅; KPIs hardcodeados (sin conectar API stats) ⚠️ Crítico | 🟧 En Progreso |
-| Admin Usuarios | | 2026-08-02 | Guard requiresAdmin ✅; Tabla y Modal son SIMPLIFICADOS (faltan campos: names, role, active, avatar upload multipart) | 🟧 En Progreso |
-| Convocatorias | | 2026-08-02 | Nada implementado (solo preview estático en Dashboard) | ⬜ Pendiente |
-| Proyectos | | 2026-08-02 | Nada implementado (solo preview estático en Dashboard) | ⬜ Pendiente |
-| Documentos | | 2026-08-02 | Nada implementado (solo panel visual upload) | ⬜ Pendiente |
-| Historial | | 2026-08-02 | Nada implementado | ⬜ Pendiente |
-| Perfil Usuario | | 2026-08-02 | Ruta/vista /profile NO existe 0%. Store avatarUrl computed ✅ | ⬜ Pendiente |
-| Integración API | | 2026-08-02 | Request interceptor ✅; Falta response interceptor completo (401/403/500/network) | 🟧 En Progreso |
-| UX / Responsive | | 2026-08-02 | BS5 y espaciados ✅; Faltan validaciones con librería y a11y básica | ⚠️ Observaciones |
-| Build / Despliegue | | 2026-08-02 | .env.production FALTA; Router fallback Nginx necesita documentación; URL BASE Axios inconsistente (/api vs /api/v1) | 🟧 En Progreso |
-| Entregables | | 2026-08-02 | Código ✅ package ✅; env.production 0 | ⚠️ Observaciones |
+| Configuración / Estructura | | 2026-08-02 (v1.2) | Stack ✅ modular ✅ env files AHORA EXISTEN ✅ Vite proxy ✅ Response interceptor AHORA EXISTE ✅ 403/500 solo console.error ⚠️ Network error sin manejar ⬜ | ⚠️ Observaciones |
+| Autenticación UI | | 2026-08-02 (v1.2) | Login/Register forms ✅ **Botón logout dropdown AHORA FUNCIONAL ✅** **401 auto-logout AHORA EXISTE ✅** Faltan: toast errores, validaciones librería | 🟧 En Progreso |
+| Layout / Navegación | | 2026-08-02 (v1.2) | Layout completo ✅ **Dropdown usuario+logout AHORA FUNCIONAL ✅** **Role filters sidebar (adminOnly) AHORA EXISTE ✅** **Rail oculto mobile ✅** **Redirect home si autenticado ✅** ⚠️ Menús calls/projects/docs/history/profile siguen apuntando a dashboard (sin rutas) | ✅ Mejoras / rutas pend |
+| Dashboard | | 2026-08-02 (v1.2) | UI completa ✅ KPIs hardcodeados (sin conectar API stats) ⚠️ Crítico | 🟧 En Progreso |
+| Admin Usuarios | | 2026-08-02 (v1.2) | Guard requiresAdmin ✅ Tabla y Modal SIMPLIFICADOS (faltan: first_name, last_name, role, is_active, avatar upload multipart FormData) | 🟧 En Progreso |
+| Convocatorias | | 2026-08-02 (v1.2) | Nada implementado (solo preview estático en Dashboard; rail item existe pero → dashboard) | ⬜ Pendiente |
+| Proyectos | | 2026-08-02 (v1.2) | Nada implementado (solo preview estático Dashboard; rail item → dashboard) | ⬜ Pendiente |
+| Documentos | | 2026-08-02 (v1.2) | Nada implementado (solo panel visual upload Dashboard; rail item → dashboard) | ⬜ Pendiente |
+| Historial | | 2026-08-02 (v1.2) | Nada implementado (rail item existe → dashboard) | ⬜ Pendiente |
+| Perfil Usuario | | 2026-08-02 (v1.2) | Ruta/vista /profile NO existe 0%. Dropdown "Perfil" existe pero → dashboard. Store avatarUrl computed ✅ | ⬜ Pendiente |
+| Integración API | | 2026-08-02 (v1.2) | Request interceptor ✅ **Response 401 logout AHORA EXISTE ✅** 403/500 console.error SOLO ⚠️ Network error (sin .response) NO manejado ⬜ | 🟧 En Progreso |
+| UX / Responsive | | 2026-08-02 (v1.2) | BS5 espaciados ✅ **Rail oculto mobile AHORA FIXADO ✅** Faltan: validaciones librería (Vuelidate/Zod) a11y aria-labels | ⚠️ Observaciones |
+| Build / Despliegue | | 2026-08-02 (v1.2) | **.env.production AHORA EXISTE (placeholder)** 🟧 Nginx fallback necesita docs; .env.production requiere editar URL real | 🟧 En Progreso |
+| Entregables | | 2026-08-02 (v1.2) | Código ✅ package ✅ env files AHORA EXISTEN ambos ✅ | ✅ / env.prod requiere edit |
 
 ---
 
-## Principales Hallazgos Críticos del Frontend (Alerta)
+## Principales Hallazgos Críticos del Frontend (Actualizado v1.2)
 
-1. **INCONSISTENCIA DE RUTAS CON BACKEND**: Axios baseURL apunta a `http://127.0.0.1:5000/api` pero Blueprint del backend es `/api/v1/`. Ninguna llamada funcionará hasta alinear. Opciones: cambiar backend `modules_bp.url_prefix = '/api'` o cambiar frontend a `VITE_API_BASE_URL=http://host:port/api/v1`.
-2. **NO HAY BOTÓN DE LOGOUT**: El store tiene `logout()` pero NUNCA se invoca desde UI. FALTA dropdown de usuario en Navbar con Cerrar Sesión + Perfil.
-3. **NO HAY VISTA DE PERFIL /me**: Requisito mandatorio (datos personales, cambiar contraseña, subir foto). Ruta /profile no existe.
-4. **KPIs DASHBOARD SON ESTÁTICOS**: Muestran valores hardcodeados. Debe consumir endpoint `/dashboard/stats` cuando exista.
-5. **ADMIN USER MODAL INCOMPLETO**: Falta first_name, last_name, role selector, is_active, upload profile_picture con multipart FormData.
-6. **USER MODAL INCOMPLETO**: Tabla no muestra nombres, rol, estado.
-7. **FALTA AXIOS RESPONSE INTERCEPTOR**: 401 debe hacer logout + redirect. 403/500 deben mostrar toast uniforme.
-8. **FALTAN MÓDULOS COMPLETOS**: Calls, Projects, Documents, History son 0% implementados (solo placeholders visuales en Dashboard).
-9. **FALTA .env.production**: Debe definirse `VITE_API_BASE_URL` con la IP pública EC2.
-10. **ROLE GUARDS EN SIDEBAR**: Los links administrativos no están ocultos para usuarios non-admin.
+1. **🔴 NO HAY VISTA DE PERFIL /profile**: Requisito mandatorio del alcance (datos personales, cambiar contraseña, subir foto). Ruta `/profile` no existe, módulo no creado. Dropdown "Perfil" del navbar apunta a dashboard.
+2. **🟠 URL BASE INCONSISTENTE EN PRODUCCIÓN**: [.env.production:1](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/.env.production#L1) usa `.../api` pero backend blueprint es `/api/v1`. Debe ser `https://<IP_EC2>/api/v1` o configurar Nginx rewrite. Placeholder requiere edición antes de build.
+3. **🟠 KPIs DASHBOARD SON ESTÁTICOS**: [DashboardKpiGrid.vue](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/modules/dashboard/components/DashboardKpiGrid.vue) valores hardcodeados 128, 8, 45, 1.2 TB. Debe consumir `GET /dashboard/stats` cuando exista endpoint backend.
+4. **🟠 ADMIN USER MODAL INCOMPLETO**: [UserModal.vue:13-33](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/modules/user/components/UserModal.vue#L13-L33) solo 3 campos (username, email, password). FALTAN: `first_name`, `last_name`, selector de `role` (admin/user), toggle `is_active`, input file `profile_picture` con `FormData` multipart.
+5. **🟠 TABLA USUARIOS INCOMPLETA**: [UserListView.vue:20-26](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/modules/user/views/UserListView.vue#L20-L26) columnas: ID, Usuario, Correo, Acciones. FALTAN 5 columnas obligatorias: `first_name`, `last_name`, `role`, `is_active` (estado), `profile_picture` (avatar thumbnail).
+6. **🟠 4 MÓDULOS 0% IMPLEMENTADOS**: Calls, Projects, Documents, History. No hay módulos en `src/modules/`, no hay rutas, no hay vistas. Solo ítems en sidebar que apuntan a dashboard + previews estáticos en Dashboard.
+7. **🟠 403/500 SOLO CONSOLE.ERROR**: [axios.ts:36-40](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L36-L40) errores se loguean pero usuario no ve nada. Necesita toast global (BS5 Toasts o componente propio) para feedback visual.
+8. **🟠 NETWORK ERROR SIN MANEJAR**: [axios.ts:25-43](file:///C:/Users/alanq/OneDrive/Documentos/universidad/noveno%20semestre/ProjectHub/frontend/src/api/axios.ts#L25-L43) si backend está caído (`error.response === undefined`) no entra en ningún if → Promise.reject sin feedback. Usuario ve pantalla en blanco o spinner infinito.
+9. **⚠️ USER SERVICE NO USA FORMDATA**: `userService.updateUser()` usa `api.put()` enviando JSON. Backend `PUT /users/:id` SOPORTA multipart para foto. Si se agrega input file al modal, hay que usar `new FormData()` + `Content-Type: multipart/form-data`.
+10. **⚠️ FALTA REFRESH USER EN STORE**: Después de `PUT /auth/me` exitoso (actualizar perfil), el `authStore.user` local NO se actualiza. Habrá inconsistencia visual (navbar muestra nombre viejo) hasta próximo login/reload.

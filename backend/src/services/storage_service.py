@@ -1,13 +1,26 @@
+# src/services/storage_service.py
 import os
 import uuid
 from abc import ABC, abstractmethod
 from werkzeug.utils import secure_filename
-from flask import current_app
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'docx', 'doc', 'txt'}
+
+def allowed_file(filename: str) -> bool:
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 class StorageAdapter(ABC):
     @abstractmethod
     def upload_file(self, file_storage, folder: str) -> str:
+        pass
+
+    @abstractmethod
+    def download_file(self, file_path: str) -> str:
+        pass
+
+    @abstractmethod
+    def delete_file(self, file_path: str) -> bool:
         pass
 
 
@@ -28,6 +41,24 @@ class LocalStorageAdapter(StorageAdapter):
         relative_url = f"/static/uploads/{folder}/{unique_filename}"
         return relative_url
 
+    def download_file(self, file_path: str) -> str:
+        clean_path = file_path.lstrip('/')
+        full_path = os.path.join(os.path.dirname(self.base_path), clean_path)
+        if not os.path.exists(full_path):
+            raise ValueError("El archivo no existe")
+        return full_path
+
+    def delete_file(self, file_path: str) -> bool:
+        try:
+            clean_path = file_path.lstrip('/')
+            full_path = os.path.join(os.path.dirname(self.base_path), clean_path)
+            if os.path.exists(full_path):
+                os.remove(full_path)
+                return True
+            return False
+        except Exception:
+            return False
+
 
 class S3StorageAdapter(StorageAdapter):
     def __init__(self, s3_client, bucket_name: str, region: str):
@@ -43,12 +74,28 @@ class S3StorageAdapter(StorageAdapter):
         self.s3_client.upload_fileobj(
             file_storage,
             self.bucket_name,
-            s3_key,
-            ExtraArgs={'ACL': 'public-read'}
+            s3_key
         )
 
         public_url = f"https://{self.bucket_name}.s3.{self.region}.amazonaws.com/{s3_key}"
         return public_url
+
+    def download_file(self, file_path: str) -> str:
+        s3_key = file_path.split(f".amazonaws.com/")[-1]
+        url = self.s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': self.bucket_name, 'Key': s3_key},
+            ExpiresIn=3600
+        )
+        return url
+
+    def delete_file(self, file_path: str) -> bool:
+        try:
+            s3_key = file_path.split(f".amazonaws.com/")[-1]
+            self.s3_client.delete_object(Bucket=self.bucket_name, Key=s3_key)
+            return True
+        except Exception:
+            return False
 
 
 class StorageService:
@@ -88,5 +135,18 @@ class StorageService:
         if file_storage is None or not file_storage.filename:
             raise ValueError('No se proporcionó un archivo válido')
 
+        if not allowed_file(file_storage.filename):
+            raise ValueError('Tipo de archivo no permitido')
+
         adapter = cls._get_adapter()
         return adapter.upload_file(file_storage, folder)
+
+    @classmethod
+    def download_file(cls, file_path: str) -> str:
+        adapter = cls._get_adapter()
+        return adapter.download_file(file_path)
+
+    @classmethod
+    def delete_file(cls, file_path: str) -> bool:
+        adapter = cls._get_adapter()
+        return adapter.delete_file(file_path)

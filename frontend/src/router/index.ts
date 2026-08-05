@@ -48,12 +48,14 @@ router.beforeEach((to, from) => {
 
   const isAuthRoute = to.name === 'login' || to.name === 'register'
 
+  // Punto 3.7: Redirigir si intenta ir a Home ('/') estando autenticado
+  if (to.name === 'home' && authStore.isAuthenticated) {
+    return authStore.isAdmin ? { name: 'users-list' } : { name: 'dashboard' }
+  }
+
   // A. Si intenta ir a Login o Register estando AUTENTICADO
   if (isAuthRoute && authStore.isAuthenticated) {
-    if (authStore.isAdmin) {
-      return { name: 'users-list' }
-    }
-    return { name: 'dashboard' }
+    return authStore.isAdmin ? { name: 'users-list' } : { name: 'dashboard' }
   }
 
   // B. Si intenta ir a una ruta privada sin estar autenticado
