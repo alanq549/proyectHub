@@ -1,110 +1,154 @@
 <template>
-  <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content rounded-4 border-0 shadow">
-        <div class="modal-header border-bottom px-4 py-3">
-          <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
-            <span class="material-symbols-outlined notranslate text-primary">
-              {{ isEditing ? 'manage_accounts' : 'person_add' }}
-            </span>
-            {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
-          </h5>
-          <button type="button" class="btn-close" @click="$emit('close')"></button>
-        </div>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div class="bg-white/90 backdrop-blur-md rounded-2xl max-w-2xl w-full shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[90vh]">
+      <!-- Header -->
+      <div class="p-5 border-b border-slate-100/80 flex items-center justify-between bg-white/40">
+        <h5 class="text-lg font-semibold text-slate-800 flex items-center gap-2.5 m-0">
+          <span class="material-symbols-outlined notranslate text-indigo-600 bg-indigo-50 p-2 rounded-xl text-xl">
+            {{ isEditing ? 'manage_accounts' : 'person_add' }}
+          </span>
+          {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
+        </h5>
+        <button 
+          type="button" 
+          class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors" 
+          @click="$emit('close')"
+        >
+          <span class="material-symbols-outlined notranslate text-xl">close</span>
+        </button>
+      </div>
 
-        <div class="modal-body p-4">
-          <form @submit.prevent="handleSubmit">
-            <!-- Selección de Avatar / Foto -->
-            <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-3">
-              <img 
-                :src="previewAvatar || defaultAvatar" 
-                alt="Preview Avatar" 
-                class="rounded-circle object-fit-cover border"
-                width="64" 
-                height="64"
+      <!-- Body -->
+      <div class="p-6 overflow-y-auto">
+        <form @submit.prevent="handleSubmit" class="space-y-5">
+         <!-- Subida de Avatar -->
+<div class="flex items-center gap-4 p-4 bg-slate-50/70 border border-slate-100 rounded-2xl">
+  <img 
+    :src="avatarUrl" 
+    alt="Preview Avatar" 
+    class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-slate-200"
+  />
+  <div class="flex-1 min-w-0">
+    <label class="block font-medium text-xs text-slate-600 mb-1.5">Foto de Perfil</label>
+    <input 
+      type="file" 
+      class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 file:transition-colors file:cursor-pointer cursor-pointer" 
+      accept="image/*" 
+      @change="handleFileChange"
+    />
+    <span class="block mt-1.5 text-[11px] text-slate-400">Formatos permitidos: JPG, PNG. Máx 2MB.</span>
+  </div>
+</div>
+
+          <!-- Form Fields -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium text-xs text-slate-600 mb-1">Nombre(s)</label>
+              <input 
+                v-model="form.first_name" 
+                type="text" 
+                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
+                placeholder="Ej. Alan" 
               />
-              <div class="flex-grow-1">
-                <label class="form-label text-secondary small fw-medium mb-1">Foto de Perfil</label>
+            </div>
+
+            <div>
+              <label class="block font-medium text-xs text-slate-600 mb-1">Apellido(s)</label>
+              <input 
+                v-model="form.last_name" 
+                type="text" 
+                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
+                placeholder="Ej. Arriaga" 
+              />
+            </div>
+
+            <div>
+              <label class="block font-medium text-xs text-slate-600 mb-1">Nombre de Usuario <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="form.username" 
+                type="text" 
+                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
+                required 
+                placeholder="Ej. alanq" 
+              />
+            </div>
+
+            <div>
+              <label class="block font-medium text-xs text-slate-600 mb-1">Correo Electrónico <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="form.email" 
+                type="email" 
+                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
+                required 
+                placeholder="usuario@correo.com" 
+              />
+            </div>
+
+            <div v-if="!isEditing">
+              <label class="block font-medium text-xs text-slate-600 mb-1">Contraseña <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="form.password" 
+                type="password" 
+                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
+                required 
+                placeholder="••••••••" 
+              />
+            </div>
+
+            <div>
+              <label class="block font-medium text-xs text-slate-600 mb-1">Rol en el Sistema <span class="text-rose-500">*</span></label>
+              <select 
+                v-model="form.role" 
+                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-slate-700 cursor-pointer" 
+                required
+              >
+                <option value="user">Usuario Standard</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+
+            <!-- Custom Tailwind Switch -->
+            <div class="flex items-center pt-2">
+              <label for="userActiveCheck" class="relative inline-flex items-center cursor-pointer select-none">
                 <input 
-                  type="file" 
-                  class="form-control form-control-sm" 
-                  accept="image/*" 
-                  @change="handleFileChange"
+                  v-model="form.is_active" 
+                  type="checkbox" 
+                  id="userActiveCheck" 
+                  class="sr-only peer" 
                 />
-                <span class="form-text text-muted small">Formatos permitidos: JPG, PNG. Máx 2MB.</span>
-              </div>
+                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none ring-offset-2 peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                <span class="ml-3 text-xs font-medium text-slate-700">Cuenta Activa</span>
+              </label>
             </div>
+          </div>
 
-            <div class="row g-3">
-              <!-- Nombre y Apellidos -->
-              <div class="col-12 col-md-6">
-                <label class="form-label text-secondary small fw-medium">Nombre(s)</label>
-                <input v-model="form.first_name" type="text" class="form-control" placeholder="Ej. Alan" />
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label class="form-label text-secondary small fw-medium">Apellido(s)</label>
-                <input v-model="form.last_name" type="text" class="form-control" placeholder="Ej. Arriaga" />
-              </div>
-
-              <!-- Username y Email -->
-              <div class="col-12 col-md-6">
-                <label class="form-label text-secondary small fw-medium">Nombre de Usuario *</label>
-                <input v-model="form.username" type="text" class="form-control" required placeholder="Ej. alanq" />
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label class="form-label text-secondary small fw-medium">Correo Electrónico *</label>
-                <input v-model="form.email" type="email" class="form-control" required placeholder="usuario@correo.com" />
-              </div>
-
-              <!-- Password -->
-              <div class="col-12 col-md-6" v-if="!isEditing">
-                <label class="form-label text-secondary small fw-medium">Contraseña *</label>
-                <input v-model="form.password" type="password" class="form-control" required placeholder="••••••••" />
-              </div>
-
-              <!-- Rol y Estado -->
-              <div class="col-12 col-md-6">
-                <label class="form-label text-secondary small fw-medium">Rol en el Sistema *</label>
-                <select v-model="form.role" class="form-select" required>
-                  <option value="user">Usuario Standard</option>
-                  <option value="admin">Administrador</option>
-                </select>
-              </div>
-
-              <div class="col-12 col-md-6 d-flex align-items-center">
-                <div class="form-check form-switch mt-3">
-                  <input 
-                    v-model="form.is_active" 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    id="userActiveCheck" 
-                  />
-                  <label class="form-check-label fw-medium text-dark" for="userActiveCheck">
-                    Cuenta Activa
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Footer con Botones -->
-            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-              <button type="button" class="btn btn-light px-4" @click="$emit('close')">Cancelar</button>
-              <button type="submit" class="btn btn-primary px-4 d-flex align-items-center gap-2" :disabled="loading">
-                <span v-if="loading" class="spinner-border spinner-border-sm" role="status"></span>
-                <span>{{ isEditing ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
-              </button>
-            </div>
-          </form>
-        </div>
+          <!-- Actions -->
+          <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
+            <button 
+              type="button" 
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100/80 rounded-xl transition-colors bg-white border border-slate-200/80" 
+              @click="$emit('close')"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="px-5 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors disabled:opacity-50 inline-flex items-center gap-2 shadow-sm" 
+              :disabled="loading"
+            >
+              <span v-if="loading" class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span>{{ isEditing ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import type { User } from '../services/userService';
 
 const props = defineProps<{
@@ -118,6 +162,23 @@ const isEditing = ref(false);
 const defaultAvatar = import.meta.env.VITE_STATIC_URL + '/static/defaults/icon_default.png';
 const previewAvatar = ref<string | null>(null);
 const selectedFile = ref<File | null>(null);
+
+// Computada para manejar los 3 casos (Blob local, ruta del backend o avatar por defecto)
+const avatarUrl = computed(() => {
+  if (!previewAvatar.value) {
+    return defaultAvatar;
+  }
+  
+  // Caso 1: Imagen local recién seleccionada (blob:http://...) o URL completa externa (https://...)
+  if (previewAvatar.value.startsWith('blob:') || previewAvatar.value.startsWith('http')) {
+    return previewAvatar.value;
+  }
+  
+  // Caso 2: Ruta relativa recibida del backend (/static/uploads/...)
+  const baseUrl = import.meta.env.VITE_STATIC_URL || '';
+  const cleanPath = previewAvatar.value.startsWith('/') ? previewAvatar.value : `/${previewAvatar.value}`;
+  return `${baseUrl}${cleanPath}`;
+});
 
 const form = ref({
   first_name: '',
@@ -163,6 +224,7 @@ const handleFileChange = (event: Event) => {
   if (target.files && target.files[0]) {
     const file = target.files[0];
     selectedFile.value = file;
+    // Genera un Blob temporal para la vista previa instantánea
     previewAvatar.value = URL.createObjectURL(file);
   }
 };
@@ -174,15 +236,12 @@ const handleSubmit = () => {
   data.append('first_name', form.value.first_name);
   data.append('last_name', form.value.last_name);
   data.append('role', form.value.role);
-  
-  // Enviar 'true' / 'false' en minúsculas explícitas
   data.append('is_active', form.value.is_active ? 'true' : 'false');
 
   if (!isEditing.value && form.value.password) {
     data.append('password', form.value.password);
   }
 
-  // Se adjunta el archivo correctamente con la key 'file' que espera Flask
   if (selectedFile.value) {
     data.append('file', selectedFile.value);
   }

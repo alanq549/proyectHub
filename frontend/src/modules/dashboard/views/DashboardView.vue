@@ -1,5 +1,11 @@
 <template>
-  <div class="af-dashboard d-flex flex-column gap-4">
+  <!--
+    DashboardView — Bloque 1.1 (Migración Bootstrap → Tailwind)
+    • Todas las utilidades layout (d-flex, row, col-*, gap-*) migradas.
+    • Tokens via theme.extend: colors/shadow/blur/radius siguen pasando por --app-*.
+    • Bootstrap sigue cargado globalmente = convivencia sin conflictos (prefijo ).
+  -->
+  <div class="af-dashboard flex flex-col gap-4">
     <!-- 1. Hero Card -->
     <DashboardHeroCard
       :user="heroUser"
@@ -11,10 +17,10 @@
     <!-- 2. Grid de 4 KPIs -->
     <DashboardKpiGrid :kpis="kpis" />
 
-    <!-- 3. Contenido Principal en 2 Columnas -->
-    <div class="row g-4">
+    <!-- 3. Contenido Principal en 2 Columnas (mobile 1 / desktop 8+4 = 12 cols) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <!-- Columna Izquierda (Proyectos Recientes + Convocatorias) -->
-      <div class="col-12 col-lg-8 d-flex flex-column gap-4">
+      <div class="lg:col-span-8 flex flex-col gap-4">
         <DashboardRecentProjects
           :projects="recentProjects"
           @view-all="$emit('view-all-projects')"
@@ -28,7 +34,7 @@
       </div>
 
       <!-- Columna Derecha (Subir a S3 + Salud Detallada + Soporte) -->
-      <div class="col-12 col-lg-4 d-flex flex-column gap-4">
+      <div class="lg:col-span-4 flex flex-col gap-4">
         <DashboardS3UploadPanel @browse="$emit('upload-file')" />
 
         <DashboardSystemHealthPanel

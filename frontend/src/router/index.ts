@@ -8,6 +8,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import { authRoutes } from '@/modules/auth/routes'
 import { userRoutes } from '@/modules/user/routes'
 import { dashboardRoutes } from '@/modules/dashboard/routes'
+import { callsRoutes } from '@/modules/calls/routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,7 +26,8 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         ...dashboardRoutes,
-        ...userRoutes
+        ...userRoutes,
+        ...callsRoutes,
       ]
     },
 

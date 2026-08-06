@@ -1,6 +1,6 @@
 <template>
   <!-- Mobile Branding -->
-  <div class="d-lg-none mobile-brand">
+  <div class="lg:hidden mobile-brand">
     <div class="mobile-logo-badge">
       <span class="material-symbols-outlined notranslate" style="font-size:18px;">
         account_tree

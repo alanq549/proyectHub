@@ -6,12 +6,12 @@
     </div>
 
     <main class="main-wrap">
-      <div class="row g-0 h-100">
+      <div class="grid grid-cols-1 lg:grid-cols-12 h-full">
         <AuthRegisterSidebar />
 
         <!-- Registration Section -->
-        <div class="col-12 col-lg-7 form-section">
-          <div class="w-100 form-container" style="max-width: 480px;">
+        <div class="col-span-1 lg:col-span-7 form-section">
+          <div class="w-full form-container" style="max-width: 480px;">
             <AuthRegisterMobileHeader />
 
             <!-- Register Form -->
@@ -24,21 +24,21 @@
               </header>
 
               <!-- Mensaje de error global -->
-              <div v-if="errorMessage" class="alert alert-danger py-2 small mb-3" role="alert">
+              <div v-if="errorMessage" class="py-2 text-xs mb-3" role="alert" style="padding: 1rem; border-radius: 0.5rem; background-color: rgba(255, 218, 214, 0.5); border: 1px solid rgba(186, 26, 26, 0.10); color: var(--on-error-container, #93000a);">
                 {{ errorMessage }}
               </div>
 
               <form @submit.prevent="handleRegistration" novalidate>
                 <!-- Nombres y Apellidos -->
-                <div class="row g-2 mb-3">
-                  <div class="col-6">
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                  <div class="col-span-1">
                     <label class="form-label-custom">Nombre(s)</label>
                     <div class="input-icon-wrap">
                       <span class="material-symbols-outlined notranslate icon-left">badge</span>
                       <input
                         v-model.trim="firstName"
                         type="text"
-                        class="form-control form-control-custom"
+                        class="form-control-custom"
                         :class="{ 'is-invalid': fieldErrors.firstName, 'is-valid': firstName && !fieldErrors.firstName }"
                         placeholder="ej. Alan"
                         @blur="validateFirstName"
@@ -46,19 +46,19 @@
                         required
                       />
                     </div>
-                    <div v-if="fieldErrors.firstName" class="invalid-feedback d-block mt-1">
+                    <div v-if="fieldErrors.firstName" class="invalid-feedback block mt-1">
                       {{ fieldErrors.firstName }}
                     </div>
                   </div>
 
-                  <div class="col-6">
+                  <div class="col-span-1">
                     <label class="form-label-custom">Apellido(s)</label>
                     <div class="input-icon-wrap">
                       <span class="material-symbols-outlined notranslate icon-left">badge</span>
                       <input
                         v-model.trim="lastName"
                         type="text"
-                        class="form-control form-control-custom"
+                        class="form-control-custom"
                         :class="{ 'is-invalid': fieldErrors.lastName, 'is-valid': lastName && !fieldErrors.lastName }"
                         placeholder="ej. Arriaga"
                         @blur="validateLastName"
@@ -66,7 +66,7 @@
                         required
                       />
                     </div>
-                    <div v-if="fieldErrors.lastName" class="invalid-feedback d-block mt-1">
+                    <div v-if="fieldErrors.lastName" class="invalid-feedback block mt-1">
                       {{ fieldErrors.lastName }}
                     </div>
                   </div>
@@ -80,7 +80,7 @@
                     <input
                       v-model.trim="username"
                       type="text"
-                      class="form-control form-control-custom"
+                      class="form-control-custom"
                       :class="{ 'is-invalid': fieldErrors.username, 'is-valid': username && !fieldErrors.username }"
                       placeholder="ej. alan_dev"
                       @blur="validateUsername"
@@ -88,7 +88,7 @@
                       required
                     />
                   </div>
-                  <div v-if="fieldErrors.username" class="invalid-feedback d-block mt-1">
+                  <div v-if="fieldErrors.username" class="invalid-feedback block mt-1">
                     {{ fieldErrors.username }}
                   </div>
                 </div>
@@ -101,7 +101,7 @@
                     <input
                       v-model.trim="email"
                       type="email"
-                      class="form-control form-control-custom"
+                      class="form-control-custom"
                       :class="{ 'is-invalid': fieldErrors.email, 'is-valid': email && !fieldErrors.email }"
                       placeholder="correo@universidad.edu"
                       @blur="validateEmail"
@@ -109,7 +109,7 @@
                       required
                     />
                   </div>
-                  <div v-if="fieldErrors.email" class="invalid-feedback d-block mt-1">
+                  <div v-if="fieldErrors.email" class="invalid-feedback block mt-1">
                     {{ fieldErrors.email }}
                   </div>
                 </div>
@@ -122,7 +122,7 @@
                     <input
                       v-model="password"
                       :type="showPassword ? 'text' : 'password'"
-                      class="form-control form-control-custom has-toggle"
+                      class="form-control-custom has-toggle"
                       :class="{ 'is-invalid': fieldErrors.password, 'is-valid': password && !fieldErrors.password }"
                       placeholder="••••••••"
                       @input="onPasswordInput"
@@ -135,15 +135,15 @@
                       </span>
                     </button>
                   </div>
-                  <div v-if="fieldErrors.password" class="invalid-feedback d-block mt-1">
+                  <div v-if="fieldErrors.password" class="invalid-feedback block mt-1">
                     {{ fieldErrors.password }}
                   </div>
 
                   <!-- Indicador de Fuerza de Contraseña -->
                   <div class="pt-2">
-                    <div class="strength-row d-flex justify-content-between align-items-center mb-1">
-                      <span class="strength-text small text-muted">Seguridad de la contraseña</span>
-                      <span class="strength-label small fw-bold" :style="{ color: strengthColor }">
+                    <div class="strength-row flex justify-between items-center mb-1">
+                      <span class="strength-text text-xs text-slate-500">Seguridad de la contraseña</span>
+                      <span class="strength-label text-xs font-bold" :style="{ color: strengthColor }">
                         {{ strengthText }}
                       </span>
                     </div>
@@ -169,7 +169,7 @@
                     <input
                       v-model="confirmPassword"
                       :type="showConfirmPassword ? 'text' : 'password'"
-                      class="form-control form-control-custom has-toggle"
+                      class="form-control-custom has-toggle"
                       :class="{ 'is-invalid': fieldErrors.confirmPassword, 'is-valid': confirmPassword && !fieldErrors.confirmPassword }"
                       placeholder="••••••••"
                       @input="onConfirmPasswordInput"
@@ -182,14 +182,14 @@
                       </span>
                     </button>
                   </div>
-                  <div v-if="fieldErrors.confirmPassword" class="invalid-feedback d-block mt-1">
+                  <div v-if="fieldErrors.confirmPassword" class="invalid-feedback block mt-1">
                     {{ fieldErrors.confirmPassword }}
                   </div>
                 </div>
 
                 <!-- Button -->
                 <div class="pt-2">
-                  <button class="btn-register w-100" type="submit" :disabled="isLoading || !isFormValid">
+                  <button class="btn-register w-full" type="submit" :disabled="isLoading || !isFormValid">
                     <span>{{ isLoading ? 'Creando cuenta...' : 'Registrarse' }}</span>
                     <span v-if="isLoading" class="spinner-border spinner-border-sm ms-2" role="status"></span>
                     <span v-else class="material-symbols-outlined notranslate ms-1" style="font-size: 18px;">
@@ -220,10 +220,10 @@
                 Tu cuenta ha sido creada con éxito. Ya puedes iniciar sesión con tus credenciales.
               </p>
 
-              <div class="d-flex flex-column gap-2 w-100 mx-auto" style="max-width: 320px;">
-                <button class="btn-register w-100" @click="router.push({ name: 'login' })">
+              <div class="flex flex-col gap-2 w-full mx-auto" style="max-width: 320px;">
+                <button class="btn-register w-full" @click="router.push({ name: 'login' })">
                   <span>Ir a Iniciar Sesión</span>
-                  <span class="material-symbols-outlined notranslate fs-5">arrow_forward</span>
+                  <span class="material-symbols-outlined notranslate text-xl">arrow_forward</span>
                 </button>
               </div>
             </div>

@@ -1,6 +1,6 @@
 <template>
   <!-- HEADER MOBILE -->
-  <div class="d-md-none d-flex justify-content-between align-items-center mb-5">
+  <div class="flex md:hidden justify-between items-center mb-5">
     <span class="brand-name" style="color:var(--primary)">
       ProjectHub
     </span>

@@ -1,7 +1,7 @@
 <template>
-  <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between sidebar-branding">
+  <div class="col-span-1 lg:col-span-5 hidden lg:flex flex-col justify-between sidebar-branding">
     <div>
-      <div class="d-flex align-items-center gap-3 mb-5">
+      <div class="flex items-center gap-3 mb-5">
         <div class="logo-badge">
           <span class="material-symbols-outlined notranslate" style="font-variation-settings: 'FILL' 1;">account_tree</span>
         </div>
@@ -12,8 +12,8 @@
         universitarios de alto impacto.</p>
     </div>
 
-    <div class="d-flex flex-column gap-4">
-      <div class="d-flex align-items-center gap-3">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-3">
         <div class="testimonial-avatar">
           <img
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3-e9ihrzVn3ULohcOKL4KvEz7DZLqzD601WzuRXHMYoJqHouMp1vqA5MN_mxQWM0Y9YX4675KEyKZnzqjM27sodKERztvnQLOROz1pSArKpGYP3atvmbAPwHfdA195IiftfjBRaOsCugE4F1kcsWHs8I4IzwKWibaBNg_G7vjeOY-ssa0m7LYR8JKPj22S9P2w_hox9gzcQhLBGvX3ONIU-P2coSImkcK00mR28RLOnBCBfk8wYKT7Q"

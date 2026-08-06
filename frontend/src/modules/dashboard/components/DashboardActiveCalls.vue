@@ -1,8 +1,14 @@
 <template>
-  <div class="d-flex flex-column gap-3">
+  <!--
+    DashboardActiveCalls — Bloque 1.5 (Migración Bootstrap → Tailwind)
+    • ~30 clases Bootstrap migradas (row/col, d-*, gap, p-*, w-* utilidades,
+      fw-bold, text-*, border-*, flex-shrink-0, etc.).
+    • Glass .app-card-glass-light intacta global, pills status intactas.
+  -->
+  <div class="flex flex-col gap-3">
     <!-- Encabezado de Sección -->
-    <div class="d-flex align-items-center justify-content-between">
-      <h3 class="af-section-title d-flex align-items-center gap-2 mb-0">
+    <div class="flex items-center justify-between">
+      <h3 class="af-section-title flex items-center gap-2 mb-0">
         <span class="material-symbols-outlined notranslate af-title-icon">event_available</span>
         Convocatorias Vigentes
       </h3>
@@ -12,14 +18,14 @@
     </div>
 
     <!-- State 1: Skeleton Loading (UX Cargando) -->
-    <div v-if="loading" class="row g-3">
-      <div v-for="i in 2" :key="i" class="col-12 col-md-6">
+    <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div v-for="i in 2" :key="i">
         <div class="app-card-glass-light af-call-card p-4">
-          <div class="af-skeleton-line w-75 mb-2"></div>
-          <div class="af-skeleton-line w-100 mb-1"></div>
-          <div class="af-skeleton-line w-50 mb-4"></div>
-          <div class="d-flex justify-content-between align-items-center mt-auto">
-            <div class="af-skeleton-line w-25"></div>
+          <div class="af-skeleton-line w-3/4 mb-2"></div>
+          <div class="af-skeleton-line w-full mb-1"></div>
+          <div class="af-skeleton-line w-1/2 mb-4"></div>
+          <div class="flex justify-between items-center mt-auto">
+            <div class="af-skeleton-line w-1/4"></div>
             <div class="af-skeleton-button"></div>
           </div>
         </div>
@@ -29,20 +35,20 @@
     <!-- State 2: Estado Vacío (UX Sin Convocatorias) -->
     <div v-else-if="!calls || calls.length === 0" class="app-card-glass-light text-center py-5">
       <span class="material-symbols-outlined notranslate af-empty-icon mb-2">event_busy</span>
-      <p class="mb-1 fw-bold text-dark">No hay convocatorias vigentes</p>
-      <span class="text-muted small">Las nuevas aperturas de proyectos y becas se publicarán aquí.</span>
+      <p class="mb-1 font-bold text-slate-900">No hay convocatorias vigentes</p>
+      <span class="text-slate-500 text-xs">Las nuevas aperturas de proyectos y becas se publicarán aquí.</span>
     </div>
 
     <!-- State 3: Lista de Convocatorias -->
-    <div v-else class="row g-3">
-      <div class="col-12 col-md-6" v-for="call in calls" :key="call.id || call.title">
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div v-for="call in calls" :key="call.id || call.title">
         <div class="app-card-glass-light af-call-card">
           <!-- Cabecera de la Card: Título + Badge de Organización -->
           <div>
-            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+            <div class="flex justify-between items-start gap-2 mb-2">
               <h4 class="af-call-title mb-0">{{ call.title }}</h4>
               <span
-                class="af-call-org flex-shrink-0"
+                class="af-call-org shrink-0"
                 :style="{
                   backgroundColor: call.orgBg || 'rgba(75, 65, 225, 0.1)',
                   color: call.orgColor || 'var(--app-primary)'
@@ -56,19 +62,19 @@
           </div>
 
           <!-- Pie de la Card: Fecha Límite + Botón de Acción -->
-          <div class="d-flex align-items-center justify-content-between mt-4 pt-2 border-top border-light-subtle">
-            <div class="d-flex align-items-center gap-2">
+          <div class="flex items-center justify-between mt-4 pt-2 border-t border-slate-100">
+            <div class="flex items-center gap-2">
               <div class="af-deadline-icon-wrapper">
                 <span class="material-symbols-outlined notranslate">schedule</span>
               </div>
-              <div class="d-flex flex-column">
+              <div class="flex flex-col">
                 <span class="af-call-deadline-label">Fecha Límite</span>
                 <span class="af-call-deadline-value">{{ call.deadline }}</span>
               </div>
             </div>
 
-            <button 
-              class="af-btn-primary sm d-inline-flex align-items-center gap-1"
+            <button
+              class="af-btn-primary sm inline-flex items-center gap-1"
               @click="$emit('apply', call)"
             >
               <span>Postular</span>

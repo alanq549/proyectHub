@@ -1,15 +1,15 @@
 <template>
   <!--
-    Clase GLOBAL .app-card-glass-light (main.css:195-206) aporta:
-    glassmorphism uniforme translúcido (bg-light, blur-sm, border-subtle,
-    radius, padding, hover-shadow). Estilos locales en .af-panel-card
-    solo definen layout interno de métricas.
+    DashboardSystemHealthPanel — Bloque 1.6b (Migración Bootstrap → Tailwind)
+    • 6 utilidades d-flex / gap / mb-* / justify-between migradas.
+    • .app-card-glass-light global intacta, clases locales para tipografía
+      métricas / progress intactas (usan tokens --app-surface-container-*).
   -->
   <div class="app-card-glass-light af-panel-card">
     <h3 class="af-section-title mb-4">Estado del Sistema</h3>
-    <div class="d-flex flex-column gap-4">
+    <div class="flex flex-col gap-4">
       <div v-for="metric in metrics" :key="metric.label">
-        <div class="d-flex justify-content-between mb-2">
+        <div class="flex justify-between mb-2">
           <span class="af-metric-label">{{ metric.label }}</span>
           <span class="af-metric-value">{{ metric.value }}</span>
         </div>
@@ -19,11 +19,11 @@
       </div>
 
       <div>
-        <div class="d-flex justify-content-between mb-2">
+        <div class="flex justify-between mb-2">
           <span class="af-metric-label">Buckets en S3</span>
           <span class="af-metric-value neutral">{{ bucketsActive }} Activos</span>
         </div>
-        <div class="d-flex gap-1">
+        <div class="flex gap-1">
           <div
             v-for="n in totalBuckets"
             :key="n"

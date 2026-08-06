@@ -1,61 +1,51 @@
 <template>
-    <div class="dropdown ms-1">
-        <button class="avatar-btn dropdown-toggle border-0 bg-transparent p-0" type="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
+    <AppDropdown align="end" v-model="open">
+        <template #trigger="{ open, toggle }">
+            <button
+                class="avatar-btn border-0 bg-transparent p-0 cursor-pointer outline-none inline-flex"
+                type="button"
+                :aria-expanded="open"
+                aria-haspopup="true"
+                @click.stop="toggle"
+            >
                 <UserAvatar :src="user.avatarUrl" :alt="`Perfil ${user.name}`" size="sm" />
+            </button>
+        </template>
+
+        <div class="px-3 py-2 border-b border-slate-100 mb-1">
+            <div class="font-semibold overflow-hidden text-ellipsis whitespace-nowrap text-xs" style="max-width:160px;">
+                {{ user.name }}
+            </div>
+            <div class="text-slate-500 lowercase text-xs" style="font-size:.75rem;">
+                {{ user.email }}
+            </div>
+        </div>
+
+        <button
+            class="app-dropdown-item flex items-center gap-2 px-3 py-2 text-slate-900 hover:bg-slate-100 text-base w-full text-left"
+            @click="goToProfile"
+        >
+            <span class="material-symbols-outlined notranslate text-xl">person</span>
+            <span>Perfil</span>
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3 py-2 border-0">
+        <hr class="my-1 border-slate-100" />
 
-            <li class="px-3 py-2 border-bottom mb-1">
-                <div class="fw-semibold text-truncate small" style="max-width:160px;">
-                    {{ user.name }}
-                </div>
-
-                <div class="text-muted text-lowercase small" style="font-size:.75rem;">
-                    {{ user.email }}
-                </div>
-            </li>
-
-            <li>
-                <!-- Se usa button con evento click directo -->
-                <button 
-                    class="dropdown-item d-flex align-items-center gap-2 py-2 fs-6"
-                    @click="goToProfile"
-                >
-                    <span class="material-symbols-outlined notranslate fs-5">
-                        person
-                    </span>
-                    <span>
-                        Perfil
-                    </span>
-                </button>
-            </li>
-
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-
-            <li>
-                <button class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 fs-6"
-                    @click="$emit('logout')">
-                    <span class="material-symbols-outlined notranslate fs-5">
-                        logout
-                    </span>
-
-                    <span>
-                        Cerrar sesión
-                    </span>
-                </button>
-            </li>
-
-        </ul>
-    </div>
+        <button
+            class="app-dropdown-item text-error flex items-center gap-2 px-3 py-2 hover:bg-error/10 text-base w-full text-left"
+            @click="$emit('logout')"
+        >
+            <span class="material-symbols-outlined notranslate text-xl">logout</span>
+            <span>Cerrar sesión</span>
+        </button>
+    </AppDropdown>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import UserAvatar from './UserAvatar.vue';
+import AppDropdown from '@/shared/components/AppDropdown.vue';
 
 interface User {
     name: string
@@ -71,20 +61,22 @@ defineEmits<{
     logout: []
 }>()
 
+const open = ref(false);
 const router = useRouter();
 
 const goToProfile = () => {
+    open.value = false;
     router.push({ name: 'user-profile' });
 };
 </script>
 
 <style scoped>
-.avatar-btn::after {
-    display: none;
-}
-
 .avatar-btn {
     cursor: pointer;
     outline: none;
+}
+.app-dropdown-item {
+    transition: background-color 0.12s ease;
+    cursor: pointer;
 }
 </style>

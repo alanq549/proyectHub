@@ -1,62 +1,62 @@
 <template>
-  <div class="container-fluid p-4">
+  <div class="p-4">
     <!-- Header de la Sección -->
     <div
-      class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3"
+      class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3"
     >
       <div>
-        <h3 class="fw-bold mb-1 title-main">Gestión de Usuarios</h3>
-        <p class="text-muted small mb-0">Control centralizado de identidades, roles y permisos del sistema.</p>
+        <h3 class="font-bold mb-1 title-main">Gestión de Usuarios</h3>
+        <p class="text-slate-500 text-xs mb-0">Control centralizado de identidades, roles y permisos del sistema.</p>
       </div>
-      <button class="btn-app-primary d-flex align-items-center gap-2 px-3" @click="openCreateModal">
-        <span class="material-symbols-outlined notranslate fs-5">person_add</span>
+      <button class="btn-app-primary flex items-center gap-2 px-3" @click="openCreateModal">
+        <span class="material-symbols-outlined notranslate text-xl">person_add</span>
         <span>Nuevo Usuario</span>
       </button>
     </div>
 
     <!-- KPIs Rápidos con estilo Glassmorphism -->
-    <div class="row g-3 mb-4">
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="app-card-glass p-3 d-flex align-items-center gap-3">
-          <div class="kpi-icon-wrapper text-dark bg-slate-100">
-            <span class="material-symbols-outlined notranslate fs-4">group</span>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
+      <div class="col-span-1">
+        <div class="app-card-glass p-3 flex items-center gap-3">
+          <div class="kpi-icon-wrapper text-slate-900 bg-slate-100">
+            <span class="material-symbols-outlined notranslate text-2xl">group</span>
           </div>
           <div>
-            <div class="text-muted small fw-medium">Total Cuentas</div>
-            <div class="fs-4 fw-bold text-dark">{{ userStore.users.length }}</div>
+            <div class="text-slate-500 text-xs font-medium">Total Cuentas</div>
+            <div class="text-2xl font-bold text-slate-900">{{ userStore.users.length }}</div>
           </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="app-card-glass p-3 d-flex align-items-center gap-3">
-          <div class="kpi-icon-wrapper text-success bg-success-subtle">
-            <span class="material-symbols-outlined notranslate fs-4">check_circle</span>
+      <div class="col-span-1">
+        <div class="app-card-glass p-3 flex items-center gap-3">
+          <div class="kpi-icon-wrapper text-success bg-success/15">
+            <span class="material-symbols-outlined notranslate text-2xl">check_circle</span>
           </div>
           <div>
-            <div class="text-muted small fw-medium">Usuarios Activos</div>
-            <div class="fs-4 fw-bold text-dark">{{ userStore.activeUsersCount }}</div>
+            <div class="text-slate-500 text-xs font-medium">Usuarios Activos</div>
+            <div class="text-2xl font-bold text-slate-900">{{ userStore.activeUsersCount }}</div>
           </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="app-card-glass p-3 d-flex align-items-center gap-3">
-          <div class="kpi-icon-wrapper text-dark bg-slate-100">
-            <span class="material-symbols-outlined notranslate fs-4">admin_panel_settings</span>
+      <div class="col-span-1">
+        <div class="app-card-glass p-3 flex items-center gap-3">
+          <div class="kpi-icon-wrapper text-slate-900 bg-slate-100">
+            <span class="material-symbols-outlined notranslate text-2xl">admin_panel_settings</span>
           </div>
           <div>
-            <div class="text-muted small fw-medium">Administradores</div>
-            <div class="fs-4 fw-bold text-dark">{{ userStore.adminUsersCount }}</div>
+            <div class="text-slate-500 text-xs font-medium">Administradores</div>
+            <div class="text-2xl font-bold text-slate-900">{{ userStore.adminUsersCount }}</div>
           </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="app-card-glass p-3 d-flex align-items-center gap-3">
-          <div class="kpi-icon-wrapper text-danger bg-danger-subtle">
-            <span class="material-symbols-outlined notranslate fs-4">block</span>
+      <div class="col-span-1">
+        <div class="app-card-glass p-3 flex items-center gap-3">
+          <div class="kpi-icon-wrapper text-error bg-error/15">
+            <span class="material-symbols-outlined notranslate text-2xl">block</span>
           </div>
           <div>
-            <div class="text-muted small fw-medium">Cuentas Inactivas</div>
-            <div class="fs-4 fw-bold text-dark">
+            <div class="text-slate-500 text-xs font-medium">Cuentas Inactivas</div>
+            <div class="text-2xl font-bold text-slate-900">
               {{ userStore.users.length - userStore.activeUsersCount }}
             </div>
           </div>
@@ -67,30 +67,30 @@
     <!-- Contenedor Principal en Glassmorphism Table Card -->
     <div class="app-card-glass-table">
       <!-- Barra de Herramientas / Buscador -->
-      <div class="p-3 border-bottom border-light-subtle bg-white bg-opacity-40">
-        <div class="row g-2 align-items-center">
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="input-group app-input-group">
-              <span class="input-group-text app-input-group-text">
-                <span class="material-symbols-outlined notranslate fs-5">search</span>
+      <div class="p-3 border-b border-slate-200/70 bg-white/40">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
+          <div class="md:col-span-4">
+            <div class="flex w-full app-input-group">
+              <span class="app-input-group-text flex items-center px-3 py-2 border border-r-0">
+                <span class="material-symbols-outlined notranslate text-xl">search</span>
               </span>
               <input
                 v-model="searchQuery"
                 type="text"
-                class="form-control app-input-control"
+                class="form-input app-input-control w-full"
                 placeholder="Buscar por usuario, nombre o email..."
               />
             </div>
           </div>
-          <div class="col-6 col-md-3 col-lg-2">
-            <select v-model="selectedRole" class="form-select custom-select">
+          <div class="md:col-span-2">
+            <select v-model="selectedRole" class="form-select custom-select w-full">
               <option value="">Todos los Roles</option>
               <option value="admin">Administrador</option>
               <option value="user">Usuario Standard</option>
             </select>
           </div>
-          <div class="col-6 col-md-3 col-lg-2">
-            <select v-model="selectedStatus" class="form-select custom-select">
+          <div class="md:col-span-2">
+            <select v-model="selectedStatus" class="form-select custom-select w-full">
               <option value="">Todos los Estados</option>
               <option value="active">Activos</option>
               <option value="inactive">Inactivos</option>

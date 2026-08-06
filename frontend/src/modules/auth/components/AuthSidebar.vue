@@ -1,9 +1,9 @@
 <template>
-  <div class="col-md-6 d-none d-md-flex flex-column justify-content-between left-panel">
+  <div class="col-span-1 md:col-span-1 hidden md:flex flex-col justify-between left-panel">
     <div class="left-panel-bg"></div>
 
-    <div class="position-relative" style="z-index:1;">
-      <div class="d-flex align-items-center gap-2 mb-5">
+    <div class="relative" style="z-index:1;">
+      <div class="flex items-center gap-2 mb-5">
         <span class="brand-name">
           ProjectHub
         </span>
@@ -16,8 +16,8 @@
       </p>
     </div>
 
-    <div class="position-relative mt-auto" style="z-index:1;">
-      <div class="avatar-stack d-flex mb-3">
+    <div class="relative mt-auto" style="z-index:1;">
+      <div class="avatar-stack flex mb-3">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAXfhEfWfTaKVGvIHAs7_UDZPt_wA6IPGlRBO7NrRs4koBf_dJE6JtECZ7tKnjBM9sNwMrcfOaemF3p03L4hipB9meE5AYCGbOOCNWmU5oSI82Y2O23hVfazOjjNN3LQeIanmR-tDfWIrhGNdCxdpiQ8Z39L-RzCG4nBHlu_FBSdwMSo5wl4mZJZKDCf0hXBSTDfWRagOJ1rc_KuogekkJnjuW20F-FhDnCC0y4TeXAcNvc00_B3rMKw"
           alt="Investigadora">

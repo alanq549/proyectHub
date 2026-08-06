@@ -6,6 +6,8 @@ modules_bp = Blueprint('modules', __name__, url_prefix='/api/v1')
 
 from .auth.routes import auth_bp
 from .users.routes import users_bp
+from .calls.routes import calls_bp
 
 modules_bp.register_blueprint(auth_bp)
 modules_bp.register_blueprint(users_bp)
+modules_bp.register_blueprint(calls_bp, url_prefix='/calls')

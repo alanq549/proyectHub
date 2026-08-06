@@ -1,10 +1,19 @@
 /* ============================================================
    main.css — Sistema Unificado de Design Tokens ProjectHub
-   Versión 2.1 (Monochrome Glass Spec 2026-08-03)
+   Versión 2.2 (Tailwind + Bootstrap Dual-Style 2026-08-05)
    ============================================================ */
 
 /* ============================================================
-   [1/4] TOKENS GLOBALES — Modificar aquí para cambiar el tema
+   [0/5] DIRECTIVAS TAILWIND (Base, Components, Utilities)
+   Colocadas ANTES de :root → tokens CSS pueden sobrescribir
+   defaults del plugin @tailwindcss/forms (strategy:class).
+   ============================================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   [1/5] TOKENS GLOBALES — Modificar aquí para cambiar el tema
    ============================================================ */
 :root {
   /* ------------------------------

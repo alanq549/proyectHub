@@ -1,5 +1,5 @@
 <template>
-  <div class="login-wrapper min-vh-100 d-flex align-items-center justify-content-center p-3 p-md-0 position-relative overflow-hidden">
+  <div class="login-wrapper min-h-screen flex items-center justify-center p-3 md:p-0 relative overflow-hidden">
 
     <div class="bg-layer">
       <div class="blob-1"></div>
@@ -7,16 +7,16 @@
     </div>
 
     <main class="auth-card">
-      <div class="row g-0">
+      <div class="grid grid-cols-1 md:grid-cols-2">
         <AuthSidebar />
 
         <!-- RIGHT PANEL -->
-        <div class="col-12 col-md-6 right-panel">
+        <div class="col-span-1 md:col-span-1 right-panel">
           <div class="mx-auto" style="max-width:24rem;">
             <AuthLoginMobileHeader />
 
             <!-- DESKTOP BACK BUTTON -->
-            <div class="d-none d-md-block mb-4">
+            <div class="hidden md:block mb-4">
               <button class="btn-back-home" @click="router.push({ name: 'home' })">
                 Volver al inicio
               </button>
@@ -35,31 +35,31 @@
             <!-- Alerta de Error Global / Backend -->
             <ErrorAlert v-if="errorMessage" :errorMessage="errorMessage" class="mb-3" />
 
-            <form id="login-form" @submit.prevent="handleLogin" class="d-flex flex-column gap-3" novalidate>
+            <form id="login-form" @submit.prevent="handleLogin" class="flex flex-col gap-3" novalidate>
               <!-- Input Email -->
               <div class="form-group">
-                <label class="form-label-custom mb-1 d-block">Correo Electrónico</label>
+                <label class="form-label-custom mb-1 block">Correo Electrónico</label>
                 <div class="input-icon-wrap">
                   <span class="material-symbols-outlined notranslate">mail</span>
                   <input 
                     v-model.trim="email" 
                     type="email" 
-                    class="form-control-custom w-100" 
+                    class="form-control-custom w-full" 
                     :class="{ 'is-invalid': errors.email }"
                     placeholder="correo@universidad.edu" 
                     @input="clearFieldError('email')"
                   />
                 </div>
-                <div v-if="errors.email" class="invalid-feedback d-block mt-1">
+                <div v-if="errors.email" class="invalid-feedback block mt-1">
                   {{ errors.email }}
                 </div>
               </div>
 
               <!-- Input Password -->
-              <div class="form-group">
-                <div class="d-flex justify-content-between align-items-center mb-1">
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-center mb-1">
                   <label class="form-label-custom mb-0">Contraseña</label>
-                  <a href="#" class="link-secondary fs-7" @click.prevent="router.push({ name: 'forgot-password' })">
+                  <a href="#" class="text-primary text-[14px] no-underline hover:underline transition-all" @click.prevent="router.push({ name: 'forgot-password' })">
                     ¿Olvidaste tu contraseña?
                   </a>
                 </div>
@@ -68,18 +68,18 @@
                   <input 
                     v-model="password" 
                     :type="showPassword ? 'text' : 'password'" 
-                    class="form-control-custom has-toggle w-100" 
+                    class="form-control-custom has-toggle w-full" 
                     :class="{ 'is-invalid': errors.password }"
                     placeholder="••••••••"
                     @input="clearFieldError('password')"
                   />
                   <button type="button" class="toggle-icon" @click="togglePassword">
-                    <span class="material-symbols-outlined notranslate fs-5">
+                    <span class="material-symbols-outlined notranslate text-xl">
                       {{ showPassword ? 'visibility_off' : 'visibility' }}
                     </span>
                   </button>
                 </div>
-                <div v-if="errors.password" class="invalid-feedback d-block mt-1">
+                <div v-if="errors.password" class="invalid-feedback block mt-1">
                   {{ errors.password }}
                 </div>
               </div>
@@ -94,7 +94,7 @@
             <div class="text-center mt-4">
               <p class="form-subtitle mb-0">
                 ¿No tienes una cuenta?
-                <a href="#" class="link-secondary fw-semibold" @click.prevent="router.push({ name: 'register' })">
+                <a href="#" class="text-primary font-semibold no-underline hover:underline transition-all" @click.prevent="router.push({ name: 'register' })">
                   Crear cuenta
                 </a>
               </p>
@@ -371,16 +371,6 @@ const handleLogin = async () => {
   outline: none;
   box-shadow: 0 0 0 4px rgba(75, 65, 225, 0.10);
   border-color: var(--secondary, #4b41e1);
-}
-
-.link-secondary {
-  color: var(--secondary, #4b41e1);
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.link-secondary:hover {
-  text-decoration: underline;
 }
 
 .btn-primary-custom {

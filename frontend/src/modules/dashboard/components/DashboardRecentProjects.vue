@@ -1,8 +1,16 @@
 <template>
+  <!--
+    DashboardRecentProjects — Bloque 1.4 (Migración Bootstrap → Tailwind)
+    • 35+ clases Bootstrap migradas (table-responsive, d-flex, gap-*, p-*, m-*,
+      text-*, fw-bold, border-*, fs-*, d-none/d-md-block/d-md-none, etc.).
+    • Glassmorphism mantiene clase global .app-card-glass-table (main.css).
+    • Pills de estado usan clases semánticas af-status-pill.* intactas (estas
+      usan tokens --app-success / --app-error / --app-warning del sistema).
+  -->
   <div class="app-card-glass-table af-table-card">
     <!-- Encabezado de la Sección -->
     <div class="af-table-header">
-      <div class="d-flex align-items-center gap-2">
+      <div class="flex items-center gap-2">
         <h3 class="af-section-title mb-0">Proyectos Recientes Globales</h3>
         <span v-if="!loading && projects.length" class="af-count-badge">
           {{ projects.length }}
@@ -22,36 +30,36 @@
     <!-- State 2: Estado Vacío (UX No hay datos) -->
     <div v-else-if="!projects || projects.length === 0" class="af-empty-state text-center py-5">
       <span class="material-symbols-outlined notranslate af-empty-icon mb-2">folder_off</span>
-      <p class="mb-1 fw-bold text-dark">No hay proyectos recientes</p>
-      <span class="text-muted small">Los nuevos proyectos asignados aparecerán aquí.</span>
+      <p class="mb-1 font-bold text-slate-900">No hay proyectos recientes</p>
+      <span class="text-slate-500 text-xs">Los nuevos proyectos asignados aparecerán aquí.</span>
     </div>
 
     <!-- State 3: Datos Presentes -->
     <template v-else>
       <!-- VISTA DESKTOP / TABLET (Tabla Tradicional) -->
-      <div class="table-responsive d-none d-md-block">
+      <div class="overflow-x-auto hidden md:block">
         <table class="af-table align-middle">
           <thead>
             <tr>
               <th scope="col" class="text-center" style="width: 50px;">#</th>
-              <scope col>Proyecto</scope>
-              <scope col>Equipo / Ámbito</scope>
-              <scope col>Fecha</scope>
-              <scope col>Estado</scope>
-              <th scope="col" class="text-end">Acción</th>
+              <th scope="col">Proyecto</th>
+              <th scope="col">Equipo / Ámbito</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="text-right">Acción</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(project, idx) in projects" :key="project.id || project.name" class="af-table-row">
               <td class="text-center af-index-col">{{ idx + 1 }}</td>
               <td>
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                   <div class="af-project-icon" :style="{ backgroundColor: project.iconBg || 'rgba(75, 65, 225, 0.1)', color: project.iconColor || '#4b41e1' }">
                     <span class="material-symbols-outlined notranslate">{{ project.icon || 'folder' }}</span>
                   </div>
                   <div>
-                    <span class="af-project-name d-block">{{ project.name }}</span>
-                    <span v-if="project.subtitle" class="af-project-sub text-muted">{{ project.subtitle }}</span>
+                    <span class="af-project-name block">{{ project.name }}</span>
+                    <span v-if="project.subtitle" class="af-project-sub text-slate-500">{{ project.subtitle }}</span>
                   </div>
                 </div>
               </td>
@@ -70,7 +78,7 @@
                   {{ project.status }}
                 </span>
               </td>
-              <td class="text-end">
+              <td class="text-right">
                 <button class="af-view-btn" title="Ver detalles" @click="$emit('view-project', project)">
                   <span class="material-symbols-outlined notranslate">visibility</span>
                 </button>
@@ -81,18 +89,18 @@
       </div>
 
       <!-- VISTA MÓVIL (Tarjetas Adaptables UX Mobile First) -->
-      <div class="d-block d-md-none p-3">
-        <div 
-          v-for="(project, idx) in projects" 
+      <div class="block md:hidden p-3">
+        <div
+          v-for="(project, idx) in projects"
           :key="`mobile-${project.id || project.name}`"
           class="af-mobile-card mb-3 p-3"
         >
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div class="d-flex align-items-center gap-2">
+          <div class="flex justify-between items-start mb-2">
+            <div class="flex items-center gap-2">
               <div class="af-project-icon sm" :style="{ backgroundColor: project.iconBg || 'rgba(75, 65, 225, 0.1)', color: project.iconColor || '#4b41e1' }">
                 <span class="material-symbols-outlined notranslate" style="font-size:16px;">{{ project.icon || 'folder' }}</span>
               </div>
-              <span class="af-project-name fs-6">{{ project.name }}</span>
+              <span class="af-project-name text-base">{{ project.name }}</span>
             </div>
             <span class="af-status-pill" :class="getStatusClass(project.status)">
               <span class="af-status-dot"></span>
@@ -100,7 +108,7 @@
             </span>
           </div>
 
-          <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-light-subtle fs-7">
+          <div class="flex justify-between items-center mt-3 pt-2 border-t border-slate-100 text-xs">
             <span class="af-team-badge">
               {{ project.team || 'Comunidad / Admin' }}
             </span>

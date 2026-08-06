@@ -8,7 +8,7 @@ La solución estará basada en una arquitectura cliente-servidor, separando la c
 
 El sistema estará compuesto por:
 
-- **Frontend:** desarrollado con Vue.js utilizando Bootstrap 5 para la construcción de la interfaz gráfica.
+- **Frontend:** desarrollado con Vue.js utilizando Bootstrap 5 y/o tailwindcss para la construcción de la interfaz gráfica.
 - **Backend:** desarrollado mediante una API REST utilizando Flask como framework principal.
 - **Base de datos:** PostgreSQL para el almacenamiento estructurado de la información.
 - **Almacenamiento de archivos:** Amazon S3 como servicio destinado al manejo de documentos y archivos multimedia.
@@ -47,7 +47,7 @@ La arquitectura propuesta sigue un modelo cliente-servidor con separación de re
             Navegador Web
                    |
                    |
-         Vue.js + Bootstrap 5
+         Vue.js + Bootstrap 5/ tailwindcss
                    |
                    |
           API REST Flask
@@ -557,7 +557,7 @@ Es responsabilidad del estudiante verificar que:
 | Componente | Tecnología |
 |------------|------------|
 | Frontend | Vue.js |
-| Framework visual | Bootstrap 5 |
+| Framework visual | Bootstrap 5/ tailwindcss | 
 | Backend | Flask |
 | API | REST API |
 | Lenguaje Backend | Python |

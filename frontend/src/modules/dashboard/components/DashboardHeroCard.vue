@@ -1,18 +1,24 @@
 <template>
+  <!--
+    DashboardHeroCard — Bloque 1.2 (Migración Bootstrap → Tailwind)
+    • Clase glassmorphism .app-card-glass-xl GLOBAL de main.css intacta (transición).
+    • Utilidades Bootstrap (text-start / d-flex / mt-* / align-items-*) migradas a *.
+    • Botones mantienen clases locales af-btn-* (son estilos custom, no Bootstrap).
+  -->
   <section class="app-card-glass-xl af-hero-card">
     <div class="af-hero-glow"></div>
     <div class="af-hero-body">
       <div class="af-hero-left">
         <div class="af-avatar-wrapper">
-          <UserAvatar 
+          <UserAvatar
             :src="user.avatarUrl"
             :alt="`Perfil ${user.name}`"
             size="lg"
           />
         </div>
-        <div class="text-start">
+        <div class="text-left">
           <h2 class="af-hero-title notranslate">¡Hola de nuevo, {{ user.name }}! 👋</h2>
-          <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+          <div class="flex items-center gap-2 mt-2 flex-wrap">
             <span class="af-role-badge">{{ user.role }}</span>
             <span class="af-secure-badge">
               <span class="material-symbols-outlined notranslate" style="font-size:14px;">lock</span>
@@ -22,7 +28,7 @@
         </div>
       </div>
 
-      <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0 align-items-center">
+      <div class="flex flex-wrap gap-2 mt-3 md:mt-0 items-center">
         <button class="af-btn-primary" @click="$emit('manage-users')">
           <span class="material-symbols-outlined notranslate" style="font-size: 18px;">manage_accounts</span>
           Gestionar Usuarios

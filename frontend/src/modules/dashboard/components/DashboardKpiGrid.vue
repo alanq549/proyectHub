@@ -1,12 +1,18 @@
 <template>
-  <section class="row g-4 mb-4">
-    <div class="col-12 col-sm-6 col-lg-3" v-for="kpi in kpis" :key="kpi.label">
+  <!--
+    DashboardKpiGrid — Bloque 1.3 (Migración Bootstrap → Tailwind)
+    • Layout row/col → grid responsive (4 cols desktop / 2 tablet / 1 móvil).
+    • Clase glass .app-card-glass GLOBAL intacta (solo override padding KPI 22/24 px).
+    • Todas utilidades espaciado/flex migradas (ms-auto = ms-auto, etc.).
+  -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <div v-for="kpi in kpis" :key="kpi.label">
       <div class="app-card-glass af-kpi-card">
         <!-- Glow suave de fondo en hover -->
         <div class="af-kpi-bg-glow" :style="{ background: kpi.iconColor }"></div>
 
         <!-- Encabezado de la card: Label + Ícono -->
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="flex justify-between items-center">
           <span class="af-kpi-label">{{ kpi.label }}</span>
           <div class="af-kpi-icon" :style="{ backgroundColor: kpi.iconBg, color: kpi.iconColor }">
             <span class="material-symbols-outlined notranslate">{{ kpi.icon }}</span>
@@ -24,15 +30,15 @@
         <!-- Barra de Progreso Opcional (UX) -->
         <div v-if="kpi.progress !== undefined" class="af-progress-container mt-2">
           <div class="af-progress-bar">
-            <div 
-              class="af-progress-fill" 
+            <div
+              class="af-progress-fill"
               :style="{ width: `${kpi.progress}%`, background: kpi.iconColor }"
             ></div>
           </div>
         </div>
 
         <!-- Pie de la Card / Metadatos Contextuales -->
-        <div class="af-kpi-footer d-flex align-items-center justify-content-between mt-auto pt-2">
+        <div class="af-kpi-footer flex items-center justify-between mt-auto pt-2">
           <!-- Tendencia (Ej: +12%) -->
           <span v-if="kpi.trend" class="af-kpi-trend">
             <span class="material-symbols-outlined notranslate" style="font-size: 16px;">trending_up</span>
@@ -45,7 +51,7 @@
           </span>
 
           <!-- Desglose (Ej: 30 Aprobados / 15 Revisión) -->
-          <div v-else-if="kpi.breakdown" class="d-flex align-items-center gap-2">
+          <div v-else-if="kpi.breakdown" class="flex items-center gap-2">
             <span class="af-kpi-breakdown-positive">{{ kpi.breakdown.positive }}</span>
             <span class="af-kpi-bullet">•</span>
             <span class="af-kpi-breakdown-neutral">{{ kpi.breakdown.neutral }}</span>

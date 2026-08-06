@@ -1,16 +1,19 @@
 <template>
   <!--
-    Clase GLOBAL .app-card-glass (main.css:144-158) aporta:
-    glassmorphism uniforme (bg, blur, border, radius, padding, hover, shadow).
-    Los estilos locales en .af-panel-card solo definen detalles internos.
+    DashboardS3UploadPanel — Bloque 1.6a (Migración Bootstrap → Tailwind)
+    • .form-select (Bootstrap) → form-select (plugin @tailwindcss/forms).
+    • 8 utilidades Bootstrap migradas (mb-*, d-flex, gap, text-center).
+    • .app-card-glass GLOBAL mantiene glassmorphism uniforme.
   -->
   <div class="app-card-glass af-panel-card">
-    <h3 class="af-section-title mb-3 d-flex align-items-center gap-2">
+    <h3 class="af-section-title mb-3 flex items-center gap-2">
       <span class="material-symbols-outlined notranslate" style="color: var(--app-primary, #4b41e1);">cloud_upload</span>
       Subir archivos a S3
     </h3>
 
     <div class="mb-3">
+      <!-- @tailwindcss/forms strategy:"class" → clase form-select.
+           Sobreescribe estilos con af-select local (tokens --app-input-*). -->
       <select class="form-select af-select" aria-label="Proyecto S3">
         <option selected>Proyecto archivos a S3</option>
       </select>

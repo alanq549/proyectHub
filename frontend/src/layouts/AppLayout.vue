@@ -2,54 +2,63 @@
     <div class="dashboard-root">
         <!-- Top Navbar -->
         <header class="topbar">
-            <div class="d-flex align-items-center gap-3">
+            <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined notranslate"
                     style="font-variation-settings: 'FILL' 1;">account_tree</span>
                 <span class="brand-name notranslate">ProjectHub</span>
             </div>
-            <div class="d-flex align-items-center gap-1">
+            <div class="flex items-center gap-1">
                 <button class="icon-btn" @click="searchOpen = true">
                     <span class="material-symbols-outlined notranslate">search</span>
                 </button>
-                <button class="icon-btn position-relative">
+                <button class="icon-btn relative">
                     <span class="material-symbols-outlined notranslate">notifications</span>
                     <span class="notif-dot"></span>
                 </button>
 
-                <!-- Punto 3.2: User Dropdown Menu -->
-                <div class="dropdown ms-1">
-                    <button class="avatar-btn dropdown-toggle border-0 bg-transparent p-0" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="avatar-sm">
-                            <img :src="authStore.avatarUrl" :alt="`Perfil ${authStore.user?.username}`" />
+                <!-- User Dropdown Menu nativo via AppDropdown -->
+                <AppDropdown align="end" v-model="userMenuOpen">
+                    <template #trigger="{ open, toggle }">
+                        <button
+                            class="avatar-btn border-0 bg-transparent p-0 cursor-pointer outline-none ms-1"
+                            type="button"
+                            :aria-expanded="open"
+                            aria-haspopup="true"
+                            @click.stop="toggle"
+                        >
+                            <div class="avatar-sm">
+                                <img :src="authStore.avatarUrl" :alt="`Perfil ${authStore.user?.username}`" />
+                            </div>
+                        </button>
+                    </template>
+
+                    <div class="px-3 py-2 border-b border-slate-100 mb-1">
+                        <div class="font-semibold overflow-hidden text-ellipsis whitespace-nowrap text-xs" style="max-width: 160px;">
+                            {{ user.name }}
                         </div>
+                        <div class="text-slate-500 lowercase text-xs" style="font-size: 0.75rem;">
+                            {{ authStore.user?.email }}
+                        </div>
+                    </div>
+
+                    <button
+                        class="app-dropdown-item flex items-center gap-2 px-3 py-2 text-base w-full text-left hover:bg-slate-100 text-slate-900"
+                        @click="handleNavigateProfile"
+                    >
+                        <span class="material-symbols-outlined notranslate text-xl">person</span>
+                        <span>Perfil</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3 py-2 border-0">
-                        <li class="px-3 py-2 border-bottom mb-1">
-                            <div class="fw-semibold text-truncate small" style="max-width: 160px;">
-                                {{ user.name }}
-                            </div>
-                            <div class="text-muted text-lowercase small" style="font-size: 0.75rem;">
-                                {{ authStore.user?.email }}
-                            </div>
-                        </li>
-                        <li>
-                            <button class="dropdown-item d-flex align-items-center gap-2 py-2 fs-6"
-                                @click="router.push({ name: 'user-profile' })">
-                                <span class="material-symbols-outlined notranslate fs-5">person</span>
-                                <span>Perfil</span>
-                            </button>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <button class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 fs-6"
-                                @click="handleLogout">
-                                <span class="material-symbols-outlined notranslate fs-5">logout</span>
-                                <span>Cerrar sesión</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+
+                    <hr class="my-1 border-slate-100" />
+
+                    <button
+                        class="app-dropdown-item text-error flex items-center gap-2 px-3 py-2 text-base w-full text-left hover:bg-error/10"
+                        @click="handleLogout"
+                    >
+                        <span class="material-symbols-outlined notranslate text-xl">logout</span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </AppDropdown>
             </div>
 
             <div class="search-overlay" :class="{ open: searchOpen }">
@@ -92,7 +101,7 @@
             </button>
 
             <button class="bnav-fab" @click="$emit('new-project')">
-                <span class="material-symbols-outlined notranslate fs-4">add</span>
+                <span class="material-symbols-outlined notranslate text-2xl">add</span>
             </button>
 
             <button v-for="item in visibleBottomNavItems.slice(2)" :key="item.key" class="bnav-item"
@@ -115,11 +124,13 @@
 import { ref, nextTick, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import AppDropdown from '@/shared/components/AppDropdown.vue'
 
 const VITE_STATIC_URL = import.meta.env.VITE_STATIC_URL
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
+const userMenuOpen = ref(false)
 
 // ==============================
 // Tipos
@@ -148,10 +159,16 @@ interface UserDisplay {
 }
 
 // ==============================
-// Acción de Logout
+// Acciones de Dropdown
 // ==============================
 
+function handleNavigateProfile(): void {
+    userMenuOpen.value = false
+    router.push({ name: 'user-profile' })
+}
+
 function handleLogout(): void {
+    userMenuOpen.value = false
     authStore.logout()
     router.push({ name: 'login' })
 }
@@ -163,7 +180,7 @@ function handleLogout(): void {
 const railItems: RailItem[] = [
     { key: 'dashboard', icon: 'dashboard', title: 'Dashboard', routeName: 'dashboard' },
     { key: 'users', icon: 'group', title: 'Usuarios', routeName: 'users-list', adminOnly: true },
-    { key: 'calls', icon: 'campaign', title: 'Convocatorias', routeName: 'dashboard' },
+    { key: 'calls', icon: 'campaign', title: 'Convocatorias', routeName: 'calls-list' },
     { key: 'projects', icon: 'folder', title: 'Proyectos', routeName: 'dashboard' },
     { key: 'documents', icon: 'description', title: 'Documentos', routeName: 'dashboard' },
     { key: 'history', icon: 'history', title: 'Historial', routeName: 'dashboard' },
@@ -289,16 +306,12 @@ defineEmits<{
     outline: none;
 }
 
-.avatar-btn::after {
-    display: none;
-}
-
-.dropdown-item {
+.app-dropdown-item {
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color 0.12s ease;
 }
 
-.dropdown-item:active {
+.app-dropdown-item:active {
     background-color: var(--app-surface-container-high, #e6e8ea);
     color: var(--app-on-surface, #191c1e);
 }
@@ -522,10 +535,6 @@ defineEmits<{
 
 .bnav-fab:active {
     transform: scale(0.9);
-}
-
-.fs-4 {
-    font-size: 24px;
 }
 
 /* Background effect — Blobs consumen tokens --app-bg-blob-* para fácilmente cambiables */
