@@ -1,19 +1,19 @@
 <template>
-  <div class="col-span-1 lg:col-span-5 hidden lg:flex flex-col justify-between sidebar-branding">
+  <div class="tw-col-span-1 lg:tw-col-span-5 tw-hidden lg:tw-flex tw-flex-col tw-justify-between sidebar-branding">
     <div>
-      <div class="flex items-center gap-3 mb-5">
+      <div class="tw-flex tw-items-center tw-gap-3 tw-mb-5">
         <div class="logo-badge">
           <span class="material-symbols-outlined notranslate" style="font-variation-settings: 'FILL' 1;">account_tree</span>
         </div>
         <span class="sidebar-brand-name">ProjectHub</span>
       </div>
-      <h1 class="sidebar-title mb-0">Eleva tu gestión académica al siguiente nivel.</h1>
-      <p class="sidebar-desc mt-4">Únete a la plataforma líder para la colaboración en investigación y proyectos
+      <h1 class="sidebar-title tw-mb-0">Eleva tu gestión académica al siguiente nivel.</h1>
+      <p class="sidebar-desc tw-mt-4">Únete a la plataforma líder para la colaboración en investigación y proyectos
         universitarios de alto impacto.</p>
     </div>
 
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center gap-3">
+    <div class="tw-flex tw-flex-col tw-gap-4">
+      <div class="tw-flex tw-items-center tw-gap-3">
         <div class="testimonial-avatar">
           <img
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3-e9ihrzVn3ULohcOKL4KvEz7DZLqzD601WzuRXHMYoJqHouMp1vqA5MN_mxQWM0Y9YX4675KEyKZnzqjM27sodKERztvnQLOROz1pSArKpGYP3atvmbAPwHfdA195IiftfjBRaOsCugE4F1kcsWHs8I4IzwKWibaBNg_G7vjeOY-ssa0m7LYR8JKPj22S9P2w_hox9gzcQhLBGvX3ONIU-P2coSImkcK00mR28RLOnBCBfk8wYKT7Q"

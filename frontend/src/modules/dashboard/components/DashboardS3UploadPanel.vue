@@ -5,13 +5,13 @@
     • 8 utilidades Bootstrap migradas (mb-*, d-flex, gap, text-center).
     • .app-card-glass GLOBAL mantiene glassmorphism uniforme.
   -->
-  <div class="app-card-glass af-panel-card">
-    <h3 class="af-section-title mb-3 flex items-center gap-2">
+  <AppCard variant="glass" class=" af-panel-card">
+    <h3 class="af-section-title tw-mb-3 tw-flex tw-items-center tw-gap-2">
       <span class="material-symbols-outlined notranslate" style="color: var(--app-primary, #4b41e1);">cloud_upload</span>
       Subir archivos a S3
     </h3>
 
-    <div class="mb-3">
+    <div class="tw-mb-3">
       <!-- @tailwindcss/forms strategy:"class" → clase form-select.
            Sobreescribe estilos con af-select local (tokens --app-input-*). -->
       <select class="form-select af-select" aria-label="Proyecto S3">
@@ -20,19 +20,21 @@
     </div>
 
     <div class="af-dropzone" @click="$emit('browse')">
-      <div class="text-center">
-        <p class="af-dropzone-title mb-1">Subir archivos a S3</p>
-        <p class="af-dropzone-sub mb-3">Con proyectos son dropzones</p>
+      <div class="tw-text-center">
+        <p class="af-dropzone-title tw-mb-1">Subir archivos a S3</p>
+        <p class="af-dropzone-sub tw-mb-3">Con proyectos son dropzones</p>
       </div>
       <button class="af-btn-upload">
         <span class="material-symbols-outlined notranslate" style="font-size:18px;">upload</span>
         Subir archivo
       </button>
     </div>
-  </div>
+  </AppCard>
 </template>
 
 <script setup lang="ts">
+import AppCard from '@/shared/components/AppCard.vue'
+
 defineEmits<{
   (event: 'browse'): void
 }>()

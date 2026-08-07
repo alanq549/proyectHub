@@ -10,6 +10,7 @@
             <a class="nav-link-custom" href="#">Investigación</a>
             <a class="nav-link-custom" href="#">Recursos</a>
           </div>
+          
         </div>
         <div class="d-flex align-items-center gap-3">
           <button class="btn-login" @click="router.push({ name: 'login' })">Iniciar Sesión</button>

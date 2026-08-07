@@ -6,32 +6,32 @@
     </div>
 
     <main class="main-wrap">
-      <div class="grid grid-cols-1 lg:grid-cols-12 h-full">
+      <div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-12 tw-h-full">
         <AuthRegisterSidebar />
 
         <!-- Registration Section -->
-        <div class="col-span-1 lg:col-span-7 form-section">
-          <div class="w-full form-container" style="max-width: 480px;">
+        <div class="tw-col-span-1 lg:tw-col-span-7 form-section">
+          <div class="tw-w-full form-container" style="max-width: 480px;">
             <AuthRegisterMobileHeader />
 
             <!-- Register Form -->
             <div v-if="!registrationSuccess">
-              <header class="mb-4">
-                <h2 class="reg-title mb-2">Crear una cuenta</h2>
-                <p class="reg-subtitle mb-0">
+              <header class="tw-mb-4">
+                <h2 class="reg-title tw-mb-2">Crear una cuenta</h2>
+                <p class="reg-subtitle tw-mb-0">
                   Ingresa tus datos para comenzar tu trayecto académico.
                 </p>
               </header>
 
               <!-- Mensaje de error global -->
-              <div v-if="errorMessage" class="py-2 text-xs mb-3" role="alert" style="padding: 1rem; border-radius: 0.5rem; background-color: rgba(255, 218, 214, 0.5); border: 1px solid rgba(186, 26, 26, 0.10); color: var(--on-error-container, #93000a);">
+              <div v-if="errorMessage" class="tw-py-2 tw-text-xs tw-mb-3" role="alert" style="padding: 1rem; border-radius: 0.5rem; background-color: rgba(255, 218, 214, 0.5); border: 1px solid rgba(186, 26, 26, 0.10); color: var(--on-error-container, #93000a);">
                 {{ errorMessage }}
               </div>
 
               <form @submit.prevent="handleRegistration" novalidate>
                 <!-- Nombres y Apellidos -->
-                <div class="grid grid-cols-2 gap-2 mb-3">
-                  <div class="col-span-1">
+                <div class="tw-grid tw-grid-cols-2 tw-gap-2 tw-mb-3">
+                  <div class="tw-col-span-1">
                     <label class="form-label-custom">Nombre(s)</label>
                     <div class="input-icon-wrap">
                       <span class="material-symbols-outlined notranslate icon-left">badge</span>
@@ -46,12 +46,12 @@
                         required
                       />
                     </div>
-                    <div v-if="fieldErrors.firstName" class="invalid-feedback block mt-1">
+                    <div v-if="fieldErrors.firstName" class="invalid-feedback tw-block tw-mt-1">
                       {{ fieldErrors.firstName }}
                     </div>
                   </div>
 
-                  <div class="col-span-1">
+                  <div class="tw-col-span-1">
                     <label class="form-label-custom">Apellido(s)</label>
                     <div class="input-icon-wrap">
                       <span class="material-symbols-outlined notranslate icon-left">badge</span>
@@ -66,14 +66,14 @@
                         required
                       />
                     </div>
-                    <div v-if="fieldErrors.lastName" class="invalid-feedback block mt-1">
+                    <div v-if="fieldErrors.lastName" class="invalid-feedback tw-block tw-mt-1">
                       {{ fieldErrors.lastName }}
                     </div>
                   </div>
                 </div>
 
                 <!-- Username -->
-                <div class="mb-3">
+                <div class="tw-mb-3">
                   <label class="form-label-custom">Nombre de usuario</label>
                   <div class="input-icon-wrap">
                     <span class="material-symbols-outlined notranslate icon-left">person</span>
@@ -88,13 +88,13 @@
                       required
                     />
                   </div>
-                  <div v-if="fieldErrors.username" class="invalid-feedback block mt-1">
+                  <div v-if="fieldErrors.username" class="invalid-feedback tw-block tw-mt-1">
                     {{ fieldErrors.username }}
                   </div>
                 </div>
 
                 <!-- Email -->
-                <div class="mb-3">
+                <div class="tw-mb-3">
                   <label class="form-label-custom">Correo electrónico</label>
                   <div class="input-icon-wrap">
                     <span class="material-symbols-outlined notranslate icon-left">mail</span>
@@ -109,13 +109,13 @@
                       required
                     />
                   </div>
-                  <div v-if="fieldErrors.email" class="invalid-feedback block mt-1">
+                  <div v-if="fieldErrors.email" class="invalid-feedback tw-block tw-mt-1">
                     {{ fieldErrors.email }}
                   </div>
                 </div>
 
                 <!-- Password -->
-                <div class="mb-3">
+                <div class="tw-mb-3">
                   <label class="form-label-custom">Contraseña</label>
                   <div class="input-icon-wrap">
                     <span class="material-symbols-outlined notranslate icon-left">lock</span>
@@ -135,19 +135,19 @@
                       </span>
                     </button>
                   </div>
-                  <div v-if="fieldErrors.password" class="invalid-feedback block mt-1">
+                  <div v-if="fieldErrors.password" class="invalid-feedback tw-block tw-mt-1">
                     {{ fieldErrors.password }}
                   </div>
 
                   <!-- Indicador de Fuerza de Contraseña -->
-                  <div class="pt-2">
-                    <div class="strength-row flex justify-between items-center mb-1">
+                  <div class="tw-pt-2">
+                    <div class="strength-row tw-flex tw-justify-between tw-items-center tw-mb-1">
                       <span class="strength-text text-xs text-slate-500">Seguridad de la contraseña</span>
-                      <span class="strength-label text-xs font-bold" :style="{ color: strengthColor }">
+                      <span class="strength-label tw-text-xs tw-font-bold" :style="{ color: strengthColor }">
                         {{ strengthText }}
                       </span>
                     </div>
-                    <div class="strength-track rounded overflow-hidden" style="height: 6px; background-color: var(--outline-variant, #e0e0e0);">
+                    <div class="strength-track tw-rounded tw-overflow-hidden" style="height: 6px; background-color: var(--outline-variant, #e0e0e0);">
                       <div
                         class="password-strength-bar"
                         :style="{
@@ -162,7 +162,7 @@
                 </div>
 
                 <!-- Confirm Password -->
-                <div class="mb-3">
+                <div class="tw-mb-3">
                   <label class="form-label-custom">Confirmar contraseña</label>
                   <div class="input-icon-wrap">
                     <span class="material-symbols-outlined notranslate icon-left">verified_user</span>
@@ -182,25 +182,25 @@
                       </span>
                     </button>
                   </div>
-                  <div v-if="fieldErrors.confirmPassword" class="invalid-feedback block mt-1">
+                  <div v-if="fieldErrors.confirmPassword" class="invalid-feedback tw-block tw-mt-1">
                     {{ fieldErrors.confirmPassword }}
                   </div>
                 </div>
 
                 <!-- Button -->
-                <div class="pt-2">
-                  <button class="btn-register w-full" type="submit" :disabled="isLoading || !isFormValid">
+                <div class="tw-pt-2">
+                  <button class="btn-register tw-w-full" type="submit" :disabled="isLoading || !isFormValid">
                     <span>{{ isLoading ? 'Creando cuenta...' : 'Registrarse' }}</span>
-                    <span v-if="isLoading" class="spinner-border spinner-border-sm ms-2" role="status"></span>
-                    <span v-else class="material-symbols-outlined notranslate ms-1" style="font-size: 18px;">
+                    <span v-if="isLoading" class="tw-inline-block tw-h-4 tw-w-4 tw-animate-spin tw-rounded-full tw-border-2 tw-border-current tw-border-t-transparent tw-ml-2" role="status"></span>
+                    <span v-else class="material-symbols-outlined notranslate tw-ml-1" style="font-size: 18px;">
                       arrow_forward
                     </span>
                   </button>
                 </div>
               </form>
 
-              <footer class="form-footer mt-4">
-                <p class="reg-subtitle mb-0">
+              <footer class="form-footer tw-mt-4">
+                <p class="reg-subtitle tw-mb-0">
                   ¿Ya tienes cuenta?
                   <a href="#" @click.prevent="router.push({ name: 'login' })">Inicia sesión</a>
                 </p>
@@ -208,22 +208,22 @@
             </div>
 
             <!-- Success State -->
-            <div v-else id="success-state" class="success-card text-center py-4 px-3">
-              <div class="success-icon-badge mx-auto mb-4">
+            <div v-else id="success-state" class="success-card tw-text-center tw-py-4 tw-px-3">
+              <div class="success-icon-badge tw-mx-auto tw-mb-4">
                 <span class="material-symbols-outlined notranslate success-icon">
                   check_circle
                 </span>
               </div>
 
-              <h2 class="reg-title mb-2">¡Registro Exitoso!</h2>
-              <p class="reg-subtitle mx-auto mb-4" style="max-width: 22rem;">
+              <h2 class="reg-title tw-mb-2">¡Registro Exitoso!</h2>
+              <p class="reg-subtitle tw-mx-auto tw-mb-4" style="max-width: 22rem;">
                 Tu cuenta ha sido creada con éxito. Ya puedes iniciar sesión con tus credenciales.
               </p>
 
-              <div class="flex flex-col gap-2 w-full mx-auto" style="max-width: 320px;">
-                <button class="btn-register w-full" @click="router.push({ name: 'login' })">
+              <div class="tw-flex tw-flex-col tw-gap-2 tw-w-full tw-mx-auto" style="max-width: 320px;">
+                <button class="btn-register tw-w-full" @click="router.push({ name: 'login' })">
                   <span>Ir a Iniciar Sesión</span>
-                  <span class="material-symbols-outlined notranslate text-xl">arrow_forward</span>
+                  <span class="material-symbols-outlined notranslate tw-text-xl">arrow_forward</span>
                 </button>
               </div>
             </div>
@@ -654,6 +654,19 @@ const handleRegistration = async () => {
   outline: none;
   border-color: var(--secondary);
   box-shadow: 0 0 0 4px rgba(75, 65, 225, .10);
+}
+
+.form-control-custom.is-invalid {
+  border-color: var(--app-error);
+}
+
+.form-control-custom.is-valid {
+  border-color: var(--app-success);
+}
+
+.invalid-feedback {
+  color: var(--app-error);
+  font-size: 0.75rem;
 }
 
 .strength-row {

@@ -5,30 +5,31 @@
     • Clase glass .app-card-glass GLOBAL intacta (solo override padding KPI 22/24 px).
     • Todas utilidades espaciado/flex migradas (ms-auto = ms-auto, etc.).
   -->
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+  <section class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4 tw-mb-4">
     <div v-for="kpi in kpis" :key="kpi.label">
-      <div class="app-card-glass af-kpi-card">
+      <AppCard variant="glass" padding="none" class=" af-kpi-card">
         <!-- Glow suave de fondo en hover -->
         <div class="af-kpi-bg-glow" :style="{ background: kpi.iconColor }"></div>
 
         <!-- Encabezado de la card: Label + Ícono -->
-        <div class="flex justify-between items-center">
+        <div class="tw-flex tw-justify-between tw-items-center">
           <span class="af-kpi-label">{{ kpi.label }}</span>
           <div class="af-kpi-icon" :style="{ backgroundColor: kpi.iconBg, color: kpi.iconColor }">
             <span class="material-symbols-outlined notranslate">{{ kpi.icon }}</span>
+            
           </div>
         </div>
 
         <!-- Valor Principal -->
-        <div class="af-kpi-value-container my-1">
-          <h3 class="af-kpi-value mb-0">
+        <div class="af-kpi-value-container tw-my-1">
+          <h3 class="af-kpi-value tw-mb-0">
             {{ kpi.value }}
             <span v-if="kpi.unit" class="af-kpi-unit">{{ kpi.unit }}</span>
           </h3>
         </div>
 
         <!-- Barra de Progreso Opcional (UX) -->
-        <div v-if="kpi.progress !== undefined" class="af-progress-container mt-2">
+        <div v-if="kpi.progress !== undefined" class="af-progress-container tw-mt-2">
           <div class="af-progress-bar">
             <div
               class="af-progress-fill"
@@ -38,7 +39,7 @@
         </div>
 
         <!-- Pie de la Card / Metadatos Contextuales -->
-        <div class="af-kpi-footer flex items-center justify-between mt-auto pt-2">
+        <div class="af-kpi-footer tw-flex tw-items-center tw-justify-between tw-mt-auto tw-pt-2">
           <!-- Tendencia (Ej: +12%) -->
           <span v-if="kpi.trend" class="af-kpi-trend">
             <span class="material-symbols-outlined notranslate" style="font-size: 16px;">trending_up</span>
@@ -51,7 +52,7 @@
           </span>
 
           <!-- Desglose (Ej: 30 Aprobados / 15 Revisión) -->
-          <div v-else-if="kpi.breakdown" class="flex items-center gap-2">
+          <div v-else-if="kpi.breakdown" class="tw-flex tw-items-center tw-gap-2">
             <span class="af-kpi-breakdown-positive">{{ kpi.breakdown.positive }}</span>
             <span class="af-kpi-bullet">•</span>
             <span class="af-kpi-breakdown-neutral">{{ kpi.breakdown.neutral }}</span>
@@ -62,12 +63,14 @@
 
           <span v-if="kpi.subtext" class="af-kpi-subtext ms-auto">{{ kpi.subtext }}</span>
         </div>
-      </div>
+      </AppCard>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import AppCard from '@/shared/components/AppCard.vue'
+
 export interface KpiBreakdown { positive: string; neutral: string }
 
 export interface Kpi {

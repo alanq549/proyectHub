@@ -5,7 +5,7 @@
     • Tokens via theme.extend: colors/shadow/blur/radius siguen pasando por --app-*.
     • Bootstrap sigue cargado globalmente = convivencia sin conflictos (prefijo ).
   -->
-  <div class="af-dashboard flex flex-col gap-4">
+  <div class="af-dashboard tw-flex tw-flex-col tw-gap-4">
     <!-- 1. Hero Card -->
     <DashboardHeroCard
       :user="heroUser"
@@ -18,9 +18,9 @@
     <DashboardKpiGrid :kpis="kpis" />
 
     <!-- 3. Contenido Principal en 2 Columnas (mobile 1 / desktop 8+4 = 12 cols) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-12 tw-gap-4">
       <!-- Columna Izquierda (Proyectos Recientes + Convocatorias) -->
-      <div class="lg:col-span-8 flex flex-col gap-4">
+      <div class="lg:tw-col-span-8 tw-flex tw-flex-col tw-gap-4">
         <DashboardRecentProjects
           :projects="recentProjects"
           @view-all="$emit('view-all-projects')"
@@ -34,7 +34,7 @@
       </div>
 
       <!-- Columna Derecha (Subir a S3 + Salud Detallada + Soporte) -->
-      <div class="lg:col-span-4 flex flex-col gap-4">
+      <div class="lg:tw-col-span-4 tw-flex tw-flex-col tw-gap-4">
         <DashboardS3UploadPanel @browse="$emit('upload-file')" />
 
         <DashboardSystemHealthPanel
@@ -130,21 +130,21 @@ const recentProjects: RecentProject[] = [
     date: '12 Oct 2023',
     status: 'Aprobado',
     icon: 'strikethrough_s',
-    iconBg: '#0f172a',
+    iconBg: '#FDFDFE',
   },
   {
     name: 'Red de Sensores IoT',
     date: '08 Oct 2023',
     status: 'En Revisión',
     icon: 'sensors',
-    iconBg: '#334155',
+    iconBg: '##FDFDFE',
   },
   {
     name: 'IA Educativa Pro',
     date: '05 Oct 2023',
     status: 'Aprobado',
     icon: 'psychology',
-    iconBg: '#0f172a',
+    iconBg: '##FDFDFE',
   },
 ]
 

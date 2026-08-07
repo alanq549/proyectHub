@@ -2,16 +2,16 @@
     <div class="dashboard-root">
         <!-- Top Navbar -->
         <header class="topbar">
-            <div class="flex items-center gap-3">
+            <div class="tw-flex tw-items-center tw-gap-3">
                 <span class="material-symbols-outlined notranslate"
                     style="font-variation-settings: 'FILL' 1;">account_tree</span>
                 <span class="brand-name notranslate">ProjectHub</span>
             </div>
-            <div class="flex items-center gap-1">
+            <div class="tw-flex tw-items-center tw-gap-1">
                 <button class="icon-btn" @click="searchOpen = true">
                     <span class="material-symbols-outlined notranslate">search</span>
                 </button>
-                <button class="icon-btn relative">
+                <button class="icon-btn tw-relative">
                     <span class="material-symbols-outlined notranslate">notifications</span>
                     <span class="notif-dot"></span>
                 </button>
@@ -20,42 +20,37 @@
                 <AppDropdown align="end" v-model="userMenuOpen">
                     <template #trigger="{ open, toggle }">
                         <button
-                            class="avatar-btn border-0 bg-transparent p-0 cursor-pointer outline-none ms-1"
-                            type="button"
-                            :aria-expanded="open"
-                            aria-haspopup="true"
-                            @click.stop="toggle"
-                        >
+                            class="avatar-btn tw-border-0 tw-bg-transparent tw-p-0 tw-cursor-pointer tw-outline-none tw-ml-1"
+                            type="button" :aria-expanded="open" aria-haspopup="true" @click.stop="toggle">
                             <div class="avatar-sm">
                                 <img :src="authStore.avatarUrl" :alt="`Perfil ${authStore.user?.username}`" />
                             </div>
                         </button>
                     </template>
 
-                    <div class="px-3 py-2 border-b border-slate-100 mb-1">
-                        <div class="font-semibold overflow-hidden text-ellipsis whitespace-nowrap text-xs" style="max-width: 160px;">
+                    <div class="tw-px-3 tw-py-2 tw-border-b tw-border-slate-100 tw-mb-1">
+                        <div class="tw-font-semibold tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-text-xs"
+                            style="max-width: 160px;">
                             {{ user.name }}
                         </div>
-                        <div class="text-slate-500 lowercase text-xs" style="font-size: 0.75rem;">
+                        <div class="tw-text-slate-500 tw-lowercase tw-text-xs" style="font-size: 0.75rem;">
                             {{ authStore.user?.email }}
                         </div>
                     </div>
 
                     <button
-                        class="app-dropdown-item flex items-center gap-2 px-3 py-2 text-base w-full text-left hover:bg-slate-100 text-slate-900"
-                        @click="handleNavigateProfile"
-                    >
-                        <span class="material-symbols-outlined notranslate text-xl">person</span>
+                        class="app-dropdown-item tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-text-base tw-w-full tw-text-left tw-border-0 tw-bg-transparent hover:tw-bg-slate-100 tw-text-slate-900"
+                        @click="handleNavigateProfile">
+                        <span class="material-symbols-outlined notranslate tw-text-xl">person</span>
                         <span>Perfil</span>
                     </button>
 
-                    <hr class="my-1 border-slate-100" />
+                    <hr class="tw-my-1 tw-border-slate-100" />
 
                     <button
-                        class="app-dropdown-item text-error flex items-center gap-2 px-3 py-2 text-base w-full text-left hover:bg-error/10"
-                        @click="handleLogout"
-                    >
-                        <span class="material-symbols-outlined notranslate text-xl">logout</span>
+                        class="app-dropdown-item tw-text-red-600 tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-text-base tw-w-full tw-text-left tw-border-0 tw-bg-transparent hover:tw-bg-red-50 tw-rounded-md"
+                        @click="handleLogout">
+                        <span class="material-symbols-outlined notranslate tw-text-xl">logout</span>
                         <span>Cerrar sesión</span>
                     </button>
                 </AppDropdown>
@@ -72,12 +67,11 @@
         <!-- Punto 3.3 & 3.4: Rail Navigation con filtrado por rol -->
         <aside class="rail-nav">
             <template v-for="item in visibleRailItems" :key="item.key">
-                <a href="#" class="rail-link"
-                    :class="{ active: activeRail === item.key }" 
-                    :title="item.title"
+                <a href="#" class="rail-link" :class="{ active: activeRail === item.key }" :title="item.title"
                     @click.prevent="navigateRail(item)">
                     <span class="material-symbols-outlined notranslate"
-                        :style="activeRail === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
+                        :style="activeRail === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon
+                        }}</span>
                 </a>
             </template>
             <a href="#" class="rail-link mt-auto" title="Configuración" :class="{ active: activeRail === 'settings' }"
@@ -96,18 +90,20 @@
             <button v-for="item in visibleBottomNavItems.slice(0, 2)" :key="item.key" class="bnav-item"
                 :class="{ active: activeBottomNav === item.key }" @click="navigateBottomNav(item)">
                 <span class="material-symbols-outlined notranslate"
-                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
+                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon
+                    }}</span>
                 <span class="lbl">{{ item.label }}</span>
             </button>
 
             <button class="bnav-fab" @click="$emit('new-project')">
-                <span class="material-symbols-outlined notranslate text-2xl">add</span>
+                <span class="material-symbols-outlined notranslate tw-text-2xl">add</span>
             </button>
 
             <button v-for="item in visibleBottomNavItems.slice(2)" :key="item.key" class="bnav-item"
                 :class="{ active: activeBottomNav === item.key }" @click="navigateBottomNav(item)">
                 <span class="material-symbols-outlined notranslate"
-                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon }}</span>
+                    :style="activeBottomNav === item.key ? { fontVariationSettings: `'FILL' 1` } : {}">{{ item.icon
+                    }}</span>
                 <span class="lbl">{{ item.label }}</span>
             </button>
         </nav>
@@ -294,7 +290,8 @@ defineEmits<{
 .dashboard-root {
     background-color: var(--app-bg-main, #f1f5f9);
     background-image: var(--app-bg-gradient);
-    background-attachment: fixed; /* Evita que el degradado se corte al hacer scroll */
+    background-attachment: fixed;
+    /* Evita que el degradado se corte al hacer scroll */
     color: var(--app-on-surface, #0f172a);
     overflow-x: hidden;
     position: relative;
@@ -457,6 +454,8 @@ defineEmits<{
 
 /* Main content */
 .main-content {
+    position: relative;
+    z-index: 1;
     padding-top: 80px;
     padding-left: calc(64px + 16px);
     padding-right: 16px;
@@ -469,6 +468,7 @@ defineEmits<{
     .rail-nav {
         display: none;
     }
+
     .main-content {
         padding-left: 16px;
     }
@@ -542,7 +542,8 @@ defineEmits<{
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 0; /* Queda justo sobre el fondo del layout, pero debajo del contenido */
+    z-index: 0;
+    /* Queda justo sobre el fondo del layout, pero debajo del contenido */
     opacity: var(--app-bg-blob-opacity, 0.85);
 }
 

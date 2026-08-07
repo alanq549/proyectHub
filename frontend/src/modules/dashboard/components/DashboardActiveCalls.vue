@@ -5,10 +5,10 @@
       fw-bold, text-*, border-*, flex-shrink-0, etc.).
     • Glass .app-card-glass-light intacta global, pills status intactas.
   -->
-  <div class="flex flex-col gap-3">
+  <div class="tw-flex tw-flex-col tw-gap-3">
     <!-- Encabezado de Sección -->
-    <div class="flex items-center justify-between">
-      <h3 class="af-section-title flex items-center gap-2 mb-0">
+    <div class="tw-flex tw-items-center tw-justify-between">
+      <h3 class="af-section-title tw-flex tw-items-center tw-gap-2 tw-mb-0">
         <span class="material-symbols-outlined notranslate af-title-icon">event_available</span>
         Convocatorias Vigentes
       </h3>
@@ -18,76 +18,77 @@
     </div>
 
     <!-- State 1: Skeleton Loading (UX Cargando) -->
-    <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div v-if="loading" class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-3">
       <div v-for="i in 2" :key="i">
-        <div class="app-card-glass-light af-call-card p-4">
-          <div class="af-skeleton-line w-3/4 mb-2"></div>
-          <div class="af-skeleton-line w-full mb-1"></div>
-          <div class="af-skeleton-line w-1/2 mb-4"></div>
-          <div class="flex justify-between items-center mt-auto">
-            <div class="af-skeleton-line w-1/4"></div>
+        <AppCard variant="glass-light" padding="sm" class="af-call-card tw-p-4">
+          <div class="af-skeleton-line tw-w-3/4 tw-mb-2"></div>
+          <div class="af-skeleton-line tw-w-full tw-mb-1"></div>
+          <div class="af-skeleton-line tw-w-1/2 tw-mb-4"></div>
+          <div class="tw-flex tw-justify-between tw-items-center tw-mt-auto">
+            <div class="af-skeleton-line tw-w-1/4"></div>
             <div class="af-skeleton-button"></div>
           </div>
-        </div>
+        </AppCard>
       </div>
     </div>
 
     <!-- State 2: Estado Vacío (UX Sin Convocatorias) -->
-    <div v-else-if="!calls || calls.length === 0" class="app-card-glass-light text-center py-5">
-      <span class="material-symbols-outlined notranslate af-empty-icon mb-2">event_busy</span>
-      <p class="mb-1 font-bold text-slate-900">No hay convocatorias vigentes</p>
-      <span class="text-slate-500 text-xs">Las nuevas aperturas de proyectos y becas se publicarán aquí.</span>
+    <div v-else-if="!calls || calls.length === 0" class=" tw-text-center tw-py-5">
+      <span class="material-symbols-outlined notranslate af-empty-icon tw-mb-2">event_busy</span>
+      <p class="tw-mb-1 font-bold tw-text-slate-900">No hay convocatorias vigentes</p>
+      <span class="tw-text-slate-500 tw-text-xs">Las nuevas aperturas de proyectos y becas se publicarán aquí.</span>
     </div>
 
     <!-- State 3: Lista de Convocatorias -->
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div v-else class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-3">
       <div v-for="call in calls" :key="call.id || call.title">
-        <div class="app-card-glass-light af-call-card">
+        <AppCard variant="glass-light" padding="sm" class="af-call-card">
           <!-- Cabecera de la Card: Título + Badge de Organización -->
           <div>
-            <div class="flex justify-between items-start gap-2 mb-2">
-              <h4 class="af-call-title mb-0">{{ call.title }}</h4>
-              <span
-                class="af-call-org shrink-0"
-                :style="{
-                  backgroundColor: call.orgBg || 'rgba(75, 65, 225, 0.1)',
-                  color: call.orgColor || 'var(--app-primary)'
-                }"
-              >
+            <div class="tw-flex tw-justify-between tw-items-start tw-gap-2 tw-mb-2">
+              <h4 class="af-call-title tw-mb-0">{{ call.title }}</h4>
+              <span class="af-call-org tw-shrink-0" :style="{
+                backgroundColor: call.orgBg || 'rgba(75, 65, 225, 0.1)',
+                color: call.orgColor || 'var(--app-primary)'
+              }">
                 {{ call.org }}
               </span>
             </div>
 
-            <p class="af-call-desc mb-0">{{ call.description }}</p>
+            <p class="af-call-desc tw-mb-0">{{ call.description }}</p>
           </div>
 
           <!-- Pie de la Card: Fecha Límite + Botón de Acción -->
-          <div class="flex items-center justify-between mt-4 pt-2 border-t border-slate-100">
-            <div class="flex items-center gap-2">
+          <div class="tw-flex tw-items-center tw-justify-between tw-mt-4 tw-pt-2 tw-border-t tw-border-slate-100">
+            <div class="tw-flex tw-items-center tw-gap-2">
               <div class="af-deadline-icon-wrapper">
                 <span class="material-symbols-outlined notranslate">schedule</span>
               </div>
-              <div class="flex flex-col">
+              <div class="tw-flex tw-flex-col">
                 <span class="af-call-deadline-label">Fecha Límite</span>
                 <span class="af-call-deadline-value">{{ call.deadline }}</span>
               </div>
             </div>
 
-            <button
-              class="af-btn-primary sm inline-flex items-center gap-1"
-              @click="$emit('apply', call)"
-            >
+            <button class="af-btn-primary sm inline-flex tw-items-center tw-gap-1" @click="$emit('apply', call)">
               <span>Postular</span>
-              <span class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span>
+              <span class="material-symbols-outlined notranslate" style="font-size: 16px;">
+                send
+              </span>
             </button>
+
           </div>
-        </div>
+        </AppCard>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
+import AppCard from '@/shared/components/AppCard.vue'
+import AppButton from '@/shared/components/AppButton.vue'
+
 export interface ActiveCall {
   id?: string | number
   title: string
@@ -115,7 +116,11 @@ defineEmits<{
   vertical-align: middle;
   font-family: 'Material Symbols Outlined' !important;
 }
-.notranslate { -webkit-translate: no; translate: no; }
+
+.notranslate {
+  -webkit-translate: no;
+  translate: no;
+}
 
 /* Título e Íconos de Sección */
 .af-section-title {
@@ -233,8 +238,8 @@ defineEmits<{
   transform: translateY(0);
 }
 
-.af-btn-primary.sm { 
-  padding: 0.4rem 0.85rem; 
+.af-btn-primary.sm {
+  padding: 0.4rem 0.85rem;
 }
 
 /* Skeleton & Empty States */
@@ -245,7 +250,7 @@ defineEmits<{
 
 .af-skeleton-line {
   height: 14px;
-  background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 25%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.04) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 0.375rem;
@@ -254,14 +259,19 @@ defineEmits<{
 .af-skeleton-button {
   height: 32px;
   width: 90px;
-  background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 25%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.04) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 0.5rem;
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>

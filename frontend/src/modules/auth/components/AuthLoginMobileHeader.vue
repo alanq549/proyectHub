@@ -1,6 +1,6 @@
 <template>
   <!-- HEADER MOBILE -->
-  <div class="flex md:hidden justify-between items-center mb-5">
+  <div class="tw-flex md:tw-hidden tw-justify-between tw-items-center tw-mb-5">
     <span class="brand-name" style="color:var(--primary)">
       ProjectHub
     </span>

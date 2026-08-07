@@ -49,20 +49,16 @@
 
   /* ------------------------------
      FONDO PRINCIPAL DE LA APLICACIÓN
-     Soporta: color sólido | linear-gradient | url(textura)
      ------------------------------ */
   --app-bg-main: #f1f5f9;
-  /* Degradado suave blanco-gris con matiz charcoal en las esquinas */
-  --app-bg-gradient: 
-    radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.06) 0%, transparent 50%),
-    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --app-bg-gradient: radial-gradient(at 0% 0%, rgba(241, 245, 249, 1) 0px, transparent 50%), 
+                      radial-gradient(at 100% 100%, rgba(226, 232, 240, 0.6) 0px, transparent 50%);
 
   /* Blobs decorativos de fondo (AppLayout) */
---app-bg-blob-primary: rgba(15, 23, 42, 0.18);      /* Slate oscuro más marcado */
---app-bg-blob-secondary: rgba(100, 116, 139, 0.25);  /* Slate medio para mayor contraste */
---app-bg-blob-blur: blur(90px);                     /* Blur ligeramente menor para que el haz de luz no se diluya por completo */
---app-bg-blob-opacity: 0.85;
+  --app-bg-blob-primary: rgba(15, 23, 42, 0.18);      /* Slate oscuro más marcado */
+  --app-bg-blob-secondary: rgba(100, 116, 139, 0.25);  /* Slate medio para mayor contraste */
+  --app-bg-blob-blur: blur(90px);                     /* Blur sutil para retener la luz */
+  --app-bg-blob-opacity: 0.85;
 
   /* ------------------------------
      SUPERFICIES / SURFACES (Material Design)
@@ -138,14 +134,70 @@
   --app-btn-radius-md: 0.75rem;
 
   /* ------------------------------
-     TIPOGRAFÍA
+     TIPOGRAFÍA Y BORDES
      ------------------------------ */
   --app-font-family: 'Inter', system-ui, -apple-system, sans-serif;
   --app-radius-pill: 9999px;
+
+  /* ------------------------------
+     ALIAS DE COMPATIBILIDAD
+     ------------------------------ */
+  --ph-surface: var(--app-surface);
+  --ph-surface-container: var(--app-surface-container);
+  --ph-primary: var(--app-slate-900);
+  --ph-primary-container: #131b2e;
+  --ph-secondary: var(--app-primary);
+  --ph-on-primary-container: #7c839b;
+  --ph-outline-variant: var(--app-outline-variant);
+  --ph-radius-lg: var(--app-glass-radius-sm);
+  --ph-radius-xl: var(--app-glass-radius-md);
+  --ph-radius-2xl: 2rem;
+
+  --af-primary: var(--app-black);
+  --af-secondary: var(--app-primary);
+  --af-surface: var(--app-surface);
+  --af-on-surface: var(--app-on-surface);
+  --af-on-surface-variant: var(--app-on-surface-variant);
+  --af-surface-container-highest: var(--app-surface-container-highest);
+  --af-error: var(--app-error);
+
+  --primary: var(--app-black);
+  --secondary: var(--app-primary);
+  --background: var(--app-bg-main);
+  --tertiary-fixed: var(--app-secondary-light);
+  --on-tertiary-container: var(--app-secondary);
+  --surface-container-lowest: var(--app-surface-container-lowest);
+  --on-surface-variant: var(--app-on-surface-variant);
+  --surface-container-low: var(--app-surface-container-low);
+  --secondary-fixed: #e2dfff;
+  --on-primary: var(--app-on-primary);
+  --secondary-container: var(--app-primary-light);
+  --outline-variant: var(--app-outline-variant);
+  --outline: var(--app-outline);
+  --error: var(--app-error);
+  --on-surface: var(--app-on-surface);
+  --surface-container: var(--app-surface-container);
+  --surface-container-high: var(--app-surface-container-high);
+  --on-primary-container: #7c839b;
+  --surface: var(--app-surface);
+}
+
+/* Estilos de Fondo Globales para la Aplicación */
+body {
+  font-family: var(--app-font-family);
+  background-color: var(--app-bg-main);
+  background-image:
+    var(--app-bg-gradient),
+    linear-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+  background-size: cover, 32px 32px, 32px 32px;
+  color: var(--app-on-surface);
+  margin: 0;
+  padding: 0;
 }
 
 /* ============================================================
-   [2/4] CLASES UTILITARIAS — Glassmorphism Reusable
+   [2/5] CLASES UTILITARIAS — Glassmorphism Reusable
    ============================================================ */
 
 /* Card estándar — uso general (KPIs, Upload panel, SystemHealth, etc.) */
@@ -207,10 +259,10 @@
   padding: 20px;
   border-radius: var(--app-glass-radius-sm);
   border: var(--app-glass-border-subtle);
-  transition: box-shadow .2s ease;
+  transition: box-shadow 0.2s ease;
 }
 .app-card-glass-light:hover {
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.06);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.06);
 }
 
 /* Card Plano — Users CRUD (Bootstrap style, sin glass) */
@@ -233,7 +285,7 @@
 }
 
 /* ============================================================
-   [3/4] CLASES UTILITARIAS — Inputs / Formularios
+   [3/5] CLASES UTILITARIAS — Inputs / Formularios
    ============================================================ */
 .app-input-group-text {
   background: transparent;
@@ -264,15 +316,8 @@
 }
 
 /* ============================================================
-   [4/4] UTILIDADES GLOBALES (Bootstrap complementos)
+   [4/5] UTILIDADES GLOBALES (Material Icons & Traducción)
    ============================================================ */
-
-/* Fuerza a que el traductor Google ignore todos los íconos */
-.material-symbols-outlined {
-  translate: no;
-}
-
-/* Alineación por defecto de íconos en botones y textos */
 .material-symbols-outlined {
   vertical-align: middle;
   font-family: 'Material Symbols Outlined' !important;
@@ -287,54 +332,10 @@
   -webkit-font-smoothing: antialiased;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  translate: no;
 }
 
 .notranslate {
   -webkit-translate: no;
   translate: no;
-}
-
-/* ============ ALIAS DE COMPATIBILIDAD ==================== */
-:root {
-  /* --ph-* → --app-* */
-  --ph-surface: var(--app-surface);
-  --ph-surface-container: var(--app-surface-container);
-  --ph-primary: var(--app-slate-900);
-  --ph-primary-container: #131b2e;
-  --ph-secondary: var(--app-primary);
-  --ph-on-primary-container: #7c839b;
-  --ph-outline-variant: var(--app-outline-variant);
-  --ph-radius-lg: var(--app-glass-radius-sm);
-  --ph-radius-xl: var(--app-glass-radius-md);
-  --ph-radius-2xl: 2rem;
-
-  /* --af-* → --app-* */
-  --af-primary: var(--app-black);
-  --af-secondary: var(--app-primary);
-  --af-surface: var(--app-surface);
-  --af-on-surface: var(--app-on-surface);
-  --af-on-surface-variant: var(--app-on-surface-variant);
-  --af-surface-container-highest: var(--app-surface-container-highest);
-  --af-error: var(--app-error);
-
-  /* Variables sin prefijo (AppLayout anterior) → --app-* */
-  --primary: var(--app-black);
-  --secondary: var(--app-primary);
-  --background: var(--app-bg-main);
-  --tertiary-fixed: var(--app-secondary-light);
-  --on-tertiary-container: var(--app-secondary);
-  --surface-container-lowest: var(--app-surface-container-lowest);
-  --on-surface-variant: var(--app-on-surface-variant);
-  --surface-container-low: var(--app-surface-container-low);
-  --secondary-fixed: #e2dfff;
-  --on-primary: var(--app-on-primary);
-  --secondary-container: var(--app-primary-light);
-  --outline-variant: var(--app-outline-variant);
-  --outline: var(--app-outline);
-  --error: var(--app-error);
-  --on-surface: var(--app-on-surface);
-  --surface-container: var(--app-surface-container);
-  --surface-container-high: var(--app-surface-container-high);
-  --on-primary-container: #7c839b;
-  --surface: var(--app-surface);
 }

@@ -14,59 +14,59 @@ const props = withDefaults(defineProps<Props>(), {
   dot: false,
 })
 
-const baseClasses = 'inline-flex items-center font-semibold rounded-full transition-colors'
+const baseClasses = 'tw-inline-flex tw-items-center tw-font-semibold tw-rounded-full tw-transition-colors'
 
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'success':
-      return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+      return 'tw-bg-success-bg tw-text-success tw-border tw-border-success/30'
     case 'warning':
-      return 'bg-amber-50 text-amber-700 border border-amber-200/60'
+      return 'tw-bg-warning-bg tw-text-warning tw-border tw-border-warning/30'
     case 'error':
-      return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+      return 'tw-bg-error-bg tw-text-error tw-border tw-border-error/30'
     case 'info':
-      return 'bg-sky-50 text-sky-700 border border-sky-200/60'
+      return 'tw-bg-surface-container-low tw-text-on-surface-variant tw-border tw-border-outline-variant'
     case 'primary':
-      return 'bg-slate-900 text-white border border-slate-800'
+      return 'tw-bg-primary tw-text-on-primary tw-border tw-border-primary-dark'
     case 'neutral':
     default:
-      return 'bg-slate-100 text-slate-700 border border-slate-200'
+      return 'tw-bg-surface-container tw-text-on-surface tw-border tw-border-outline-variant'
   }
 })
 
 const dotColorClass = computed(() => {
   switch (props.variant) {
     case 'success':
-      return 'bg-emerald-500'
+      return 'tw-bg-success'
     case 'warning':
-      return 'bg-amber-500'
+      return 'tw-bg-warning'
     case 'error':
-      return 'bg-rose-500'
+      return 'tw-bg-error'
     case 'info':
-      return 'bg-sky-500'
+      return 'tw-bg-on-surface-variant'
     case 'primary':
-      return 'bg-white'
+      return 'tw-bg-on-primary'
     case 'neutral':
     default:
-      return 'bg-slate-400'
+      return 'tw-bg-outline'
   }
 })
 
 const sizeClasses = computed(() => {
   switch (props.size) {
     case 'sm':
-      return 'px-2 py-0.5 text-[11px] gap-1'
+      return 'tw-px-2 tw-py-0.5 tw-text-[11px] tw-gap-1'
     case 'md':
     default:
-      return 'px-2.5 py-1 text-xs gap-1.5'
+      return 'tw-px-2.5 tw-py-1 tw-text-xs tw-gap-1.5'
   }
 })
 </script>
 
 <template>
   <span :class="[baseClasses, variantClasses, sizeClasses]">
-    <span v-if="dot" :class="['inline-block w-1.5 h-1.5 rounded-full', dotColorClass]" aria-hidden="true"></span>
-    <span v-else-if="icon" class="material-symbols-outlined text-[1.1em] notranslate" aria-hidden="true">{{ icon }}</span>
+    <span v-if="dot" :class="['tw-inline-block tw-w-1.5 tw-h-1.5 tw-rounded-full', dotColorClass]" aria-hidden="true"></span>
+    <span v-else-if="icon" class="material-symbols-outlined tw-text-[1.1em] notranslate" aria-hidden="true">{{ icon }}</span>
     <slot></slot>
   </span>
 </template>

@@ -1,17 +1,14 @@
 <template>
   <!--
     DashboardRecentProjects — Bloque 1.4 (Migración Bootstrap → Tailwind)
-    • 35+ clases Bootstrap migradas (table-responsive, d-flex, gap-*, p-*, m-*,
-      text-*, fw-bold, border-*, fs-*, d-none/d-md-block/d-md-none, etc.).
-    • Glassmorphism mantiene clase global .app-card-glass-table (main.css).
-    • Pills de estado usan clases semánticas af-status-pill.* intactas (estas
-      usan tokens --app-success / --app-error / --app-warning del sistema).
+    • Integrado al sistema de tokens `main.css` mediante la clase .app-card-glass-table
+    • Estilos de estado y badges sincronizados con las variables de tema global
   -->
   <div class="app-card-glass-table af-table-card">
     <!-- Encabezado de la Sección -->
     <div class="af-table-header">
-      <div class="flex items-center gap-2">
-        <h3 class="af-section-title mb-0">Proyectos Recientes Globales</h3>
+      <div class="tw-flex tw-items-center tw-gap-2">
+        <h3 class="af-section-title tw-mb-0">Proyectos Recientes Globales</h3>
         <span v-if="!loading && projects.length" class="af-count-badge">
           {{ projects.length }}
         </span>
@@ -23,43 +20,49 @@
     </div>
 
     <!-- State 1: Skeleton Loader (UX Cargando) -->
-    <div v-if="loading" class="p-4">
-      <div v-for="i in 3" :key="i" class="af-skeleton-row mb-3"></div>
+    <div v-if="loading" class="tw-p-4">
+      <div v-for="i in 3" :key="i" class="af-skeleton-row tw-mb-3"></div>
     </div>
 
     <!-- State 2: Estado Vacío (UX No hay datos) -->
-    <div v-else-if="!projects || projects.length === 0" class="af-empty-state text-center py-5">
-      <span class="material-symbols-outlined notranslate af-empty-icon mb-2">folder_off</span>
-      <p class="mb-1 font-bold text-slate-900">No hay proyectos recientes</p>
-      <span class="text-slate-500 text-xs">Los nuevos proyectos asignados aparecerán aquí.</span>
+    <div v-else-if="!projects || projects.length === 0" class="af-empty-state tw-text-center tw-py-8">
+      <span class="material-symbols-outlined notranslate af-empty-icon tw-mb-2">folder_off</span>
+      <p class="tw-mb-1 tw-font-bold tw-text-slate-900">No hay proyectos recientes</p>
+      <span class="tw-text-slate-500 tw-text-xs">Los nuevos proyectos asignados aparecerán aquí.</span>
     </div>
 
     <!-- State 3: Datos Presentes -->
     <template v-else>
       <!-- VISTA DESKTOP / TABLET (Tabla Tradicional) -->
-      <div class="overflow-x-auto hidden md:block">
-        <table class="af-table align-middle">
+      <div class="tw-overflow-x-auto tw-hidden md:tw-block">
+        <table class="af-table tw-align-middle">
           <thead>
             <tr>
-              <th scope="col" class="text-center" style="width: 50px;">#</th>
+              <th scope="col" class="tw-text-center" style="width: 50px;">#</th>
               <th scope="col">Proyecto</th>
               <th scope="col">Equipo / Ámbito</th>
               <th scope="col">Fecha</th>
               <th scope="col">Estado</th>
-              <th scope="col" class="text-right">Acción</th>
+              <th scope="col" class="tw-text-right">Acción</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(project, idx) in projects" :key="project.id || project.name" class="af-table-row">
-              <td class="text-center af-index-col">{{ idx + 1 }}</td>
+              <td class="tw-text-center af-index-col">{{ idx + 1 }}</td>
               <td>
-                <div class="flex items-center gap-3">
-                  <div class="af-project-icon" :style="{ backgroundColor: project.iconBg || 'rgba(75, 65, 225, 0.1)', color: project.iconColor || '#4b41e1' }">
+                <div class="tw-flex tw-items-center tw-gap-3">
+                  <div 
+                    class="af-project-icon"
+                    :style="{ 
+                      backgroundColor: project.iconBg || 'rgba(15, 23, 42, 0.08)', 
+                      color: project.iconColor || 'var(--app-primary)' 
+                    }"
+                  >
                     <span class="material-symbols-outlined notranslate">{{ project.icon || 'folder' }}</span>
                   </div>
                   <div>
-                    <span class="af-project-name block">{{ project.name }}</span>
-                    <span v-if="project.subtitle" class="af-project-sub text-slate-500">{{ project.subtitle }}</span>
+                    <span class="af-project-name tw-block">{{ project.name }}</span>
+                    <span v-if="project.subtitle" class="af-project-sub tw-text-slate-500">{{ project.subtitle }}</span>
                   </div>
                 </div>
               </td>
@@ -78,7 +81,7 @@
                   {{ project.status }}
                 </span>
               </td>
-              <td class="text-right">
+              <td class="tw-text-right">
                 <button class="af-view-btn" title="Ver detalles" @click="$emit('view-project', project)">
                   <span class="material-symbols-outlined notranslate">visibility</span>
                 </button>
@@ -89,18 +92,26 @@
       </div>
 
       <!-- VISTA MÓVIL (Tarjetas Adaptables UX Mobile First) -->
-      <div class="block md:hidden p-3">
-        <div
-          v-for="(project, idx) in projects"
+      <div class="tw-block md:tw-hidden tw-p-3">
+        <div 
+          v-for="project in projects" 
           :key="`mobile-${project.id || project.name}`"
-          class="af-mobile-card mb-3 p-3"
+          class="af-mobile-card tw-mb-3 tw-p-3"
         >
-          <div class="flex justify-between items-start mb-2">
-            <div class="flex items-center gap-2">
-              <div class="af-project-icon sm" :style="{ backgroundColor: project.iconBg || 'rgba(75, 65, 225, 0.1)', color: project.iconColor || '#4b41e1' }">
-                <span class="material-symbols-outlined notranslate" style="font-size:16px;">{{ project.icon || 'folder' }}</span>
+          <div class="tw-flex tw-justify-between tw-items-start tw-mb-2">
+            <div class="tw-flex tw-items-center tw-gap-2">
+              <div 
+                class="af-project-icon sm"
+                :style="{ 
+                  backgroundColor: project.iconBg || 'rgba(15, 23, 42, 0.08)', 
+                  color: project.iconColor || 'var(--app-primary)' 
+                }"
+              >
+                <span class="material-symbols-outlined notranslate" style="font-size:16px;">
+                  {{ project.icon || 'folder' }}
+                </span>
               </div>
-              <span class="af-project-name text-base">{{ project.name }}</span>
+              <span class="af-project-name tw-text-base">{{ project.name }}</span>
             </div>
             <span class="af-status-pill" :class="getStatusClass(project.status)">
               <span class="af-status-dot"></span>
@@ -108,7 +119,7 @@
             </span>
           </div>
 
-          <div class="flex justify-between items-center mt-3 pt-2 border-t border-slate-100 text-xs">
+          <div class="tw-flex tw-justify-between tw-items-center tw-mt-3 tw-pt-2 tw-border-t tw-border-slate-200/60 tw-text-xs">
             <span class="af-team-badge">
               {{ project.team || 'Comunidad / Admin' }}
             </span>
@@ -162,21 +173,19 @@ function getStatusClass(status: string) {
   vertical-align: middle;
   font-family: 'Material Symbols Outlined' !important;
 }
-.notranslate { -webkit-translate: no; translate: no; }
 
-/*
-  Contenedor principal hereda glassmorphism estandarizado desde
-  clase utilitaria GLOBAL .app-card-glass-table (main.css:183-192).
-  Los estilos locales solo agregan el overflow:hidden necesario
-  para tablas. Cualquier cambio de tema se aplica desde main.css.
-*/
+.notranslate {
+  -webkit-translate: no;
+  translate: no;
+}
+
 .af-table-card {
   overflow: hidden;
 }
 
 /* Header de la Tabla */
 .af-table-header {
-  padding: 20px 28px;
+  padding: 18px 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
@@ -185,15 +194,15 @@ function getStatusClass(status: string) {
 }
 
 .af-section-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--app-slate-900, #0f172a);
   letter-spacing: -0.02em;
 }
 
 .af-count-badge {
-  background: rgba(75, 65, 225, 0.1);
-  color: var(--app-primary, #4b41e1);
+  background: rgba(15, 23, 42, 0.08);
+  color: var(--app-primary, #0f172a);
   font-size: 11px;
   font-weight: 700;
   padding: 0.15rem 0.55rem;
@@ -203,7 +212,7 @@ function getStatusClass(status: string) {
 .af-link-btn {
   background: none;
   border: none;
-  color: var(--app-primary, #4b41e1);
+  color: var(--app-primary, #0f172a);
   font-size: 13px;
   font-weight: 700;
   display: inline-flex;
@@ -212,21 +221,23 @@ function getStatusClass(status: string) {
   transition: all 0.2s ease;
   padding: 0.35rem 0.65rem;
   border-radius: 0.5rem;
+  cursor: pointer;
 }
 
 .af-link-btn:hover {
-  background-color: rgba(75, 65, 225, 0.08);
-  color: var(--app-primary-dark, #4338ca);
+  background-color: rgba(15, 23, 42, 0.06);
+  color: var(--app-black, #000000);
 }
 
 /* Tabla Desktop */
 .af-table {
   width: 100%;
   margin-bottom: 0;
+  border-collapse: collapse;
 }
 
 .af-table th {
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.25rem;
   font-size: 11px;
   color: var(--app-slate-500, #64748b);
   text-transform: uppercase;
@@ -237,7 +248,7 @@ function getStatusClass(status: string) {
 }
 
 .af-table td {
-  padding: 1.1rem 1.5rem;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   font-size: 14px;
 }
@@ -247,7 +258,7 @@ function getStatusClass(status: string) {
 }
 
 .af-table-row:hover {
-  background-color: rgba(75, 65, 225, 0.02);
+  background-color: rgba(15, 23, 42, 0.02);
 }
 
 .af-index-col {
@@ -301,7 +312,7 @@ function getStatusClass(status: string) {
   font-weight: 500;
 }
 
-/* Status Pills — usan tokens semánticos --app-* del sistema unificado */
+/* Status Pills — Usan tokens semánticos --app-* */
 .af-status-pill {
   padding: 0.25rem 0.7rem;
   font-size: 11px;
@@ -333,7 +344,7 @@ function getStatusClass(status: string) {
 
 .af-status-pill.rejected {
   background-color: var(--app-error-bg, rgba(254, 226, 226, 0.8));
-  color: var(--app-error, #b91c1c);
+  color: var(--app-error, #ba1a1a);
   border: 1px solid rgba(254, 202, 202, 0.8);
 }
 
@@ -350,7 +361,7 @@ function getStatusClass(status: string) {
   width: 34px;
   height: 34px;
   border-radius: 0.5rem;
-  color: var(--app-primary, #4b41e1);
+  color: var(--app-primary, #0f172a);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -359,16 +370,16 @@ function getStatusClass(status: string) {
 }
 
 .af-view-btn:hover {
-  background-color: var(--app-primary, #4b41e1);
+  background-color: var(--app-primary, #0f172a);
   color: var(--app-on-primary, #ffffff);
-  border-color: var(--app-primary, #4b41e1);
-  box-shadow: 0 4px 12px rgba(75, 65, 225, 0.25);
+  border-color: var(--app-primary, #0f172a);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
 
 /* Adaptación MÓVIL (Cards) */
 .af-mobile-card {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(226, 232, 240, 0.9);
   border-radius: 0.85rem;
   transition: background 0.2s ease;
 }
@@ -380,12 +391,13 @@ function getStatusClass(status: string) {
 .af-btn-mobile-action {
   background: none;
   border: none;
-  color: var(--app-primary, #4b41e1);
+  color: var(--app-primary, #0f172a);
   font-weight: 700;
   font-size: 12px;
   display: flex;
   align-items: center;
   gap: 0.1rem;
+  cursor: pointer;
 }
 
 /* Skeletons y Estados Vacíos */
@@ -403,7 +415,11 @@ function getStatusClass(status: string) {
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>

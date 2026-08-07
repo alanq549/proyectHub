@@ -24,20 +24,20 @@ const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
 }>()
 
-const baseClasses = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-900/20 active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none cursor-pointer'
+const baseClasses = 'tw-inline-flex tw-items-center tw-justify-center tw-font-medium tw-rounded-xl tw-transition-all tw-duration-200 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-primary/20 active:tw-scale-[0.98] disabled:tw-opacity-60 disabled:tw-pointer-events-none tw-cursor-pointer'
 
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'primary':
-      return 'bg-slate-900 hover:bg-black text-white shadow-btn-primary hover:shadow-btn-primary-hover border border-slate-800'
+      return 'tw-bg-primary hover:tw-bg-primary-dark tw-text-on-primary tw-shadow-btn-primary hover:tw-shadow-btn-primary-hover tw-border tw-border-primary-dark'
     case 'secondary':
-      return 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200/80 shadow-sm'
+      return 'tw-bg-surface-container-low hover:tw-bg-surface-container tw-text-on-surface tw-border tw-border-outline-variant tw-shadow-sm'
     case 'outline':
-      return 'bg-transparent hover:bg-slate-100/80 text-slate-700 border border-slate-300 hover:border-slate-400'
+      return 'tw-bg-transparent hover:tw-bg-surface-container-low tw-text-on-surface-variant tw-border tw-border-outline-variant hover:tw-border-outline'
     case 'ghost':
-      return 'bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900'
+      return 'tw-bg-transparent hover:tw-bg-surface-container-low tw-text-on-surface-variant hover:tw-text-on-surface'
     case 'danger':
-      return 'bg-error hover:bg-red-700 text-white shadow-sm border border-red-700'
+      return 'tw-bg-error hover:tw-bg-error/90 tw-text-on-primary tw-shadow-sm tw-border tw-border-error'
     default:
       return ''
   }
@@ -46,16 +46,16 @@ const variantClasses = computed(() => {
 const sizeClasses = computed(() => {
   switch (props.size) {
     case 'sm':
-      return 'px-3 py-1.5 text-xs gap-1.5'
+      return 'tw-px-3 tw-py-1.5 tw-text-xs tw-gap-1.5'
     case 'lg':
-      return 'px-6 py-3 text-base gap-2.5'
+      return 'tw-px-6 tw-py-3 tw-text-base tw-gap-2.5'
     case 'md':
     default:
-      return 'px-4 py-2 text-sm gap-2'
+      return 'tw-px-4 tw-py-2 tw-text-sm tw-gap-2'
   }
 })
 
-const widthClass = computed(() => (props.block ? 'w-full' : ''))
+const widthClass = computed(() => (props.block ? 'tw-w-full' : ''))
 
 function handleClick(event: MouseEvent) {
   if (!props.disabled && !props.loading) {
@@ -71,8 +71,8 @@ function handleClick(event: MouseEvent) {
     :class="[baseClasses, variantClasses, sizeClasses, widthClass]"
     @click="handleClick"
   >
-    <span v-if="loading" class="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full" aria-hidden="true"></span>
-    <span v-else-if="icon" class="material-symbols-outlined text-[1.2em] notranslate" aria-hidden="true">{{ icon }}</span>
+    <span v-if="loading" class="tw-animate-spin tw-inline-block tw-w-4 tw-h-4 tw-border-2 tw-border-current tw-border-t-transparent tw-rounded-full" aria-hidden="true"></span>
+    <span v-else-if="icon" class="material-symbols-outlined tw-text-[1.2em] notranslate" aria-hidden="true">{{ icon }}</span>
     <slot name="icon" v-else-if="$slots.icon"></slot>
     <slot></slot>
   </button>

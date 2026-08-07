@@ -5,11 +5,11 @@
     • .app-card-glass-light global intacta, clases locales para tipografía
       métricas / progress intactas (usan tokens --app-surface-container-*).
   -->
-  <div class="app-card-glass-light af-panel-card">
-    <h3 class="af-section-title mb-4">Estado del Sistema</h3>
-    <div class="flex flex-col gap-4">
+  <AppCard variant="glass-light" padding="none" class=" af-panel-card">
+    <h3 class="af-section-title tw-mb-4">Estado del Sistema</h3>
+    <div class="tw-flex tw-flex-col tw-gap-4">
       <div v-for="metric in metrics" :key="metric.label">
-        <div class="flex justify-between mb-2">
+        <div class="tw-flex tw-justify-between tw-mb-2">
           <span class="af-metric-label">{{ metric.label }}</span>
           <span class="af-metric-value">{{ metric.value }}</span>
         </div>
@@ -19,28 +19,26 @@
       </div>
 
       <div>
-        <div class="flex justify-between mb-2">
+        <div class="tw-flex tw-justify-between tw-mb-2">
           <span class="af-metric-label">Buckets en S3</span>
           <span class="af-metric-value neutral">{{ bucketsActive }} Activos</span>
         </div>
-        <div class="flex gap-1">
+        <div class="tw-flex tw-gap-1">
           <div
             v-for="n in totalBuckets"
             :key="n"
             class="af-bucket-segment"
-            :class="{
-              filled: n <= bucketsActive,
-              'rounded-start': n === 1,
-              'rounded-end': n === totalBuckets
-            }"
+            :class="{ filled: n <= bucketsActive, 'rounded-start': n === 1, 'rounded-end': n === totalBuckets }"
           ></div>
         </div>
       </div>
     </div>
-  </div>
+  </AppCard>
 </template>
 
 <script setup lang="ts">
+import AppCard from '@/shared/components/AppCard.vue'
+
 export interface SystemMetric {
   label: string
   value: string

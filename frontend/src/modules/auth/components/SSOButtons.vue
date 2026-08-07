@@ -1,6 +1,6 @@
 <template>
   <!-- SOCIAL LOGIN -->
-  <div class="flex items-center gap-3 my-4">
+  <div class="tw-flex tw-items-center tw-gap-3 tw-my-4">
     <div class="divider-line"></div>
     <span class="divider-text">
       O CONTINUAR CON
@@ -8,14 +8,14 @@
     <div class="divider-line"></div>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    <div class="col-span-1">
+  <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 tw-gap-3">
+    <div class="tw-col-span-1">
       <button class="sso-btn">
         Google
       </button>
     </div>
 
-    <div class="col-span-1">
+    <div class="tw-col-span-1">
       <button class="sso-btn">
         <span class="material-symbols-outlined notranslate">
           school

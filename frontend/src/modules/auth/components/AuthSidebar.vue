@@ -1,14 +1,14 @@
 <template>
-  <div class="col-span-1 md:col-span-1 hidden md:flex flex-col justify-between left-panel">
+  <div class="tw-col-span-1 md:tw-col-span-1 tw-hidden md:tw-flex tw-flex-col tw-justify-between left-panel">
     <div class="left-panel-bg"></div>
 
-    <div class="relative" style="z-index:1;">
-      <div class="flex items-center gap-2 mb-5">
+    <div class="tw-relative" style="z-index:1;">
+      <div class="tw-flex tw-items-center tw-gap-2 tw-mb-5">
         <span class="brand-name">
           ProjectHub
         </span>
       </div>
-      <h1 class="headline mb-2">
+      <h1 class="headline tw-mb-2">
         Garantizando la excelencia académica.
       </h1>
       <p class="subhead">
@@ -16,8 +16,8 @@
       </p>
     </div>
 
-    <div class="relative mt-auto" style="z-index:1;">
-      <div class="avatar-stack flex mb-3">
+    <div class="tw-relative tw-mt-auto" style="z-index:1;">
+      <div class="avatar-stack tw-flex tw-mb-3">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAXfhEfWfTaKVGvIHAs7_UDZPt_wA6IPGlRBO7NrRs4koBf_dJE6JtECZ7tKnjBM9sNwMrcfOaemF3p03L4hipB9meE5AYCGbOOCNWmU5oSI82Y2O23hVfazOjjNN3LQeIanmR-tDfWIrhGNdCxdpiQ8Z39L-RzCG4nBHlu_FBSdwMSo5wl4mZJZKDCf0hXBSTDfWRagOJ1rc_KuogekkJnjuW20F-FhDnCC0y4TeXAcNvc00_B3rMKw"
           alt="Investigadora">
@@ -28,7 +28,7 @@
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3faTjVGZj6d3l8Ff-cp3IqLWD3avOw7p02pfbdELvnXHw1IJNMinwm-iTgPDvi9cEtnFfdCo8GvSwwztV66vPIPxfFgLTIWm_DkulZBfF-QLA8_SjLPBjam2RKv3ug-cXduOve63CKZdkC7voCnQ3WubJ7jVvDOYS7KIvQPW_nwQTWPpFszvkPTFepRz7tLwpGOstLvd-YfHH4WyqCQ5lT9sXgLUYRLJtvYzJ0MKQdwEeu3ueHsvT4w"
           alt="Investigador en presentación">
       </div>
-      <p class="caption-text mb-0">
+      <p class="caption-text tw-mb-0">
         Únete a más de 5,000 investigadores hoy.
       </p>
     </div>

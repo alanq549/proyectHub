@@ -1,5 +1,5 @@
 <template>
-  <div class="login-wrapper min-h-screen flex items-center justify-center p-3 md:p-0 relative overflow-hidden">
+  <div class="login-wrapper tw-min-h-screen tw-flex tw-items-center tw-justify-center tw-p-3 md:tw-p-0 tw-relative tw-overflow-hidden">
 
     <div class="bg-layer">
       <div class="blob-1"></div>
@@ -7,94 +7,91 @@
     </div>
 
     <main class="auth-card">
-      <div class="grid grid-cols-1 md:grid-cols-2">
+      <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2">
         <AuthSidebar />
 
         <!-- RIGHT PANEL -->
-        <div class="col-span-1 md:col-span-1 right-panel">
-          <div class="mx-auto" style="max-width:24rem;">
+        <div class="tw-col-span-1 md:tw-col-span-1 right-panel">
+          <div class="tw-mx-auto" style="max-width:24rem;">
             <AuthLoginMobileHeader />
 
             <!-- DESKTOP BACK BUTTON -->
-            <div class="hidden md:block mb-4">
+            <div class="tw-hidden md:tw-block tw-mb-4">
               <button class="btn-back-home" @click="router.push({ name: 'home' })">
                 Volver al inicio
               </button>
             </div>
 
-            <div class="mb-4">
-              <h2 class="form-title mb-2">
+            <div class="tw-mb-4">
+              <h2 class="form-title tw-mb-2">
                 Bienvenido de nuevo
               </h2>
 
-              <p class="form-subtitle mb-0">
+              <p class="form-subtitle tw-mb-0">
                 Ingresa tus credenciales para acceder.
               </p>
             </div>
 
             <!-- Alerta de Error Global / Backend -->
-            <ErrorAlert v-if="errorMessage" :errorMessage="errorMessage" class="mb-3" />
+            <ErrorAlert v-if="errorMessage" :errorMessage="errorMessage" class="tw-mb-3" />
 
-            <form id="login-form" @submit.prevent="handleLogin" class="flex flex-col gap-3" novalidate>
+            <form id="login-form" @submit.prevent="handleLogin" class="tw-flex tw-flex-col tw-gap-3" novalidate>
               <!-- Input Email -->
               <div class="form-group">
-                <label class="form-label-custom mb-1 block">Correo Electrónico</label>
+                <label class="form-label-custom tw-mb-1 tw-block">Correo Electrónico</label>
                 <div class="input-icon-wrap">
                   <span class="material-symbols-outlined notranslate">mail</span>
                   <input 
                     v-model.trim="email" 
                     type="email" 
-                    class="form-control-custom w-full" 
+                    class="form-control-custom tw-w-full"
                     :class="{ 'is-invalid': errors.email }"
                     placeholder="correo@universidad.edu" 
                     @input="clearFieldError('email')"
                   />
                 </div>
-                <div v-if="errors.email" class="invalid-feedback block mt-1">
+                <div v-if="errors.email" class="invalid-feedback tw-block tw-mt-1">
                   {{ errors.email }}
                 </div>
               </div>
 
               <!-- Input Password -->
-              <div class="flex flex-col gap-1">
-                <div class="flex justify-between items-center mb-1">
-                  <label class="form-label-custom mb-0">Contraseña</label>
-                  <a href="#" class="text-primary text-[14px] no-underline hover:underline transition-all" @click.prevent="router.push({ name: 'forgot-password' })">
-                    ¿Olvidaste tu contraseña?
-                  </a>
+              <div class="tw-flex tw-flex-col tw-gap-1">
+                <div class="tw-flex tw-justify-between tw-items-center tw-mb-1">
+                  <label class="form-label-custom tw-mb-0">Contraseña</label>
                 </div>
                 <div class="input-icon-wrap">
                   <span class="material-symbols-outlined notranslate">lock</span>
                   <input 
                     v-model="password" 
                     :type="showPassword ? 'text' : 'password'" 
-                    class="form-control-custom has-toggle w-full" 
+                    class="form-control-custom has-toggle tw-w-full"
                     :class="{ 'is-invalid': errors.password }"
                     placeholder="••••••••"
                     @input="clearFieldError('password')"
                   />
                   <button type="button" class="toggle-icon" @click="togglePassword">
-                    <span class="material-symbols-outlined notranslate text-xl">
+                    <span class="material-symbols-outlined notranslate tw-text-xl">
                       {{ showPassword ? 'visibility_off' : 'visibility' }}
                     </span>
                   </button>
                 </div>
-                <div v-if="errors.password" class="invalid-feedback block mt-1">
+                <div v-if="errors.password" class="invalid-feedback tw-block tw-mt-1">
                   {{ errors.password }}
                 </div>
               </div>
 
               <!-- Botón Iniciar Sesión -->
-              <button type="submit" class="btn-primary-custom mt-2" :disabled="isLoading">
+              <button type="submit" class="btn-primary-custom tw-mt-2" :disabled="isLoading">
                 <span v-if="!isLoading">Iniciar Sesión</span>
-                <span v-else class="spinner-border spinner-border-sm" role="status"></span>
+                <span v-else class="tw-inline-block tw-h-4 tw-w-4 tw-animate-spin tw-rounded-full tw-border-2 tw-border-current tw-border-t-transparent" role="status"></span>
               </button>
             </form>
 
-            <div class="text-center mt-4">
-              <p class="form-subtitle mb-0">
+            <div class="tw-text-center tw-mt-4">
+              <p class="form-subtitle tw-mb-0">
                 ¿No tienes una cuenta?
-                <a href="#" class="text-primary font-semibold no-underline hover:underline transition-all" @click.prevent="router.push({ name: 'register' })">
+                <a href="#" class="tw-text-primary tw-font-semibold tw-no-underline hover:tw-underline tw-transition-all" @click.prevent="router.push({ name: 'register' })">
                   Crear cuenta
                 </a>
               </p>
@@ -105,7 +102,6 @@
         </div>
       </div>
     </main>
-    <SecureBadge />
   </div>
 </template>
 
@@ -371,6 +367,15 @@ const handleLogin = async () => {
   outline: none;
   box-shadow: 0 0 0 4px rgba(75, 65, 225, 0.10);
   border-color: var(--secondary, #4b41e1);
+}
+
+.form-control-custom.is-invalid {
+  border-color: var(--app-error);
+}
+
+.invalid-feedback {
+  color: var(--app-error);
+  font-size: 0.75rem;
 }
 
 .btn-primary-custom {

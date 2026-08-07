@@ -1,148 +1,109 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-    <div class="bg-white/90 backdrop-blur-md rounded-2xl max-w-2xl w-full shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[90vh]">
+  <div class="tw-fixed tw-inset-0 tw-z-50 tw-flex tw-items-center tw-justify-center tw-bg-black/40 tw-backdrop-blur-sm tw-p-4">
+    <AppCard variant="glass" padding="none" class="tw-max-w-2xl tw-w-full tw-max-h-[90vh] tw-flex tw-flex-col tw-overflow-hidden">
       <!-- Header -->
-      <div class="p-5 border-b border-slate-100/80 flex items-center justify-between bg-white/40">
-        <h5 class="text-lg font-semibold text-slate-800 flex items-center gap-2.5 m-0">
-          <span class="material-symbols-outlined notranslate text-indigo-600 bg-indigo-50 p-2 rounded-xl text-xl">
+      <div class="tw-px-5 tw-py-4 tw-border-b tw-border-outline-variant tw-flex tw-items-center tw-justify-between tw-bg-surface-container-lowest/40">
+        <h5 class="tw-text-lg tw-font-semibold tw-text-on-surface tw-flex tw-items-center tw-gap-2.5 tw-m-0">
+          <span class="material-symbols-outlined notranslate tw-text-primary tw-bg-surface-container tw-p-2 tw-rounded-xl tw-text-xl">
             {{ isEditing ? 'manage_accounts' : 'person_add' }}
           </span>
           {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
         </h5>
-        <button 
-          type="button" 
-          class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors" 
+        <button
+          type="button"
+          class="tw-w-9 tw-h-9 tw-flex tw-items-center tw-justify-center tw-rounded-xl tw-text-outline hover:tw-bg-surface-container hover:tw-text-on-surface tw-transition-colors"
           @click="$emit('close')"
         >
-          <span class="material-symbols-outlined notranslate text-xl">close</span>
+          <span class="material-symbols-outlined notranslate tw-text-xl">close</span>
         </button>
       </div>
 
       <!-- Body -->
-      <div class="p-6 overflow-y-auto">
-        <form @submit.prevent="handleSubmit" class="space-y-5">
-         <!-- Subida de Avatar -->
-<div class="flex items-center gap-4 p-4 bg-slate-50/70 border border-slate-100 rounded-2xl">
-  <img 
-    :src="avatarUrl" 
-    alt="Preview Avatar" 
-    class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-slate-200"
-  />
-  <div class="flex-1 min-w-0">
-    <label class="block font-medium text-xs text-slate-600 mb-1.5">Foto de Perfil</label>
-    <input 
-      type="file" 
-      class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 file:transition-colors file:cursor-pointer cursor-pointer" 
-      accept="image/*" 
-      @change="handleFileChange"
-    />
-    <span class="block mt-1.5 text-[11px] text-slate-400">Formatos permitidos: JPG, PNG. Máx 2MB.</span>
-  </div>
-</div>
+      <div class="tw-p-6 tw-overflow-y-auto">
+        <form @submit.prevent="handleSubmit" class="tw-space-y-5">
+          <!-- Subida de Avatar -->
+          <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-bg-surface-container-low/60 tw-border tw-border-outline-variant tw-rounded-2xl">
+            <img
+              :src="avatarUrl"
+              alt="Preview Avatar"
+              class="tw-w-16 tw-h-16 tw-rounded-full tw-object-cover tw-border-2 tw-border-outline-variant tw-shadow-sm"
+            />
+            <div class="tw-flex-1 tw-min-w-0">
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1.5">Foto de Perfil</label>
+              <input
+                type="file"
+                class="tw-block tw-w-full tw-text-xs tw-text-on-surface-variant file:tw-mr-3 file:tw-py-1.5 file:tw-px-3 file:tw-rounded-lg file:tw-border-0 file:tw-text-xs file:tw-font-medium file:tw-bg-surface-container file:tw-text-primary hover:file:tw-bg-surface-container-high file:tw-transition-colors file:tw-cursor-pointer tw-cursor-pointer"
+                accept="image/*"
+                @change="handleFileChange"
+              />
+              <span class="tw-block tw-mt-1.5 tw-text-[11px] tw-text-outline">Formatos permitidos: JPG, PNG. Máx 2MB.</span>
+            </div>
+          </div>
 
           <!-- Form Fields -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
             <div>
-              <label class="block font-medium text-xs text-slate-600 mb-1">Nombre(s)</label>
-              <input 
-                v-model="form.first_name" 
-                type="text" 
-                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
-                placeholder="Ej. Alan" 
-              />
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Nombre(s)</label>
+              <AppInput v-model="form.first_name" placeholder="Ej. Alan" />
             </div>
 
             <div>
-              <label class="block font-medium text-xs text-slate-600 mb-1">Apellido(s)</label>
-              <input 
-                v-model="form.last_name" 
-                type="text" 
-                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
-                placeholder="Ej. Arriaga" 
-              />
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Apellido(s)</label>
+              <AppInput v-model="form.last_name" placeholder="Ej. Arriaga" />
             </div>
 
             <div>
-              <label class="block font-medium text-xs text-slate-600 mb-1">Nombre de Usuario <span class="text-rose-500">*</span></label>
-              <input 
-                v-model="form.username" 
-                type="text" 
-                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
-                required 
-                placeholder="Ej. alanq" 
-              />
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Nombre de Usuario <span class="tw-text-error">*</span></label>
+              <AppInput v-model="form.username" icon="alternate_email" placeholder="Ej. alanq" />
             </div>
 
             <div>
-              <label class="block font-medium text-xs text-slate-600 mb-1">Correo Electrónico <span class="text-rose-500">*</span></label>
-              <input 
-                v-model="form.email" 
-                type="email" 
-                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
-                required 
-                placeholder="usuario@correo.com" 
-              />
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Correo Electrónico <span class="tw-text-error">*</span></label>
+              <AppInput v-model="form.email" type="email" icon="mail" placeholder="usuario@correo.com" />
             </div>
 
             <div v-if="!isEditing">
-              <label class="block font-medium text-xs text-slate-600 mb-1">Contraseña <span class="text-rose-500">*</span></label>
-              <input 
-                v-model="form.password" 
-                type="password" 
-                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700" 
-                required 
-                placeholder="••••••••" 
-              />
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Contraseña <span class="tw-text-error">*</span></label>
+              <AppInput v-model="form.password" type="password" icon="lock" placeholder="••••••••" />
             </div>
 
             <div>
-              <label class="block font-medium text-xs text-slate-600 mb-1">Rol en el Sistema <span class="text-rose-500">*</span></label>
-              <select 
-                v-model="form.role" 
-                class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-slate-700 cursor-pointer" 
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Rol en el Sistema <span class="tw-text-error">*</span></label>
+              <select
+                v-model="form.role"
                 required
+                class="tw-w-full tw-rounded-xl tw-border tw-border-outline-variant tw-bg-surface-container-lowest tw-px-3.5 tw-py-2.5 tw-text-sm tw-text-on-surface focus:tw-border-primary focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-primary tw-transition-all tw-cursor-pointer"
               >
                 <option value="user">Usuario Standard</option>
                 <option value="admin">Administrador</option>
               </select>
             </div>
 
-            <!-- Custom Tailwind Switch -->
-            <div class="flex items-center pt-2">
-              <label for="userActiveCheck" class="relative inline-flex items-center cursor-pointer select-none">
-                <input 
-                  v-model="form.is_active" 
-                  type="checkbox" 
-                  id="userActiveCheck" 
-                  class="sr-only peer" 
+            <!-- Switch Cuenta Activa -->
+            <div class="tw-flex tw-items-center tw-pt-2">
+              <label for="userActiveCheck" class="tw-relative tw-inline-flex tw-items-center tw-cursor-pointer tw-select-none">
+                <input
+                  v-model="form.is_active"
+                  type="checkbox"
+                  id="userActiveCheck"
+                  class="tw-sr-only tw-peer"
                 />
-                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none ring-offset-2 peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                <span class="ml-3 text-xs font-medium text-slate-700">Cuenta Activa</span>
+                <div class="tw-w-11 tw-h-6 tw-bg-surface-container-highest peer-focus:tw-outline-none peer-focus:tw-ring-2 peer-focus:tw-ring-primary/20 tw-rounded-full tw-peer peer-checked:after:tw-translate-x-full peer-checked:after:tw-border-white after:tw-content-[''] after:tw-absolute after:tw-top-[2px] after:tw-left-[2px] after:tw-bg-white after:tw-border-outline-variant after:tw-border after:tw-rounded-full after:tw-h-5 after:tw-w-5 after:tw-transition-all peer-checked:tw-bg-primary"></div>
+                <span class="tw-ml-3 tw-text-xs tw-font-medium tw-text-on-surface-variant">Cuenta Activa</span>
               </label>
             </div>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-            <button 
-              type="button" 
-              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100/80 rounded-xl transition-colors bg-white border border-slate-200/80" 
-              @click="$emit('close')"
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              class="px-5 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors disabled:opacity-50 inline-flex items-center gap-2 shadow-sm" 
-              :disabled="loading"
-            >
-              <span v-if="loading" class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              <span>{{ isEditing ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
-            </button>
+          <div class="tw-flex tw-justify-end tw-gap-3 tw-mt-6 tw-pt-4 tw-border-t tw-border-outline-variant">
+            <AppButton type="button" variant="secondary" @click="$emit('close')">Cancelar</AppButton>
+            <AppButton type="submit" variant="primary" :loading="loading" icon="save">
+              {{ isEditing ? 'Guardar Cambios' : 'Crear Usuario' }}
+            </AppButton>
           </div>
         </form>
       </div>
-    </div>
+    </AppCard>
   </div>
 </template>
 
@@ -150,6 +111,9 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import type { User } from '../services/userService';
+import AppCard from '@/shared/components/AppCard.vue';
+import AppButton from '@/shared/components/AppButton.vue';
+import AppInput from '@/shared/components/AppInput.vue';
 
 const props = defineProps<{
   userToEdit?: User | null;

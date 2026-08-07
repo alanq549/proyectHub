@@ -1,14 +1,13 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import 'material-symbols';
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
-// Importante: Si utilizas iconos de Material Symbols / Bootstrap Icons
-import 'bootstrap-icons/font/bootstrap-icons.css' 
-// En main.ts
-import 'material-symbols/outlined.css' // Importa los estilos de la versión Outlined
+import 'material-symbols'
+import 'material-symbols/outlined.css'
 
-// Tus estilos globales personalizados
 import './assets/main.css'
 
 import App from './App.vue'

@@ -1,34 +1,22 @@
+  <!--src/shared/components/AppDropdown.vue -->
+
 <template>
-  <div ref="dropdownRef" class="relative inline-block">
-    <slot
-      name="trigger"
-      :open="isOpen"
-      :toggle="toggle"
-    >
-      <button
-        type="button"
-        class="inline-flex items-center justify-center p-2 rounded-xl outline-none"
-        :aria-expanded="isOpen"
-        aria-haspopup="true"
-        role="button"
-        @click="toggle"
-      >
+  <div ref="dropdownRef" class="tw-relative tw-inline-block">
+    <slot name="trigger" :open="isOpen" :toggle="toggle">
+      <button type="button"
+        class="tw-inline-flex tw-items-center tw-justify-center tw-p-2 tw-rounded-xl tw-outline-none"
+        :aria-expanded="isOpen" aria-haspopup="true" role="button" @click="toggle">
         <span class="material-symbols-outlined notranslate">more_vert</span>
       </button>
     </slot>
 
     <Teleport to="body">
       <Transition name="dropdown-fade">
-        <div
-          v-if="isOpen && floatingStyles"
-          class="z-[1060]"
-          :style="floatingStyles"
-          role="menu"
-        >
+        <div v-if="isOpen && floatingStyles" ref="floatingRef" class="tw-z-[1060]" :style="floatingStyles" role="menu">
+          <!-- En AppDropdown.vue -->
           <div
-            class="bg-white backdrop-blur-glass-sm rounded-2xl border border-slate-100 shadow-lg py-2 min-w-[220px]"
-            @click.stop
-          >
+            class="tw-bg-white tw-backdrop-blur-glass-sm tw-rounded-2xl tw-border tw-border-solid tw-border-slate-100 tw-shadow-lg tw-py-2 tw-min-w-[220px]"
+            @click.stop>
             <slot :close="close" />
           </div>
         </div>
@@ -53,6 +41,7 @@ const emit = defineEmits<{
 }>();
 
 const dropdownRef = ref<HTMLElement | null>(null);
+const floatingRef = ref<HTMLElement | null>(null);
 const isOpen = ref(props.modelValue ?? false);
 const top = ref(0);
 const left = ref(0);
@@ -67,7 +56,7 @@ watch(
 const floatingStyles = computed(() => {
   if (!isOpen.value) return null;
   return {
-    position: 'absolute' as const,
+    position: 'fixed' as const,
     top: `${top.value}px`,
     left: `${left.value}px`,
   };
@@ -98,12 +87,12 @@ function computePosition() {
   if (!root) return;
   const rect = root.getBoundingClientRect();
   const align = props.align ?? 'end';
-  top.value = window.scrollY + rect.bottom + 6;
+  top.value = rect.bottom + 6;
   if (align === 'end') {
     const menuWidth = 220;
-    left.value = window.scrollX + rect.right - menuWidth;
+    left.value = rect.right - menuWidth;
   } else {
-    left.value = window.scrollX + rect.left;
+    left.value = rect.left;
   }
 }
 
@@ -121,7 +110,8 @@ window.addEventListener('scroll', () => {
   if (isOpen.value) computePosition();
 }, true);
 
-useClickOutside(dropdownRef, () => {
+useClickOutside(dropdownRef, (event) => {
+  if (event.target instanceof Node && floatingRef.value?.contains(event.target)) return;
   if (isOpen.value) close();
 });
 
@@ -133,6 +123,7 @@ defineExpose({ open, close, toggle });
 .dropdown-fade-leave-active {
   transition: opacity 0.12s ease, transform 0.12s ease;
 }
+
 .dropdown-fade-enter-from,
 .dropdown-fade-leave-to {
   opacity: 0;

@@ -5,7 +5,7 @@
     • Utilidades Bootstrap (text-start / d-flex / mt-* / align-items-*) migradas a *.
     • Botones mantienen clases locales af-btn-* (son estilos custom, no Bootstrap).
   -->
-  <section class="app-card-glass-xl af-hero-card">
+  <AppCard variant="glass-xl" padding="none" class=" af-hero-card">
     <div class="af-hero-glow"></div>
     <div class="af-hero-body">
       <div class="af-hero-left">
@@ -16,9 +16,9 @@
             size="lg"
           />
         </div>
-        <div class="text-left">
+        <div class="tw-text-left">
           <h2 class="af-hero-title notranslate">¡Hola de nuevo, {{ user.name }}! 👋</h2>
-          <div class="flex items-center gap-2 mt-2 flex-wrap">
+          <div class="tw-flex tw-items-center tw-gap-2 tw-mt-2 tw-flex-wrap">
             <span class="af-role-badge">{{ user.role }}</span>
             <span class="af-secure-badge">
               <span class="material-symbols-outlined notranslate" style="font-size:14px;">lock</span>
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-2 mt-3 md:mt-0 items-center">
+      <div class="tw-flex tw-flex-wrap tw-gap-2 tw-mt-3 md:tw-mt-0 tw-items-center">
         <button class="af-btn-primary" @click="$emit('manage-users')">
           <span class="material-symbols-outlined notranslate" style="font-size: 18px;">manage_accounts</span>
           Gestionar Usuarios
@@ -43,10 +43,12 @@
         </button>
       </div>
     </div>
-  </section>
+  </AppCard>
 </template>
 
 <script setup lang="ts">
+import AppCard from '@/shared/components/AppCard.vue'
+
 import UserAvatar from '@/layouts/components/UserAvatar.vue'
 
 export interface DashboardHeroUser {
