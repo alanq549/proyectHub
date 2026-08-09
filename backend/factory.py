@@ -6,6 +6,10 @@ import os
 
 load_dotenv()
 
+# Avatar uploads receive a new UUID-based filename when they change, so they can
+# safely be cached by browsers without revalidation on every list navigation.
+PROFILE_IMAGE_CACHE_MAX_AGE = 60 * 60 * 24 * 7
+
 def create_app():
     factory_dir = os.path.dirname(os.path.abspath(__file__))
     src_path = os.path.join(factory_dir, 'src')
@@ -18,6 +22,12 @@ def create_app():
     )
 
     app.config.from_object('src.config.default.Config')
+
+    # The module blueprints currently contain a mix of collection routes that
+    # do and do not end in '/'.  Accept both spellings at the application
+    # boundary so clients are not redirected (or rejected for POST requests).
+    # This must be set before registering the blueprints.
+    app.url_map.strict_slashes = False
 
     uploads_folder = os.path.join(static_folder, 'uploads')
     defaults_folder = os.path.join(static_folder, 'defaults')
@@ -61,11 +71,19 @@ def create_app():
     @app.route('/static/uploads/<folder>/<filename>')
     def serve_upload(folder, filename):
         target_folder = os.path.join(uploads_folder, folder)
-        return send_from_directory(target_folder, filename)
+        return send_from_directory(
+            target_folder,
+            filename,
+            max_age=PROFILE_IMAGE_CACHE_MAX_AGE
+        )
 
     @app.route('/static/defaults/<path:filename>')
     def serve_defaults(filename):
-        return send_from_directory(defaults_folder, filename)
+        return send_from_directory(
+            defaults_folder,
+            filename,
+            max_age=PROFILE_IMAGE_CACHE_MAX_AGE
+        )
 
     @app.route('/')
     def index():

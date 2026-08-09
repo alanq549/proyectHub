@@ -22,6 +22,13 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value);
   const isAdmin = computed(() => user.value?.role === 'admin');
 
+  function clearModuleCaches() {
+    for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+      const key = localStorage.key(index);
+      if (key?.startsWith('projecthub.')) localStorage.removeItem(key);
+    }
+  }
+
   // 💡 CENTRALIZACIÓN DE LA URL DE LA IMAGEN DE PERFIL
   const avatarUrl = computed(() => {
     const staticBase = import.meta.env.VITE_STATIC_URL || '';
@@ -51,6 +58,8 @@ export const useAuthStore = defineStore('auth', () => {
     
     const accessToken = response.access_token; 
     
+    // Cached module data may belong to a different account.
+    clearModuleCaches();
     token.value = accessToken;
     user.value = response.user;
     
@@ -82,6 +91,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null;
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    clearModuleCaches();
   }
 
   return {

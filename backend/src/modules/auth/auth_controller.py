@@ -109,3 +109,27 @@ class AuthController:
             return jsonify({'error': str(e)}), 400
         except PermissionError as e:
             return jsonify({'error': str(e)}), 403
+
+    @staticmethod
+    def update_password():
+        current_user_id = get_jwt_identity()
+        data = AuthController._extract_data()
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+
+        if not old_password or not new_password:
+            return jsonify({'error': 'Contraseña antigua y nueva son obligatorias'}), 400
+
+        try:
+            AuthService.update_password(
+                current_user_id,
+                old_password,
+                new_password
+            )
+            return jsonify({
+                'message': 'Contraseña actualizada exitosamente'
+            }), 200
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+        except PermissionError as e:
+            return jsonify({'error': str(e)}), 403

@@ -6,6 +6,25 @@ from urllib.error import URLError, HTTPError
 from ..config import API_BASE_URL
 
 
+def _normalize_trailing_slash(url):
+    parsed = urlparse(url)
+    path = parsed.path or ''
+    if not path or path.endswith('/'):
+        return url
+
+    stripped = path.rstrip('/')
+    segments = [s for s in stripped.split('/') if s]
+    if len(segments) <= 1:
+        return url
+
+    last_segment = segments[-1]
+    if '.' in last_segment:
+        return url
+
+    path = path + '/'
+    return urlunparse(parsed._replace(path=path))
+
+
 def build_url(path, query=None):
     if path.startswith('http://') or path.startswith('https://'):
         url = path
@@ -20,7 +39,7 @@ def build_url(path, query=None):
             existing.update({str(k): str(v) for k, v in clean_query.items()})
             new_query = urlencode(existing)
             url = urlunparse(parsed._replace(query=new_query))
-    return url
+    return _normalize_trailing_slash(url)
 
 
 def build_headers(token=None, is_multipart=False):
@@ -93,7 +112,7 @@ def request(method, path, options=None):
     form = options.get('form')
 
     is_multipart = bool(file) or bool(form)
-    url = build_url(path, query)
+    original_url = build_url(path, query)
 
     extra_headers = {}
     if is_multipart:
@@ -101,24 +120,74 @@ def request(method, path, options=None):
     else:
         payload, _ = _encode_body(body, None, None, False)
 
-    headers = build_headers(token=token, is_multipart=is_multipart)
-    headers.update(extra_headers)
+    redirect_statuses = {301, 302, 303, 307, 308}
+    max_redirects = 3
+    redirect_count = 0
+    current_url = original_url
+    current_method = method.upper()
+    current_payload = payload
+    current_is_multipart = is_multipart
+    current_extra_headers = extra_headers
+    status = 0
+    raw = b''
 
-    req = Request(url, data=payload, headers=headers, method=method.upper())
+    while redirect_count <= max_redirects:
+        headers = build_headers(token=token, is_multipart=current_is_multipart)
+        headers.update(current_extra_headers)
 
-    try:
-        with urlopen(req, timeout=60) as resp:
-            raw = resp.read()
-            status = resp.status
-    except HTTPError as e:
-        raw = e.read()
-        status = e.code
-    except URLError as e:
-        return {
-            'status': 0,
-            'json': {'error': str(e.reason)},
-            'ok': False,
-        }
+        req = Request(current_url, data=current_payload, headers=headers, method=current_method)
+
+        try:
+            with urlopen(req, timeout=60) as resp:
+                raw = resp.read()
+                status = resp.status
+                if status in redirect_statuses and redirect_count < max_redirects:
+                    location = resp.headers.get('Location') or resp.headers.get('location')
+                    if location:
+                        redirect_count += 1
+                        parsed_current = urlparse(current_url)
+                        parsed_location = urlparse(location)
+                        if not parsed_location.scheme:
+                            location = urlunparse(parsed_current._replace(
+                                path=parsed_location.path,
+                                query=parsed_location.query,
+                            ))
+                        current_url = location
+                        if status in (301, 302, 303) and current_method not in ('GET', 'HEAD'):
+                            current_method = 'GET'
+                            current_payload = None
+                            current_is_multipart = False
+                            current_extra_headers = {}
+                        continue
+                break
+        except HTTPError as e:
+            raw = e.read()
+            status = e.code
+            if status in redirect_statuses and redirect_count < max_redirects:
+                location = e.headers.get('Location') or e.headers.get('location')
+                if location:
+                    redirect_count += 1
+                    parsed_current = urlparse(current_url)
+                    parsed_location = urlparse(location)
+                    if not parsed_location.scheme:
+                        location = urlunparse(parsed_current._replace(
+                            path=parsed_location.path,
+                            query=parsed_location.query,
+                        ))
+                    current_url = location
+                    if status in (301, 302, 303) and current_method not in ('GET', 'HEAD'):
+                        current_method = 'GET'
+                        current_payload = None
+                        current_is_multipart = False
+                        current_extra_headers = {}
+                    continue
+            break
+        except URLError as e:
+            return {
+                'status': 0,
+                'json': {'error': str(e.reason)},
+                'ok': False,
+            }
 
     json_data = None
     text = raw.decode('utf-8', errors='replace') if raw else ''

@@ -3,6 +3,8 @@
 from src.models.user import User
 from src.modules.users.user_repository import UserRepository
 from flask_jwt_extended import create_access_token, create_refresh_token
+from extensions.db import db
+from src.utils.logger import log_activity  # Helper centralizado
 import os
 
 class AuthService:
@@ -31,6 +33,18 @@ class AuthService:
         user.set_password(password)
 
         UserRepository.add(user)
+        db.session.flush() # Asegura que el user.id esté disponible
+
+        # Registrar en la bitácora
+        log_activity(
+            user_id=user.id,
+            action='USER_REGISTERED',
+            entity_type='User',
+            entity_id=user.id,
+            description=f"El usuario '{user.username}' se ha registrado exitosamente."
+        )
+        db.session.commit()
+
         return user
 
     @staticmethod
@@ -45,6 +59,16 @@ class AuthService:
 
         access_token = create_access_token(identity=str(user.id))
         refresh_token = create_refresh_token(identity=str(user.id))
+
+        # Registrar inicio de sesión en la bitácora
+        log_activity(
+            user_id=user.id,
+            action='USER_LOGIN',
+            entity_type='User',
+            entity_id=user.id,
+            description=f"El usuario '{user.username}' inició sesión."
+        )
+        db.session.commit()
 
         return {
             'user': user.to_dict(),
@@ -62,3 +86,24 @@ class AuthService:
         if not user:
             raise ValueError('Usuario no encontrado')
         return user.to_dict()
+
+    @staticmethod
+    def update_password(user_id, old_password, new_password):
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            raise ValueError('Usuario no encontrado')
+        if not user.check_password(old_password):
+            raise ValueError('Contraseña antigua incorrecta')
+        
+        user.set_password(new_password)
+        UserRepository.update(user)
+
+        # Registrar cambio de contraseña en la bitácora
+        log_activity(
+            user_id=user.id,
+            action='PASSWORD_UPDATED',
+            entity_type='User',
+            entity_id=user.id,
+            description=f"El usuario '{user.username}' actualizó su contraseña."
+        )
+        db.session.commit()

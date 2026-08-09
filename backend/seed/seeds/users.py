@@ -1,3 +1,6 @@
+import os
+import mimetypes
+
 from ..lib.http_client import request, expect
 from ..data.users import DEFAULT_USERS
 
@@ -23,10 +26,10 @@ def find_user_by_email(token, email):
     return None
 
 
-def create_user_by_admin(admin_token, payload):
-    return request('POST', '/users', {
+def create_user_by_admin(admin_token, payload, file_payload=None):
+    opts = {
         'token': admin_token,
-        'body': {
+        'form': {
             'username': payload['username'],
             'email': payload['email'],
             'password': payload['password'],
@@ -34,22 +37,48 @@ def create_user_by_admin(admin_token, payload):
             'last_name': payload.get('last_name'),
             'role': payload.get('role', 'user'),
         }
-    })
+    }
+    if file_payload:
+        opts['file'] = file_payload
+    return request('POST', '/users', opts)
 
 
-def update_user_by_admin(admin_token, user_id, body):
-    return request('PUT', f'/users/{user_id}', {
+def update_user_with_file(admin_token, user_id, body, file_payload=None):
+    opts = {
         'token': admin_token,
-        'body': body,
-    })
+        'form': body,
+    }
+    if file_payload:
+        opts['file'] = file_payload
+    return request('PUT', f'/users/{user_id}', opts)
+
+
+def _load_file(file_path):
+    if not file_path or not os.path.isfile(file_path):
+        return None
+    try:
+        with open(file_path, 'rb') as fh:
+            data = fh.read()
+        fname = os.path.basename(file_path)
+        mtype, _ = mimetypes.guess_type(file_path)
+        return {
+            'name': fname,
+            'bytes': data,
+            'content_type': mtype or 'application/octet-stream',
+        }
+    except OSError:
+        return None
 
 
 def seed_users(admin_token):
     created = []
     skipped = []
+    users = []
 
     for u in DEFAULT_USERS:
         existing = find_user_by_email(admin_token, u['email'])
+        file_payload = _load_file(u.get('profile_picture'))
+
         if existing:
             user_id = existing.get('id')
             final_user = existing
@@ -58,14 +87,18 @@ def seed_users(admin_token):
                 existing.get('role') != (u.get('role') or 'user')
                 or existing.get('first_name') != u.get('first_name')
                 or existing.get('last_name') != u.get('last_name')
+                or (file_payload and is_default_profile(existing.get('profile_picture_url')))
             )
             updated_ok = False
             if needs_update and user_id:
-                updated = update_user_by_admin(admin_token, user_id, {
+                update_body = {
                     'first_name': u.get('first_name'),
                     'last_name': u.get('last_name'),
                     'role': u.get('role', 'user'),
-                })
+                }
+                updated = update_user_with_file(
+                    admin_token, user_id, update_body, file_payload=file_payload
+                )
                 if updated['status'] == 200:
                     final_user = updated.get('json', {}).get('user') or final_user
                     updated_ok = True
@@ -74,19 +107,16 @@ def seed_users(admin_token):
                 'id': final_user.get('id'),
                 'updated': updated_ok,
             })
+            if final_user:
+                users.append(final_user)
             continue
 
-        res = create_user_by_admin(admin_token, u)
+        res = create_user_by_admin(admin_token, u, file_payload=file_payload)
         if res['status'] != 201:
             raise RuntimeError(
                 f'No se pudo crear usuario {u["email"]} status={res["status"]}: {res["json"]}'
             )
         user = (res.get('json') or {}).get('user') or {}
-        if not is_default_profile(user.get('profile_picture_url')):
-            raise RuntimeError(
-                f'{u["email"]} debió nacer con avatar default, obtuvo: '
-                f'{user.get("profile_picture_url")}'
-            )
         created.append({
             'id': user.get('id'),
             'email': user.get('email'),
@@ -94,16 +124,18 @@ def seed_users(admin_token):
             'role': user.get('role'),
             'profile_picture_url': user.get('profile_picture_url'),
         })
+        users.append(user)
 
     list_res = expect(
         200,
         request('GET', '/users', {'token': admin_token}),
         'Listar usuarios al final del seed',
     )
-    users = list_res.get('json') or []
+    all_users = list_res.get('json') or []
 
     return {
         'created': created,
         'skipped': skipped,
-        'total': len(users) if isinstance(users, list) else None,
+        'total': len(all_users) if isinstance(all_users, list) else None,
+        'users': users if users else (all_users if isinstance(all_users, list) else []),
     }

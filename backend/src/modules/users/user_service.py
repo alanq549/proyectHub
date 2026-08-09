@@ -2,6 +2,8 @@
 from src.models.user import User
 from src.modules.users.user_repository import UserRepository
 from src.services.storage_service import StorageService
+from extensions.db import db
+from src.utils.logger import log_activity  # Helper centralizado
 
 class UserService:
 
@@ -18,7 +20,7 @@ class UserService:
         return user.to_dict()
 
     @staticmethod
-    def create_user(username, email, password, first_name=None, last_name=None, role='user', is_active=True, file=None):
+    def create_user(username, email, password, first_name=None, last_name=None, role='user', is_active=True, file=None, current_user_id=None):
         if UserRepository.get_by_email(email):
             raise ValueError('El correo electrónico ya está registrado')
 
@@ -42,7 +44,6 @@ class UserService:
         )
         user.set_password(password)
 
-        # AGREGADO: Guardar la imagen si fue enviada en la creación
         if file is not None:
             try:
                 profile_url = StorageService.upload_file(file, folder='profiles')
@@ -51,11 +52,23 @@ class UserService:
                 pass
 
         UserRepository.add(user)
+        db.session.flush()
+
+        # Registrar actividad en la bitácora
+        actor_id = current_user_id if current_user_id else user.id
+        log_activity(
+            user_id=actor_id,
+            action='USER_CREATED',
+            entity_type='User',
+            entity_id=user.id,
+            description=f"Se creó el usuario '{user.username}' (Rol: {user.role})."
+        )
+        db.session.commit()
 
         return user.to_dict()
 
     @staticmethod
-    def update_user(user_id, data, file=None, is_admin=False):
+    def update_user(user_id, data, file=None, is_admin=False, current_user_id=None):
         user = UserRepository.get_by_id(user_id)
         if not user:
             raise ValueError('Usuario no encontrado')
@@ -76,7 +89,6 @@ class UserService:
         if 'last_name' in data:
             user.last_name = data['last_name']
 
-        # CORRECCIÓN DE IS_ACTIVE: Parseo explícito de strings a booleano
         if 'is_active' in data:
             val = data['is_active']
             if isinstance(val, str):
@@ -99,6 +111,18 @@ class UserService:
                 pass
 
         UserRepository.update()
+        db.session.flush()
+
+        actor_id = current_user_id if current_user_id else user.id
+        log_activity(
+            user_id=actor_id,
+            action='USER_UPDATED',
+            entity_type='User',
+            entity_id=user.id,
+            description=f"Se actualizaron los datos del usuario '{user.username}'."
+        )
+        db.session.commit()
+
         return user.to_dict()
 
     @staticmethod
@@ -115,13 +139,37 @@ class UserService:
 
         user.set_password(new_password)
         UserRepository.update()
+        db.session.flush()
+
+        log_activity(
+            user_id=user.id,
+            action='PASSWORD_CHANGED',
+            entity_type='User',
+            entity_id=user.id,
+            description=f"El usuario '{user.username}' cambió su contraseña."
+        )
+        db.session.commit()
+
         return True
 
     @staticmethod
-    def delete_user(user_id):
+    def delete_user(user_id, current_user_id=None):
         user = UserRepository.get_by_id(user_id)
         if not user:
             raise ValueError('Usuario no encontrado')
 
+        username = user.username
         UserRepository.delete(user)
+        db.session.flush()
+
+        actor_id = current_user_id if current_user_id else user_id
+        log_activity(
+            user_id=actor_id,
+            action='USER_DELETED',
+            entity_type='User',
+            entity_id=user_id,
+            description=f"Se eliminó al usuario '{username}'."
+        )
+        db.session.commit()
+
         return True

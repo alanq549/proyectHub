@@ -4,7 +4,7 @@ import uuid
 from abc import ABC, abstractmethod
 from werkzeug.utils import secure_filename
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'docx', 'doc', 'txt'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'docx', 'doc', 'txt', 'md'}
 
 def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -26,7 +26,7 @@ class StorageAdapter(ABC):
 
 class LocalStorageAdapter(StorageAdapter):
     def __init__(self, base_path: str):
-        self.base_path = base_path
+        self.base_path = base_path  # Apunta directamente a .../src/static/uploads
 
     def upload_file(self, file_storage, folder: str) -> str:
         folder_path = os.path.join(self.base_path, folder)
@@ -42,16 +42,26 @@ class LocalStorageAdapter(StorageAdapter):
         return relative_url
 
     def download_file(self, file_path: str) -> str:
-        clean_path = file_path.lstrip('/')
-        full_path = os.path.join(os.path.dirname(self.base_path), clean_path)
+        # Si por alguna razón ya contiene una URL completa (ej. S3), se retorna directo
+        if file_path.startswith('http://') or file_path.startswith('https://'):
+            return file_path
+
+        # Limpia la ruta relativa y la une correctamente con base_path
+        clean_path = file_path.replace('/static/uploads/', '').lstrip('/')
+        full_path = os.path.join(self.base_path, clean_path)
+
         if not os.path.exists(full_path):
-            raise ValueError("El archivo no existe")
+            raise ValueError("El archivo no existe en el disco")
         return full_path
 
     def delete_file(self, file_path: str) -> bool:
         try:
-            clean_path = file_path.lstrip('/')
-            full_path = os.path.join(os.path.dirname(self.base_path), clean_path)
+            if file_path.startswith('http://') or file_path.startswith('https://'):
+                return True
+            
+            clean_path = file_path.replace('/static/uploads/', '').lstrip('/')
+            full_path = os.path.join(self.base_path, clean_path)
+
             if os.path.exists(full_path):
                 os.remove(full_path)
                 return True

@@ -1,3 +1,4 @@
+<!--src/layouts/AppLayout.vue -->
 <template>
     <div class="dashboard-root">
         <!-- Top Navbar -->
@@ -177,16 +178,16 @@ const railItems: RailItem[] = [
     { key: 'dashboard', icon: 'dashboard', title: 'Dashboard', routeName: 'dashboard' },
     { key: 'users', icon: 'group', title: 'Usuarios', routeName: 'users-list', adminOnly: true },
     { key: 'calls', icon: 'campaign', title: 'Convocatorias', routeName: 'calls-list' },
-    { key: 'projects', icon: 'folder', title: 'Proyectos', routeName: 'dashboard' },
-    { key: 'documents', icon: 'description', title: 'Documentos', routeName: 'dashboard' },
-    { key: 'history', icon: 'history', title: 'Historial', routeName: 'dashboard' },
+    { key: 'projects', icon: 'folder', title: 'Mis proyectos', routeName: 'projects-list' },
+    { key: 'documents', icon: 'description', title: 'Mis documentos', routeName: 'documents-list' },
+    { key: 'history', icon: 'history', title: 'Historial', routeName: 'history' },
 ]
 
 const bottomNavItems: BottomNavItem[] = [
     { key: 'home', icon: 'home', label: 'Inicio', routeName: 'dashboard' },
     { key: 'users', icon: 'group', label: 'Usuarios', routeName: 'users-list', adminOnly: true },
-    { key: 'projects', icon: 'folder', label: 'Proyectos', routeName: 'dashboard' },
-    { key: 'profile', icon: 'person', label: 'Perfil', routeName: 'dashboard' },
+    { key: 'projects', icon: 'folder', label: 'Mis proyectos', routeName: 'projects-list' },
+    { key: 'history', icon: 'history', label: 'Historial', routeName: 'history' },
 ]
 
 // Filtrar ítems visibles según rol

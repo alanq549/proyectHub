@@ -9,6 +9,9 @@ import { authRoutes } from '@/modules/auth/routes'
 import { userRoutes } from '@/modules/user/routes'
 import { dashboardRoutes } from '@/modules/dashboard/routes'
 import { callsRoutes } from '@/modules/calls/routes'
+import { projectRoutes } from '@/modules/projects/routes'
+import { documentsRoutes } from '@/modules/documents/routes'
+import { historyRoutes } from '@/modules/history/routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +31,9 @@ const router = createRouter({
         ...dashboardRoutes,
         ...userRoutes,
         ...callsRoutes,
+        ...projectRoutes,
+        ...documentsRoutes,
+        ...historyRoutes,
       ]
     },
 

@@ -30,3 +30,9 @@ def get_current_user():
 @jwt_required()
 def update_current_user():
     return AuthController.update_current_user()
+
+# proximante agregar ruta para actualizar contraseña
+@auth_bp.route('/me/password', methods=['PUT'])
+@jwt_required()
+def update_password():
+    return AuthController.update_password()

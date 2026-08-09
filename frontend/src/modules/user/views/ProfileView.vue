@@ -132,7 +132,6 @@ const handleChangePassword = async () => {
     <AppCard variant="glass">
       <template #header>
         <div class="tw-flex tw-items-center tw-gap-2">
-          <span class="material-symbols-outlined notranslate tw-text-primary">person_gear</span>
           <h2 class="tw-text-lg tw-font-semibold notranslate tw-text-on-surface">Información Personal</h2>
         </div>
       </template>

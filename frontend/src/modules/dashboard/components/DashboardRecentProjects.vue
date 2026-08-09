@@ -8,7 +8,7 @@
     <!-- Encabezado de la Sección -->
     <div class="af-table-header">
       <div class="tw-flex tw-items-center tw-gap-2">
-        <h3 class="af-section-title tw-mb-0">Proyectos Recientes Globales</h3>
+        <h3 class="af-section-title tw-mb-0">{{ title }}</h3>
         <span v-if="!loading && projects.length" class="af-count-badge">
           {{ projects.length }}
         </span>
@@ -150,8 +150,10 @@ export interface RecentProject {
 withDefaults(defineProps<{
   projects: RecentProject[]
   loading?: boolean
+  title?: string
 }>(), {
-  loading: false
+  loading: false,
+  title: 'Proyectos recientes'
 })
 
 defineEmits<{

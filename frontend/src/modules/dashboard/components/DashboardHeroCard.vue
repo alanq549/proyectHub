@@ -29,15 +29,15 @@
       </div>
 
       <div class="tw-flex tw-flex-wrap tw-gap-2 tw-mt-3 md:tw-mt-0 tw-items-center">
-        <button class="af-btn-primary" @click="$emit('manage-users')">
+        <button class="af-btn-primary" @click="$emit('primary-action')">
           <span class="material-symbols-outlined notranslate" style="font-size: 18px;">manage_accounts</span>
-          Gestionar Usuarios
+          {{ primaryActionLabel }}
         </button>
-        <button class="af-btn-outline" @click="$emit('download-report')">
+        <button class="af-btn-outline" @click="$emit('secondary-action')">
           <span class="material-symbols-outlined notranslate" style="font-size: 18px;">download</span>
-          Descargar Reporte
+          {{ secondaryActionLabel }}
         </button>
-        <button class="af-btn-black" @click="$emit('new-audit')">
+        <button v-if="showCreateAction" class="af-btn-black" @click="$emit('create-action')">
           <span class="material-symbols-outlined notranslate" style="font-size: 18px;">add</span>
           Nueva Auditoría
         </button>
@@ -59,12 +59,15 @@ export interface DashboardHeroUser {
 
 defineProps<{
   user: DashboardHeroUser
+  primaryActionLabel: string
+  secondaryActionLabel: string
+  showCreateAction?: boolean
 }>()
 
 defineEmits<{
-  (event: 'download-report'): void
-  (event: 'new-audit'): void
-  (event: 'manage-users'): void
+  (event: 'primary-action'): void
+  (event: 'secondary-action'): void
+  (event: 'create-action'): void
 }>()
 </script>
 

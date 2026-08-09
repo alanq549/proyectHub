@@ -71,7 +71,7 @@
             </div>
 
             <button class="af-btn-primary sm inline-flex tw-items-center tw-gap-1" @click="$emit('apply', call)">
-              <span>Postular</span>
+              <span>{{ actionLabel }}</span>
               <span class="material-symbols-outlined notranslate" style="font-size: 16px;">
                 send
               </span>
@@ -102,8 +102,10 @@ export interface ActiveCall {
 withDefaults(defineProps<{
   calls: ActiveCall[]
   loading?: boolean
+  actionLabel?: string
 }>(), {
-  loading: false
+  loading: false,
+  actionLabel: 'Abrir'
 })
 
 defineEmits<{
