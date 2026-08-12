@@ -1,4 +1,4 @@
-//src/modules/calls/views/CallsListView.vue
+<!--src/modules/calls/views/CallsListView.vue-->
 <template>
   <div class="tw-py-2 tw-max-w-7xl tw-mx-auto tw-space-y-6">
     <div class="tw-flex tw-flex-col sm:tw-flex-row tw-justify-between tw-items-start sm:tw-items-center tw-gap-4">

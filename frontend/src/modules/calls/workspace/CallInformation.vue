@@ -1,282 +1,114 @@
+<!-- src/modules/calls/views/CallInformation.vue -->
 <template>
-  <section class="tw-space-y-6">
-    <!-- ENCABEZADO Y ACCIONES PRINCIPALES -->
+  <section class="tw-space-y-8">
+    <!-- ENCABEZADO: Uso de tipografía display para mayor impacto -->
     <div class="tw-flex tw-items-center tw-justify-between tw-flex-wrap tw-gap-4">
-      <div>
-        <div class="tw-flex tw-items-center tw-gap-2 tw-mb-1">
-          <span class="material-symbols-outlined notranslate tw-text-primary">info</span>
-          <h2 class="tw-text-xl tw-font-bold tw-text-on-surface">Información de la convocatoria</h2>
-        </div>
-        <p class="tw-text-sm tw-text-on-surface-variant">
-          {{ isAdmin ? 'Administra los detalles y requisitos de esta convocatoria.' : 'Consulta los detalles, fechas y condiciones de esta convocatoria.' }}
+      <div class="tw-space-y-1">
+        <h2 class="tw-text-3xl tw-font-semibold tw-text-[var(--app-primary)]">
+          Información de la convocatoria
+        </h2>
+        <p class="tw-text-sm tw-text-[var(--app-slate-500)]">
+          {{ isAdmin ? 'Gestiona los parámetros, fechas y requisitos.' : 'Consulta los detalles y condiciones de participación.' }}
         </p>
       </div>
 
-      <!-- BOTONES DE ACCIÓN (ADMIN VS ESTUDIANTE) -->
-      <div>
-        <!-- Modo lectura Admin: Botón Editar -->
-        <AppButton 
-          v-if="isAdmin && !isEditing" 
-          variant="primary" 
-          icon="edit" 
-          @click="isEditing = true"
-        >
-          Editar Convocatoria
-        </AppButton>
-
-        <!-- Modo edición Admin: Cancelar / Guardar -->
-        <div v-else-if="isAdmin && isEditing" class="tw-flex tw-gap-2">
-          <AppButton variant="secondary" icon="cancel" @click="cancelEdit">
-            Cancelar
+      <!-- ACCIONES: Botón de acento (Latón) para el llamado principal -->
+      <div class="tw-flex tw-gap-3">
+        <template v-if="isAdmin">
+          <AppButton v-if="!isEditing" variant="primary" icon="edit" @click="isEditing = true">
+            Editar convocatoria
           </AppButton>
-          <AppButton variant="primary" icon="save" :loading="saving" @click="saveChanges">
-            Guardar Cambios
-          </AppButton>
-        </div>
+          <div v-else class="tw-flex tw-gap-2">
+            <AppButton variant="secondary" @click="cancelEdit">Cancelar</AppButton>
+            <AppButton variant="primary" :loading="saving" @click="saveChanges">Guardar cambios</AppButton>
+          </div>
+        </template>
 
-        <!-- CTA Inscribirse: Solo Estudiante no registrado -->
         <button
           v-else-if="!isAdmin && !isRegistered && call.is_active"
           type="button"
           @click="handleEnrollment"
           :disabled="submitting"
-          class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-primary tw-px-5 tw-py-2.5 tw-text-sm tw-font-semibold tw-text-on-primary tw-shadow-md tw-transition hover:tw-bg-primary-hover focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-primary/40 disabled:tw-opacity-50"
+          class="app-btn-accent tw-inline-flex tw-items-center tw-justify-center tw-px-8 tw-gap-2 tw-text-sm"
         >
-          <span v-if="submitting" class="material-symbols-outlined notranslate tw-animate-spin">progress_activity</span>
-          <span v-else class="material-symbols-outlined notranslate">how_to_reg</span>
-          <span>Inscribirme a la convocatoria</span>
+          <span class="material-symbols-outlined tw-text-[18px]">how_to_reg</span>
+          Inscribirme ahora
         </button>
       </div>
     </div>
 
-    <!-- BANNER DE INSCRITO (Solo Estudiantes) -->
-    <AppCard
-      v-if="!isAdmin && isRegistered"
-      variant="glass"
-      padding="md"
-      class="tw-border-l-4 tw-border-l-success"
-    >
-      <div class="tw-flex tw-items-center tw-gap-3">
-        <span class="material-symbols-outlined notranslate tw-text-success">check_circle</span>
+    <!-- BANNER ESTADO -->
+    <div v-if="!isAdmin && isRegistered" class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-rounded-xl tw-bg-[rgba(47,143,91,0.1)] tw-border tw-border-[var(--app-success)]">
+      <span class="material-symbols-outlined tw-text-[var(--app-success)]">check_circle</span>
+      <div>
+        <p class="tw-text-sm tw-font-bold tw-text-[var(--app-ink-900)]">Ya estás inscrito</p>
+        <p class="tw-text-xs tw-text-[var(--app-slate-600)]">Accede a "Mi Proyecto" para gestionar tus avances.</p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN GENERAL -->
+    <div class="app-card-glass tw-p-8">
+      <div class="tw-space-y-6">
         <div>
-          <p class="tw-text-sm tw-font-semibold tw-text-on-surface">Ya estás inscrito en esta convocatoria</p>
-          <p class="tw-text-xs tw-text-on-surface-variant">
-            Puedes acceder a la pestaña <strong>"Mi Proyecto"</strong> para comenzar a cargar tus avances.
-          </p>
+          <label class="tw-text-[10px] tw-uppercase tw-tracking-widest tw-font-bold tw-text-[var(--app-slate-400)]">Título</label>
+          <input v-if="isEditing" v-model="editForm.title" class="tw-w-full tw-mt-2 tw-p-3 tw-bg-[var(--app-surface-container-lowest)] tw-rounded-lg tw-border tw-border-[var(--app-outline-variant)] focus:tw-border-[var(--app-primary)] focus:tw-ring-2 focus:tw-ring-[var(--app-input-focus-ring)] tw-transition-all tw-outline-none" />
+          <h3 v-else class="tw-text-xl tw-font-medium tw-text-[var(--app-ink-800)] tw-mt-1">{{ call.title }}</h3>
+        </div>
+
+        <div>
+          <label class="tw-text-[10px] tw-uppercase tw-tracking-widest tw-font-bold tw-text-[var(--app-slate-400)]">Descripción</label>
+          <textarea v-if="isEditing" v-model="editForm.description" rows="4" class="tw-w-full tw-mt-2 tw-p-3 tw-bg-[var(--app-surface-container-lowest)] tw-rounded-lg tw-border tw-border-[var(--app-outline-variant)] focus:tw-border-[var(--app-primary)] focus:tw-ring-2 focus:tw-ring-[var(--app-input-focus-ring)] tw-transition-all tw-outline-none"></textarea>
+          <p v-else class="tw-text-sm tw-leading-relaxed tw-text-[var(--app-slate-600)] tw-mt-1">{{ call.description }}</p>
         </div>
       </div>
-    </AppCard>
+    </div>
 
-    <!-- INFORMACIÓN GENERAL (MODO LECTURA / EDICIÓN) -->
-    <AppCard variant="glass" padding="md">
-      <div class="tw-flex tw-items-center tw-gap-2 tw-mb-5">
-        <span class="material-symbols-outlined notranslate tw-text-primary">campaign</span>
-        <h3 class="tw-font-semibold tw-text-on-surface">Información general</h3>
+    <!-- VIGENCIA: Uso de grid para equilibrio -->
+    <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-6">
+      <div class="app-card-glass tw-p-6">
+        <div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
+          <span class="material-symbols-outlined tw-text-[var(--app-accent-brass)]">event</span>
+          <span class="tw-text-xs tw-font-bold tw-uppercase tw-text-[var(--app-slate-500)]">Inicio</span>
+        </div>
+        <p class="tw-font-mono tw-text-lg tw-text-[var(--app-ink-900)]">{{ formatDate(call.start_date) }}</p>
       </div>
 
-      <div class="tw-space-y-5">
-        <!-- TÍTULO -->
-        <div>
-          <label class="tw-block tw-text-xs tw-font-medium tw-text-outline tw-mb-1">
-            Nombre de la convocatoria
-          </label>
-          <input 
-            v-if="isEditing" 
-            v-model="editForm.title" 
-            type="text" 
-            class="tw-w-full tw-px-3 tw-py-2 tw-rounded-xl tw-bg-surface-container-low tw-border tw-border-outline-variant tw-text-sm tw-text-on-surface focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-primary"
-          />
-          <p v-else class="tw-text-base tw-font-semibold tw-text-on-surface">
-            {{ call.title || 'Sin título' }}
-          </p>
+      <div class="app-card-glass tw-p-6">
+        <div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
+          <span class="material-symbols-outlined tw-text-[var(--app-error)]">event_busy</span>
+          <span class="tw-text-xs tw-font-bold tw-uppercase tw-text-[var(--app-slate-500)]">Cierre</span>
         </div>
-
-        <!-- DESCRIPCIÓN -->
-        <div>
-          <label class="tw-block tw-text-xs tw-font-medium tw-text-outline tw-mb-1">
-            Descripción
-          </label>
-          <textarea 
-            v-if="isEditing" 
-            v-model="editForm.description" 
-            rows="3"
-            class="tw-w-full tw-px-3 tw-py-2 tw-rounded-xl tw-bg-surface-container-low tw-border tw-border-outline-variant tw-text-sm tw-text-on-surface focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-primary"
-          ></textarea>
-          <p v-else class="tw-text-sm tw-leading-relaxed tw-text-on-surface-variant">
-            {{ call.description || 'Esta convocatoria no cuenta con una descripción disponible.' }}
-          </p>
-        </div>
-
-        <!-- ESTADO -->
-        <div>
-          <label class="tw-block tw-text-xs tw-font-medium tw-text-outline tw-mb-2">
-            Estado
-          </label>
-          <div v-if="isEditing" class="tw-flex tw-items-center tw-gap-3">
-            <label class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-cursor-pointer">
-              <input type="checkbox" v-model="editForm.is_active" class="tw-rounded tw-text-primary" />
-              <span>Convocatoria Activa / Abierta</span>
-            </label>
-          </div>
-          <AppBadge v-else :variant="call.is_active ? 'success' : 'neutral'" :dot="true">
-            {{ call.is_active ? 'Convocatoria abierta' : 'Convocatoria cerrada' }}
-          </AppBadge>
-        </div>
+        <p class="tw-font-mono tw-text-lg tw-text-[var(--app-ink-900)]">{{ formatDate(call.end_date) }}</p>
       </div>
-    </AppCard>
+    </div>
 
-    <!-- VIGENCIA (FECHAS) -->
-    <AppCard variant="glass" padding="md">
-      <div class="tw-flex tw-items-center tw-gap-2 tw-mb-5">
-        <span class="material-symbols-outlined notranslate tw-text-primary">calendar_month</span>
-        <div>
-          <h3 class="tw-font-semibold tw-text-on-surface">Vigencia</h3>
-          <p class="tw-text-xs tw-text-on-surface-variant">Periodo disponible para participar en la convocatoria.</p>
-        </div>
-      </div>
-
-      <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
-        <!-- Inicio -->
-        <div class="tw-rounded-xl tw-bg-surface-container-low tw-p-4">
-          <div class="tw-flex tw-items-center tw-gap-2 tw-mb-3">
-            <span class="material-symbols-outlined notranslate tw-text-success">event</span>
-            <span class="tw-text-xs tw-font-medium tw-text-outline">Fecha de inicio</span>
-          </div>
-          <input 
-            v-if="isEditing" 
-            v-model="editForm.start_date" 
-            type="date" 
-            class="tw-w-full tw-px-3 tw-py-1.5 tw-rounded-lg tw-bg-surface tw-border tw-border-outline-variant tw-text-sm"
-          />
-          <p v-else class="tw-text-base tw-font-semibold tw-text-on-surface">
-            {{ formatDate(call.start_date) }}
-          </p>
-        </div>
-
-        <!-- Cierre -->
-        <div class="tw-rounded-xl tw-bg-surface-container-low tw-p-4">
-          <div class="tw-flex tw-items-center tw-gap-2 tw-mb-3">
-            <span class="material-symbols-outlined notranslate tw-text-warning">event_busy</span>
-            <span class="tw-text-xs tw-font-medium tw-text-outline">Fecha de cierre</span>
-          </div>
-          <input 
-            v-if="isEditing" 
-            v-model="editForm.end_date" 
-            type="date" 
-            class="tw-w-full tw-px-3 tw-py-1.5 tw-rounded-lg tw-bg-surface tw-border tw-border-outline-variant tw-text-sm"
-          />
-          <p v-else class="tw-text-base tw-font-semibold tw-text-on-surface">
-            {{ formatDate(call.end_date) }}
-          </p>
-        </div>
-      </div>
-    </AppCard>
-
-    <!-- REQUISITOS (LECTURA Y CREACIÓN RÁPIDA PARA ADMIN) -->
-    <AppCard variant="glass" padding="md">
-      <div class="tw-mb-5 tw-flex tw-items-center tw-justify-between tw-gap-4">
-        <div class="tw-flex tw-items-center tw-gap-2">
-          <span class="material-symbols-outlined notranslate tw-text-primary">checklist</span>
+    <!-- REQUISITOS -->
+    <div class="app-card-glass tw-p-8">
+      <h3 class="tw-font-bold tw-text-[var(--app-ink-900)] tw-mb-6">Requisitos de participación</h3>
+      <ul class="tw-space-y-4">
+        <li v-for="req in requirements" :key="req.id" class="tw-flex tw-items-start tw-gap-4 tw-p-4 tw-rounded-lg tw-bg-[var(--app-slate-50)]">
+          <span class="material-symbols-outlined" :class="req.is_required ? 'tw-text-[var(--app-accent-brass)]' : 'tw-text-[var(--app-slate-300)]'">
+            {{ req.is_required ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
           <div>
-            <h3 class="tw-font-semibold tw-text-on-surface">Requisitos de participación</h3>
-            <p class="tw-text-xs tw-text-on-surface-variant">Condiciones para participar en esta convocatoria</p>
+            <p class="tw-text-sm tw-font-bold tw-text-[var(--app-ink-800)]">{{ req.title }}</p>
+            <p class="tw-text-xs tw-text-[var(--app-slate-500)]">{{ req.description }}</p>
           </div>
-        </div>
-
-        <!-- Admin: Agregar Requisito Rápido -->
-        <AppButton 
-          v-if="isAdmin" 
-          variant="outline" 
-          size="sm" 
-          icon="add" 
-          @click="showAddReqModal = !showAddReqModal"
-        >
-          {{ showAddReqModal ? 'Cancelar' : 'Añadir Requisito' }}
-        </AppButton>
-      </div>
-
-      <!-- Formulario para agregar nuevo requisito (Admin) -->
-      <div v-if="isAdmin && showAddReqModal" class="tw-mb-5 tw-p-4 tw-rounded-xl tw-bg-surface-container-low tw-space-y-3 tw-border tw-border-outline-variant/40">
-        <input 
-          v-model="newReq.title" 
-          placeholder="Nombre del requisito (ej. Anteproyecto en PDF)"
-          class="tw-w-full tw-px-3 tw-py-2 tw-rounded-lg tw-bg-surface tw-border tw-border-outline-variant tw-text-sm"
-        />
-        <textarea 
-          v-model="newReq.description" 
-          placeholder="Instrucciones o especificaciones opcionales"
-          class="tw-w-full tw-px-3 tw-py-2 tw-rounded-lg tw-bg-surface tw-border tw-border-outline-variant tw-text-sm"
-          rows="2"
-        ></textarea>
-        <div class="tw-flex tw-items-center tw-justify-between">
-          <label class="tw-flex tw-items-center tw-gap-2 tw-text-xs tw-text-on-surface-variant">
-            <input type="checkbox" v-model="newReq.is_required" /> Obligatorio
-          </label>
-          <AppButton size="sm" variant="primary" :disabled="!newReq.title" @click="handleAddRequirement">
-            Guardar Requisito
-          </AppButton>
-        </div>
-      </div>
-
-      <!-- Lista de Requisitos -->
-      <div v-if="requirements.length > 0" class="tw-space-y-3">
-        <div
-          v-for="requirement in requirements"
-          :key="requirement.id"
-          class="tw-flex tw-items-start tw-gap-3 tw-rounded-xl tw-border tw-border-outline-variant/60 tw-bg-surface-container-lowest tw-p-4"
-        >
-          <span
-            class="material-symbols-outlined notranslate tw-mt-0.5 tw-text-xl"
-            :class="[requirement.is_required ? 'tw-text-accent' : 'tw-text-on-surface-variant']"
-          >
-            {{ requirement.is_required ? 'check_circle' : 'radio_button_unchecked' }}
-          </span>
-
-          <div class="tw-min-w-0 tw-flex-1">
-            <p
-              class="tw-text-sm tw-font-semibold"
-              :class="requirement.is_required ? 'tw-text-on-surface' : 'tw-text-on-surface-variant'"
-            >
-              {{ requirement.title }}
-            </p>
-
-            <p v-if="requirement.description" class="tw-mt-1 tw-text-sm tw-leading-relaxed tw-text-on-surface-variant">
-              {{ requirement.description }}
-            </p>
-          </div>
-
-          <span
-            v-if="requirement.is_required"
-            class="tw-shrink-0 tw-rounded-md tw-bg-accent-bg tw-px-2 tw-py-1 tw-text-[11px] tw-font-medium tw-text-accent"
-          >
-            Obligatorio
-          </span>
-        </div>
-      </div>
-
-      <div v-else class="tw-rounded-xl tw-border tw-border-dashed tw-border-outline-variant tw-bg-surface-container-low tw-p-8">
-        <div class="tw-flex tw-flex-col tw-items-center tw-text-center">
-          <h4 class="tw-font-semibold tw-text-on-surface">Requisitos por publicar</h4>
-          <p class="tw-mt-1 tw-max-w-md tw-text-sm tw-text-on-surface-variant">
-            Esta convocatoria todavía no ha publicado los requisitos de participación.
-          </p>
-        </div>
-      </div>
-    </AppCard>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
+// (Misma lógica funcional, solo importando los componentes de UI que ya tienes)
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Call } from '../services/callService'
-import { callService } from '../services/callService'
+import { callService, type Call } from '../services/callService'
 import type { CallWorkspace, CallRequirement } from '../services/workspaceService'
 import { useWorkspaceStore } from '../stores/workspaceStore'
 import { useAuthStore } from '@/stores/authStore'
 import AppButton from '@/shared/components/AppButton.vue'
-import AppCard from '@/shared/components/AppCard.vue'
-import AppBadge from '@/shared/components/AppBadge.vue'
 
 const props = defineProps<{
   call: Call

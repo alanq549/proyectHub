@@ -11,47 +11,58 @@
     </div>
 
     <!-- Filtros y Estado Vacío / Tabla -->
-    <AppCard variant="glass" padding="none">
-      <div v-if="loading" class="tw-p-8 tw-text-center">
-        <span class="material-symbols-outlined notranslate tw-animate-spin tw-text-primary">
-          progress_activity
-        </span>
+    <div v-if="loading" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-24 tw-gap-4">
+      <div class="tw-w-16 tw-h-16 tw-rounded-2xl tw-bg-[var(--app-surface-container)] tw-flex tw-items-center tw-justify-center tw-shadow-sm">
+        <span class="material-symbols-outlined notranslate tw-animate-spin tw-text-3xl tw-text-[var(--app-primary)]">progress_activity</span>
       </div>
+      <span class="tw-text-sm tw-text-[var(--app-on-surface-variant)] tw-font-medium tw-tracking-wide">Cargando proyectos...</span>
+    </div>
 
-      <div v-else-if="submissions.length === 0" class="tw-p-8 tw-text-center tw-text-on-surface-variant">
-        No hay proyectos registrados aún en esta convocatoria.
+    <AppCard v-else-if="submissions.length === 0" variant="glass"
+      class="tw-text-center tw-py-16 tw-px-4 tw-border-dashed tw-flex tw-flex-col tw-items-center tw-justify-center tw-mt-4">
+      <div
+        class="tw-w-16 tw-h-16 tw-rounded-3xl tw-bg-[var(--app-surface-container)] tw-text-[var(--app-secondary)] tw-flex tw-items-center tw-justify-center tw-mb-4 tw-shadow-sm">
+        <span class="material-symbols-outlined notranslate tw-text-3xl">folder_off</span>
       </div>
+      <h3 class="tw-text-base tw-font-bold tw-text-[var(--app-primary)]">Sin proyectos registrados</h3>
+      <p class="tw-text-[var(--app-on-surface-variant)] tw-text-sm tw-mt-2 tw-max-w-md">
+        Aún no hay propuestas enviadas para esta convocatoria. Los participantes inscritos aparecerán aquí.
+      </p>
+    </AppCard>
 
-      <table v-else class="tw-w-full tw-text-left tw-text-sm">
-        <thead class="tw-bg-surface-container-low tw-border-b tw-border-outline-variant">
+    <div v-else class="app-card-glass-table tw-w-full tw-overflow-x-auto tw-mt-4">
+      <table class="tw-w-full tw-text-left tw-text-sm">
+        <thead class="tw-bg-[var(--app-surface-container-low)] tw-border-b tw-border-[var(--app-outline-variant)]">
           <tr>
-            <th class="tw-py-3 tw-px-4">Proyecto</th>
-            <th class="tw-py-3 tw-px-4">Participante / Equipo</th>
-            <th class="tw-py-3 tw-px-4">Estado</th>
-            <th class="tw-py-3 tw-px-4 tw-text-right">Acciones</th>
+            <th class="tw-py-4 tw-px-6 tw-font-semibold tw-text-[var(--app-primary)]">Proyecto</th>
+            <th class="tw-py-4 tw-px-6 tw-font-semibold tw-text-[var(--app-primary)]">Participante / Equipo</th>
+            <th class="tw-py-4 tw-px-6 tw-font-semibold tw-text-[var(--app-primary)]">Estado</th>
+            <th class="tw-py-4 tw-px-6 tw-text-right tw-font-semibold tw-text-[var(--app-primary)]">Acciones</th>
           </tr>
         </thead>
-        <tbody class="tw-divide-y tw-divide-outline-variant/40">
-          <tr v-for="item in submissions" :key="item.id" class="hover:tw-bg-surface-container-lowest">
-            <td class="tw-py-3 tw-px-4 tw-font-semibold">{{ item.title }}</td>
-            <td class="tw-py-3 tw-px-4">{{ item.user_email || item.author_name }}</td>
-            <td class="tw-py-3 tw-px-4">
+        <tbody class="tw-divide-y tw-divide-[var(--app-outline-variant)]/40">
+          <tr v-for="item in submissions" :key="item.id" class="hover:tw-bg-[var(--app-surface-container-lowest)] tw-transition-colors">
+            <td class="tw-py-4 tw-px-6 tw-font-medium tw-text-[var(--app-ink-800)]">{{ item.title }}</td>
+            <td class="tw-py-4 tw-px-6 tw-text-[var(--app-slate-600)]">{{ item.user_email || item.author_name }}</td>
+            <td class="tw-py-4 tw-px-6">
               <AppBadge :variant="getStatusVariant(item.status)">
                 {{ item.status }}
               </AppBadge>
             </td>
-            <td class="tw-py-3 tw-px-4 tw-text-right">
+            <td class="tw-py-4 tw-px-6 tw-text-right">
               <button 
                 @click="openReviewModal(item)"
-                class="tw-px-3 tw-py-1.5 tw-rounded-lg tw-bg-primary tw-text-on-primary tw-text-xs tw-font-medium"
+                class="app-btn-primary tw-inline-flex tw-items-center tw-justify-center tw-px-4 tw-text-xs tw-gap-2"
+                style="height: 36px;"
               >
-                Revisar y Dar Seguimiento
+                Revisar 
+                <span class="material-symbols-outlined tw-text-[16px]">arrow_forward</span>
               </button>
             </td>
           </tr>
         </tbody>
       </table>
-    </AppCard>
+    </div>
 
     <!-- Modal de Revisión -->
     <CallReviewModal 
