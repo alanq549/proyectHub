@@ -1,10 +1,10 @@
 <template>
-  <div class="tw-fixed tw-inset-0 tw-z-50 tw-flex tw-items-center tw-justify-center tw-bg-black/40 tw-backdrop-blur-sm tw-p-4">
-    <AppCard variant="glass" padding="none" class="tw-max-w-2xl tw-w-full tw-max-h-[90vh] tw-flex tw-flex-col tw-overflow-hidden">
+  <div class="tw-fixed tw-inset-0 tw-z-50 tw-flex tw-items-center tw-justify-center tw-bg-black/50 tw-backdrop-blur-sm tw-p-4">
+    <AppCard variant="glass" padding="none" class="tw-max-w-2xl tw-w-full tw-max-h-[90vh] tw-flex tw-flex-col tw-overflow-hidden tw-border tw-border-outline-variant/60 tw-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
       <!-- Header -->
       <div class="tw-px-5 tw-py-4 tw-border-b tw-border-outline-variant tw-flex tw-items-center tw-justify-between tw-bg-surface-container-lowest/40">
         <h5 class="tw-text-lg tw-font-semibold tw-text-on-surface tw-flex tw-items-center tw-gap-2.5 tw-m-0">
-          <span class="material-symbols-outlined notranslate tw-text-primary tw-bg-surface-container tw-p-2 tw-rounded-xl tw-text-xl">
+          <span class="material-symbols-outlined notranslate tw-text-on-primary tw-bg-primary tw-p-2 tw-rounded-xl tw-text-xl">
             {{ isEditing ? 'manage_accounts' : 'person_add' }}
           </span>
           {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
@@ -22,17 +22,20 @@
       <div class="tw-p-6 tw-overflow-y-auto">
         <form @submit.prevent="handleSubmit" class="tw-space-y-5">
           <!-- Subida de Avatar -->
-          <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-bg-surface-container-low/60 tw-border tw-border-outline-variant tw-rounded-2xl">
+          <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-bg-surface-container-low/60 tw-border tw-border-dashed tw-border-primary/30 tw-rounded-2xl">
             <img
               :src="avatarUrl"
               alt="Preview Avatar"
               class="tw-w-16 tw-h-16 tw-rounded-full tw-object-cover tw-border-2 tw-border-outline-variant tw-shadow-sm"
             />
             <div class="tw-flex-1 tw-min-w-0">
-              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1.5">Foto de Perfil</label>
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1.5 tw-flex tw-items-center tw-gap-1.5">
+                <span class="material-symbols-outlined notranslate tw-text-sm tw-text-primary">image</span>
+                Foto de Perfil
+              </label>
               <input
                 type="file"
-                class="tw-block tw-w-full tw-text-xs tw-text-on-surface-variant file:tw-mr-3 file:tw-py-1.5 file:tw-px-3 file:tw-rounded-lg file:tw-border-0 file:tw-text-xs file:tw-font-medium file:tw-bg-surface-container file:tw-text-primary hover:file:tw-bg-surface-container-high file:tw-transition-colors file:tw-cursor-pointer tw-cursor-pointer"
+                class="tw-block tw-w-full tw-text-xs tw-text-on-surface-variant file:tw-mr-3 file:tw-py-1.5 file:tw-px-3 file:tw-rounded-lg file:tw-border-0 file:tw-text-xs file:tw-font-medium file:tw-bg-primary/15 file:tw-text-primary hover:file:tw-bg-primary/25 file:tw-transition-colors file:tw-cursor-pointer tw-cursor-pointer"
                 accept="image/*"
                 @change="handleFileChange"
               />
@@ -53,22 +56,22 @@
             </div>
 
             <div>
-              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Nombre de Usuario <span class="tw-text-error">*</span></label>
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Nombre de Usuario <span class="tw-text-primary">*</span></label>
               <AppInput v-model="form.username" icon="alternate_email" placeholder="Ej. alanq" />
             </div>
 
             <div>
-              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Correo Electrónico <span class="tw-text-error">*</span></label>
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Correo Electrónico <span class="tw-text-primary">*</span></label>
               <AppInput v-model="form.email" type="email" icon="mail" placeholder="usuario@correo.com" />
             </div>
 
             <div v-if="!isEditing">
-              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Contraseña <span class="tw-text-error">*</span></label>
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Contraseña <span class="tw-text-primary">*</span></label>
               <AppInput v-model="form.password" type="password" icon="lock" placeholder="••••••••" />
             </div>
 
             <div>
-              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Rol en el Sistema <span class="tw-text-error">*</span></label>
+              <label class="tw-block tw-font-medium tw-text-xs tw-text-on-surface-variant tw-mb-1">Rol en el Sistema <span class="tw-text-primary">*</span></label>
               <select
                 v-model="form.role"
                 required
@@ -132,12 +135,12 @@ const avatarUrl = computed(() => {
   if (!previewAvatar.value) {
     return defaultAvatar;
   }
-  
+
   // Caso 1: Imagen local recién seleccionada (blob:http://...) o URL completa externa (https://...)
   if (previewAvatar.value.startsWith('blob:') || previewAvatar.value.startsWith('http')) {
     return previewAvatar.value;
   }
-  
+
   // Caso 2: Ruta relativa recibida del backend (/static/uploads/...)
   const baseUrl = import.meta.env.VITE_STATIC_URL || '';
   const cleanPath = previewAvatar.value.startsWith('/') ? previewAvatar.value : `/${previewAvatar.value}`;
