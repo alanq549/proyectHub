@@ -82,9 +82,11 @@ const getUserAvatar = (user: User) => {
   if (!user.profile_picture_url) {
     return defaultAvatar;
   }
+
   if (user.profile_picture_url.startsWith('/')) {
-    return `http://127.0.0.1:5000${user.profile_picture_url}`;
+    return user.profile_picture_url;
   }
+
   return user.profile_picture_url;
 };
 
