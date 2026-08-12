@@ -4,6 +4,7 @@
     • Clase glassmorphism .app-card-glass-xl GLOBAL de main.css intacta (transición).
     • Utilidades Bootstrap (text-start / d-flex / mt-* / align-items-*) migradas a *.
     • Botones mantienen clases locales af-btn-* (son estilos custom, no Bootstrap).
+    • Paleta "PROJECTHUB" navy + dorado, coherente con Login/Register/CallCard.
   -->
   <AppCard variant="glass-xl" padding="none" class=" af-hero-card">
     <div class="af-hero-glow"></div>
@@ -75,6 +76,12 @@ defineEmits<{
 .material-symbols-outlined { vertical-align: middle; font-family: 'Material Symbols Outlined' !important; }
 .notranslate { -webkit-translate: no; translate: no; }
 
+/* ============================================================
+   Paleta "PROJECTHUB" — navy #10192B + dorado #C9974A
+   Se apoya en las variables globales --ph-navy / --ph-gold ya
+   definidas en :root (ver Login.vue / Register.vue).
+   ============================================================ */
+
 /*
   El contenedor principal AHORA hereda glassmorphism de la clase global
   .app-card-glass-xl definida en main.css (background, blur, border, shadow,
@@ -84,21 +91,21 @@ defineEmits<{
 */
 .af-hero-card {
   background: linear-gradient(
-    135deg, 
-    rgba(255, 255, 255, 0.85) 0%, 
-    rgba(245, 247, 255, 0.75) 60%, 
-    rgba(235, 233, 254, 0.6) 100%
+    135deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(247, 245, 238, 0.75) 60%,
+    rgba(238, 227, 205, 0.55) 100%
   );
 }
 
-/* Destello sutil de fondo */
+/* Destello sutil de fondo, ahora en tono dorado */
 .af-hero-glow {
   position: absolute;
   top: -40px;
   right: -40px;
   width: 220px;
   height: 220px;
-  background: radial-gradient(circle, rgba(75, 65, 225, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(circle, rgba(201, 151, 74, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
   pointer-events: none;
   border-radius: 50%;
 }
@@ -126,27 +133,29 @@ defineEmits<{
   gap: 1.25rem;
 }
 
+/* Anillo del avatar en degradé navy → dorado */
 .af-avatar-wrapper {
   position: relative;
   border-radius: 50%;
   padding: 3px;
-  background: linear-gradient(135deg, rgba(75, 65, 225, 0.3) 0%, rgba(255, 255, 255, 0.8) 100%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, var(--ph-navy, #10192B) 0%, var(--ph-gold, #C9974A) 100%);
+  box-shadow: 0 4px 12px rgba(16, 25, 43, 0.15);
 }
 
 .af-hero-title {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
   font-size: 26px;
-  font-weight: 800;
-  color: var(--app-slate-900, #0f172a);
+  font-weight: 700;
+  color: var(--ph-navy, #10192B);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 /* Badges con diseño neumórfico/soft */
 .af-role-badge {
-  background: rgba(75, 65, 225, 0.08);
-  color: var(--app-primary, #4b41e1);
-  border: 1px solid rgba(75, 65, 225, 0.2);
+  background: var(--ph-gold-soft, rgba(201, 151, 74, 0.12));
+  color: var(--ph-gold, #C9974A);
+  border: 1px solid rgba(201, 151, 74, 0.3);
   padding: 0.25rem 0.75rem;
   border-radius: var(--app-radius-pill, 9999px);
   font-size: 12px;
@@ -168,10 +177,10 @@ defineEmits<{
   backdrop-filter: blur(4px);
 }
 
-/* Estilos de Botones — tokens --app-btn-* */
+/* Estilos de Botones — navy como color primario de marca */
 .af-btn-primary {
-  background: var(--app-btn-primary-bg, linear-gradient(135deg, #5b50f6 0%, #4b41e1 100%));
-  color: var(--app-on-primary, #ffffff);
+  background: linear-gradient(135deg, var(--ph-navy, #10192B) 0%, var(--ph-navy-soft, #16233b) 100%);
+  color: #ffffff;
   border: none;
   height: var(--app-btn-primary-height, 42px);
   padding: 0 1.25rem;
@@ -181,44 +190,45 @@ defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  box-shadow: var(--app-btn-primary-shadow, 0 4px 14px rgba(75, 65, 225, 0.3));
+  box-shadow: 0 4px 14px rgba(16, 25, 43, 0.3);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .af-btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(75, 65, 225, 0.4);
-  background: var(--app-btn-primary-bg-hover, linear-gradient(135deg, #645bf7 0%, #4338ca 100%));
+  box-shadow: 0 6px 18px rgba(16, 25, 43, 0.4);
+  background: linear-gradient(135deg, #16233b 0%, #0c1420 100%);
 }
 
+/* Botón "Nueva Auditoría" en dorado, como CTA de acento */
 .af-btn-black {
-  background: var(--app-slate-900, #0f172a);
-  color: var(--app-on-primary, #ffffff);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--ph-gold, #C9974A);
+  color: var(--ph-navy, #10192B);
+  border: 1px solid rgba(16, 25, 43, 0.08);
   height: var(--app-btn-primary-height, 42px);
   padding: 0 1.25rem;
   border-radius: var(--app-btn-radius-md, 0.75rem);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 4px 12px rgba(201, 151, 74, 0.3);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .af-btn-black:hover {
   transform: translateY(-1px);
-  background: var(--app-slate-800, #1e293b);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+  background: #d9ab5e;
+  box-shadow: 0 6px 16px rgba(201, 151, 74, 0.4);
 }
 
 .af-btn-outline {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(203, 213, 225, 0.8);
-  color: var(--app-slate-700, #334155);
+  color: var(--ph-navy, #10192B);
   height: var(--app-btn-primary-height, 42px);
   padding: 0 1.1rem;
   border-radius: var(--app-btn-radius-md, 0.75rem);
@@ -234,9 +244,9 @@ defineEmits<{
 
 .af-btn-outline:hover {
   background: #ffffff;
-  border-color: var(--app-slate-400, #94a3b8);
-  color: var(--app-slate-900, #0f172a);
+  border-color: var(--ph-navy, #10192B);
+  color: var(--ph-navy, #10192B);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(16, 25, 43, 0.08);
 }
 </style>

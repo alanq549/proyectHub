@@ -3,6 +3,7 @@
     DashboardRecentProjects — Bloque 1.4 (Migración Bootstrap → Tailwind)
     • Integrado al sistema de tokens `main.css` mediante la clase .app-card-glass-table
     • Estilos de estado y badges sincronizados con las variables de tema global
+    • Acentos navy + dorado "PROJECTHUB" coherentes con el resto del dashboard
   -->
   <div class="app-card-glass-table af-table-card">
     <!-- Encabezado de la Sección -->
@@ -51,11 +52,11 @@
               <td class="tw-text-center af-index-col">{{ idx + 1 }}</td>
               <td>
                 <div class="tw-flex tw-items-center tw-gap-3">
-                  <div 
+                  <div
                     class="af-project-icon"
-                    :style="{ 
-                      backgroundColor: project.iconBg || 'rgba(15, 23, 42, 0.08)', 
-                      color: project.iconColor || 'var(--app-primary)' 
+                    :style="{
+                      backgroundColor: project.iconBg || 'rgba(16, 25, 43, 0.08)',
+                      color: project.iconColor || 'var(--ph-navy)'
                     }"
                   >
                     <span class="material-symbols-outlined notranslate">{{ project.icon || 'folder' }}</span>
@@ -93,18 +94,18 @@
 
       <!-- VISTA MÓVIL (Tarjetas Adaptables UX Mobile First) -->
       <div class="tw-block md:tw-hidden tw-p-3">
-        <div 
-          v-for="project in projects" 
+        <div
+          v-for="project in projects"
           :key="`mobile-${project.id || project.name}`"
           class="af-mobile-card tw-mb-3 tw-p-3"
         >
           <div class="tw-flex tw-justify-between tw-items-start tw-mb-2">
             <div class="tw-flex tw-items-center tw-gap-2">
-              <div 
+              <div
                 class="af-project-icon sm"
-                :style="{ 
-                  backgroundColor: project.iconBg || 'rgba(15, 23, 42, 0.08)', 
-                  color: project.iconColor || 'var(--app-primary)' 
+                :style="{
+                  backgroundColor: project.iconBg || 'rgba(16, 25, 43, 0.08)',
+                  color: project.iconColor || 'var(--ph-navy)'
                 }"
               >
                 <span class="material-symbols-outlined notranslate" style="font-size:16px;">
@@ -196,15 +197,17 @@ function getStatusClass(status: string) {
 }
 
 .af-section-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--app-slate-900, #0f172a);
-  letter-spacing: -0.02em;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ph-navy, #10192B);
+  letter-spacing: -0.01em;
 }
 
+/* Badge de conteo en dorado, como acento de marca */
 .af-count-badge {
-  background: rgba(15, 23, 42, 0.08);
-  color: var(--app-primary, #0f172a);
+  background: var(--ph-gold-soft, rgba(201, 151, 74, 0.15));
+  color: var(--ph-gold, #C9974A);
   font-size: 11px;
   font-weight: 700;
   padding: 0.15rem 0.55rem;
@@ -214,7 +217,7 @@ function getStatusClass(status: string) {
 .af-link-btn {
   background: none;
   border: none;
-  color: var(--app-primary, #0f172a);
+  color: var(--ph-navy, #10192B);
   font-size: 13px;
   font-weight: 700;
   display: inline-flex;
@@ -227,8 +230,8 @@ function getStatusClass(status: string) {
 }
 
 .af-link-btn:hover {
-  background-color: rgba(15, 23, 42, 0.06);
-  color: var(--app-black, #000000);
+  background-color: var(--ph-gold-soft, rgba(201, 151, 74, 0.12));
+  color: var(--ph-gold, #C9974A);
 }
 
 /* Tabla Desktop */
@@ -260,7 +263,7 @@ function getStatusClass(status: string) {
 }
 
 .af-table-row:hover {
-  background-color: rgba(15, 23, 42, 0.02);
+  background-color: var(--ph-gold-soft, rgba(201, 151, 74, 0.05));
 }
 
 .af-index-col {
@@ -288,7 +291,7 @@ function getStatusClass(status: string) {
 .af-project-name {
   font-size: 14px;
   font-weight: 700;
-  color: var(--app-slate-900, #0f172a);
+  color: var(--ph-navy, #10192B);
 }
 
 .af-project-sub {
@@ -314,7 +317,8 @@ function getStatusClass(status: string) {
   font-weight: 500;
 }
 
-/* Status Pills — Usan tokens semánticos --app-* */
+/* Status Pills — se mantienen con tokens semánticos (éxito/alerta/error),
+   sin mezclarlos con la paleta de marca, para no perder su significado */
 .af-status-pill {
   padding: 0.25rem 0.7rem;
   font-size: 11px;
@@ -356,14 +360,14 @@ function getStatusClass(status: string) {
   border: 1px solid var(--app-slate-200, #e2e8f0);
 }
 
-/* Botón de Acción */
+/* Botón de Acción — navy, coherente con los botones primarios del dashboard */
 .af-view-btn {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(203, 213, 225, 0.8);
   width: 34px;
   height: 34px;
   border-radius: 0.5rem;
-  color: var(--app-primary, #0f172a);
+  color: var(--ph-navy, #10192B);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -372,10 +376,10 @@ function getStatusClass(status: string) {
 }
 
 .af-view-btn:hover {
-  background-color: var(--app-primary, #0f172a);
-  color: var(--app-on-primary, #ffffff);
-  border-color: var(--app-primary, #0f172a);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  background-color: var(--ph-navy, #10192B);
+  color: #ffffff;
+  border-color: var(--ph-navy, #10192B);
+  box-shadow: 0 4px 12px rgba(16, 25, 43, 0.2);
 }
 
 /* Adaptación MÓVIL (Cards) */
@@ -393,7 +397,7 @@ function getStatusClass(status: string) {
 .af-btn-mobile-action {
   background: none;
   border: none;
-  color: var(--app-primary, #0f172a);
+  color: var(--ph-gold, #C9974A);
   font-weight: 700;
   font-size: 12px;
   display: flex;

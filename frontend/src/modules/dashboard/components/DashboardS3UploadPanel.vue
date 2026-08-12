@@ -4,10 +4,11 @@
     • .form-select (Bootstrap) → form-select (plugin @tailwindcss/forms).
     • 8 utilidades Bootstrap migradas (mb-*, d-flex, gap, text-center).
     • .app-card-glass GLOBAL mantiene glassmorphism uniforme.
+    • Acentos navy + dorado "PROJECTHUB" coherentes con el resto del dashboard.
   -->
   <AppCard variant="glass" class=" af-panel-card">
     <h3 class="af-section-title tw-mb-3 tw-flex tw-items-center tw-gap-2">
-      <span class="material-symbols-outlined notranslate" style="color: var(--app-primary, #4b41e1);">cloud_upload</span>
+      <span class="material-symbols-outlined notranslate" style="color: var(--ph-gold, #C9974A);">cloud_upload</span>
       Subir archivos a S3
     </h3>
 
@@ -44,6 +45,12 @@ defineEmits<{
 .material-symbols-outlined { vertical-align: middle; font-family: 'Material Symbols Outlined' !important; }
 .notranslate { -webkit-translate: no; translate: no; }
 
+/* ============================================================
+   Paleta "PROJECTHUB" — navy #10192B + dorado #C9974A
+   Se apoya en las variables globales --ph-navy / --ph-gold ya
+   definidas en :root (ver Login.vue / Register.vue).
+   ============================================================ */
+
 /*
   El contenedor principal ya recibe glassmorphism + padding
   de la clase GLOBAL .app-card-glass. Sin definiciones locales duplicadas.
@@ -53,9 +60,10 @@ defineEmits<{
 }
 
 .af-section-title {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
   font-size: 16px;
   font-weight: 700;
-  color: var(--app-black, #000);
+  color: var(--ph-navy, #10192B);
 }
 
 .af-select {
@@ -65,24 +73,33 @@ defineEmits<{
   background-color: var(--app-input-bg, #ffffff);
 }
 
+.af-select:focus {
+  outline: none;
+  border-color: var(--ph-gold, #C9974A);
+  box-shadow: 0 0 0 3px var(--ph-gold-soft, rgba(201, 151, 74, 0.12));
+}
+
 .af-dropzone {
-  border: 2px dashed rgba(75, 65, 225, 0.25);
+  border: 2px dashed rgba(201, 151, 74, 0.35);
   border-radius: var(--app-glass-radius-sm, 0.75rem);
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(242, 244, 246, 0.4);
+  background-color: var(--ph-gold-soft, rgba(201, 151, 74, 0.05));
   cursor: pointer;
-  transition: background-color .15s ease;
+  transition: background-color .15s ease, border-color .15s ease;
 }
 
-.af-dropzone:hover { background-color: rgba(75, 65, 225, 0.04); }
+.af-dropzone:hover {
+  background-color: rgba(201, 151, 74, 0.1);
+  border-color: rgba(201, 151, 74, 0.55);
+}
 
 .af-dropzone-title {
   font-size: 14px;
-  color: var(--app-black, #000);
+  color: var(--ph-navy, #10192B);
   font-weight: 700;
 }
 
@@ -91,9 +108,10 @@ defineEmits<{
   color: var(--app-slate-500, #64748b);
 }
 
+/* Botón principal — navy, coherente con el resto del dashboard */
 .af-btn-upload {
-  background-color: var(--app-primary, #4b41e1);
-  color: var(--app-on-primary, #fff);
+  background-color: var(--ph-navy, #10192B);
+  color: #ffffff;
   border: none;
   padding: 0.45rem 1.25rem;
   border-radius: 0.5rem;
@@ -102,11 +120,12 @@ defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  box-shadow: 0 4px 12px rgba(75, 65, 225, 0.25);
+  box-shadow: 0 4px 12px rgba(16, 25, 43, 0.25);
+  transition: background-color .15s ease;
   cursor: pointer;
 }
 
 .af-btn-upload:hover {
-  background-color: var(--app-primary-dark, #4338ca);
+  background-color: var(--ph-navy-soft, #16233b);
 }
 </style>
