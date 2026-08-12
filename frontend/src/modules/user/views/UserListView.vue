@@ -1,196 +1,105 @@
 <template>
-  <div class="tw-py-2 tw-max-w-7xl tw-mx-auto tw-space-y-6">
-    <!-- Header de la Sección -->
-    <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-items-start md:tw-items-center tw-gap-4">
-      <div>
-        <h1 class="tw-text-2xl tw-font-bold tw-text-on-surface tw-tracking-tight">Gestión de Usuarios</h1>
-        <p class="tw-text-on-surface-variant tw-text-xs tw-mt-1">Control centralizado de identidades, roles y permisos del sistema.</p>
-      </div>
-      <AppButton variant="primary" icon="person_add" @click="openCreateModal">
-        Nuevo Usuario
-      </AppButton>
-    </div>
-
-    <!-- KPIs Rápidos -->
-    <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 xl:tw-grid-cols-4 tw-gap-3">
-      <AppCard variant="glass" padding="sm" class="tw-flex tw-items-center tw-gap-3">
-        <div class="tw-w-11 tw-h-11 tw-rounded-2xl tw-bg-surface-container tw-text-on-surface-variant tw-flex tw-items-center tw-justify-center tw-shrink-0">
-          <span class="material-symbols-outlined notranslate tw-text-2xl">group</span>
-        </div>
-        <div>
-          <div class="tw-text-on-surface-variant tw-text-xs tw-font-medium">Total Cuentas</div>
-          <div class="tw-text-2xl tw-font-bold tw-text-on-surface">{{ userStore.users.length }}</div>
-        </div>
-      </AppCard>
-
-      <AppCard variant="glass" padding="sm" class="tw-flex tw-items-center tw-gap-3">
-        <div class="tw-w-11 tw-h-11 tw-rounded-2xl tw-bg-success-bg tw-text-success tw-flex tw-items-center tw-justify-center tw-shrink-0">
-          <span class="material-symbols-outlined notranslate tw-text-2xl">check_circle</span>
-        </div>
-        <div>
-          <div class="tw-text-on-surface-variant tw-text-xs tw-font-medium">Usuarios Activos</div>
-          <div class="tw-text-2xl tw-font-bold tw-text-on-surface">{{ userStore.activeUsersCount }}</div>
-        </div>
-      </AppCard>
-
-      <!-- Único ícono con el acento latón: es el dato más sensible
-           de la tabla (administradores), coherente con la regla de
-           "un solo acento, reservado para lo que de verdad importa". -->
-      <AppCard variant="glass" padding="sm" class="tw-flex tw-items-center tw-gap-3">
-        <div class="tw-w-11 tw-h-11 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-shrink-0" style="background-color: rgba(184,134,59,0.12); color: var(--app-accent-melon, #B8863B);">
-          <span class="material-symbols-outlined notranslate tw-text-2xl">admin_panel_settings</span>
-        </div>
-        <div>
-          <div class="tw-text-on-surface-variant tw-text-xs tw-font-medium">Administradores</div>
-          <div class="tw-text-2xl tw-font-bold tw-text-on-surface">{{ userStore.adminUsersCount }}</div>
-        </div>
-      </AppCard>
-
-      <AppCard variant="glass" padding="sm" class="tw-flex tw-items-center tw-gap-3">
-        <div class="tw-w-11 tw-h-11 tw-rounded-2xl tw-bg-error-bg tw-text-error tw-flex tw-items-center tw-justify-center tw-shrink-0">
-          <span class="material-symbols-outlined notranslate tw-text-2xl">block</span>
-        </div>
-        <div>
-          <div class="tw-text-on-surface-variant tw-text-xs tw-font-medium">Cuentas Inactivas</div>
-          <div class="tw-text-2xl tw-font-bold tw-text-on-surface">{{ userStore.users.length - userStore.activeUsersCount }}</div>
-        </div>
-      </AppCard>
-    </div>
-
-    <!-- Tabla y buscador -->
-    <AppCard variant="glass" padding="none">
-      <!-- Barra de Herramientas / Buscador -->
-      <div class="tw-px-4 tw-py-3 tw-border-b tw-border-outline-variant">
-        <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-gap-3 tw-items-center">
-          <div class="md:tw-col-span-5">
-            <AppInput
-              v-model="searchQuery"
-              icon="search"
-              placeholder="Buscar por usuario, nombre o email..."
-            />
-          </div>
-          <div class="md:tw-col-span-3">
-            <select
-              v-model="selectedRole"
-              class="tw-w-full tw-rounded-xl tw-border tw-border-outline-variant tw-bg-surface-container-lowest tw-px-3 tw-py-2.5 tw-text-sm tw-text-on-surface focus:tw-border-primary focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-primary"
-            >
-              <option value="">Todos los Roles</option>
-              <option value="admin">Administrador</option>
-              <option value="user">Usuario Standard</option>
-            </select>
-          </div>
-          <div class="md:tw-col-span-3">
-            <select
-              v-model="selectedStatus"
-              class="tw-w-full tw-rounded-xl tw-border tw-border-outline-variant tw-bg-surface-container-lowest tw-px-3 tw-py-2.5 tw-text-sm tw-text-on-surface focus:tw-border-primary focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-primary"
-            >
-              <option value="">Todos los Estados</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabla Separada -->
-      <UserTable
-        :users="filteredUsers"
-        @edit="openEditModal"
-        @delete="handleDeleteUser"
-      />
-    </AppCard>
-
-    <!-- Modal Form Completo -->
-    <UserModal
-      v-if="showModal"
-      :userToEdit="selectedUser"
-      :loading="saving"
-      @close="showModal = false"
-      @save="handleSave"
-    />
+  <div class="tw-overflow-x-auto tw-rounded-2xl tw-border tw-border-outline-variant/60">
+    <table class="tw-w-full tw-align-middle">
+      <thead class="tw-bg-surface-container-low/50 tw-border-b tw-border-outline-variant">
+        <tr>
+          <th class="tw-ps-4 tw-py-4 tw-text-xs tw-font-bold tw-text-on-surface-variant tw-uppercase tw-tracking-wider" style="width: 70px;">ID</th>
+          <th class="tw-py-4 tw-text-xs tw-font-bold tw-text-on-surface-variant tw-uppercase tw-tracking-wider">Usuario / Info</th>
+          <th class="tw-py-4 tw-text-xs tw-font-bold tw-text-on-surface-variant tw-uppercase tw-tracking-wider">Correo Electrónico</th>
+          <th class="tw-py-4 tw-text-xs tw-font-bold tw-text-on-surface-variant tw-uppercase tw-tracking-wider">Rol</th>
+          <th class="tw-py-4 tw-text-xs tw-font-bold tw-text-on-surface-variant tw-uppercase tw-tracking-wider">Estado</th>
+          <th class="tw-text-right tw-pe-4 tw-py-4 tw-text-xs tw-font-bold tw-text-on-surface-variant tw-uppercase tw-tracking-wider">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="user in users"
+          :key="user.id"
+          class="tw-border-b tw-border-outline-variant/40 hover:tw-bg-primary/[0.04] tw-transition-colors"
+        >
+          <td class="tw-ps-4 tw-py-3 tw-font-semibold tw-text-on-surface-variant tw-font-mono tw-text-xs">#{{ user.id }}</td>
+          <td class="tw-py-3">
+            <div class="tw-flex tw-items-center tw-gap-3">
+              <img
+                :src="getUserAvatar(user)"
+                alt="Avatar"
+                class="tw-rounded-full tw-object-cover tw-border tw-border-outline-variant tw-shadow-sm"
+                width="40"
+                height="40"
+              />
+              <div>
+                <div class="tw-font-bold tw-text-on-surface tw-text-sm">{{ getFullName(user) }}</div>
+                <span class="tw-text-on-surface-variant tw-text-xs">@{{ user.username }}</span>
+              </div>
+            </div>
+          </td>
+          <td class="tw-py-3 tw-text-on-surface-variant tw-text-xs tw-font-medium">{{ user.email }}</td>
+          <td class="tw-py-3">
+            <AppBadge :variant="user.role === 'admin' ? 'primary' : 'neutral'" :icon="user.role === 'admin' ? 'admin_panel_settings' : 'person'">
+              {{ user.role === 'admin' ? 'Administrador' : 'Usuario' }}
+            </AppBadge>
+          </td>
+          <td class="tw-py-3">
+            <AppBadge :variant="user.is_active !== false ? 'success' : 'error'" :dot="true">
+              {{ user.is_active !== false ? 'Activo' : 'Inactivo' }}
+            </AppBadge>
+          </td>
+          <td class="tw-text-right tw-pe-4 tw-py-3">
+            <div class="tw-inline-flex tw-gap-1">
+              <AppButton variant="ghost" size="sm" icon="edit" @click="$emit('edit', user)" />
+              <AppButton variant="danger" size="sm" icon="delete" @click="$emit('delete', user.id!)" />
+            </div>
+          </td>
+        </tr>
+        <tr v-if="users.length === 0">
+          <td colspan="6" class="tw-text-center tw-py-10 tw-text-on-surface-variant">
+            <span class="material-symbols-outlined notranslate tw-text-4xl tw-text-outline tw-block tw-mb-2">group_off</span>
+            <p class="tw-text-sm">No se encontraron usuarios con los criterios seleccionados.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useUserStore } from '../stores/userStore';
-import type { User, UserPayload } from '../services/userService';
-import UserTable from '../components/UserTable.vue';
-import UserModal from '../components/UserModal.vue';
-import AppCard from '@/shared/components/AppCard.vue';
-import AppButton from '@/shared/components/AppButton.vue';
-import AppInput from '@/shared/components/AppInput.vue';
+import type { User } from '../services/userService'
+import AppBadge from '@/shared/components/AppBadge.vue'
+import AppButton from '@/shared/components/AppButton.vue'
 
-const userStore = useUserStore();
-
-const showModal = ref(false);
-const selectedUser = ref<User | null>(null);
-const saving = ref(false);
-
-const searchQuery = ref('');
-const selectedRole = ref('');
-const selectedStatus = ref('');
-
-const filteredUsers = computed(() => {
-  return userStore.users.filter((u: User) => {
-    const query = searchQuery.value.toLowerCase().trim();
-    const fullName = `${u.first_name || ''} ${u.last_name || ''}`.toLowerCase();
-
-    const matchesSearch =
-      !query ||
-      u.username.toLowerCase().includes(query) ||
-      u.email.toLowerCase().includes(query) ||
-      fullName.includes(query);
-
-    const matchesRole = !selectedRole.value || u.role === selectedRole.value;
-
-    const isActive = u.is_active !== false;
-    const matchesStatus =
-      !selectedStatus.value ||
-      (selectedStatus.value === 'active' && isActive) ||
-      (selectedStatus.value === 'inactive' && !isActive);
-
-    return matchesSearch && matchesRole && matchesStatus;
-  });
-});
-
-const openCreateModal = () => {
-  selectedUser.value = null;
-  showModal.value = true;
-};
-
-const openEditModal = (user: User) => {
-  selectedUser.value = user;
-  showModal.value = true;
-};
-
-const handleSave = async (formData: UserPayload | FormData) => {
-  saving.value = true;
-  try {
-    if (selectedUser.value?.id) {
-      await userStore.updateUser(selectedUser.value.id, formData as UserPayload);
-    } else {
-      await userStore.createUser(formData as UserPayload);
-    }
-    showModal.value = false;
-  } catch (err) {
-    alert('Error al guardar datos del usuario');
-  } finally {
-    saving.value = false;
+withDefaults(
+  defineProps<{
+    users?: User[]
+  }>(),
+  {
+    users: () => []
   }
-};
+)
 
-const handleDeleteUser = async (id: number) => {
-  if (confirm('¿Seguro que deseas eliminar este usuario?')) {
-    try {
-      await userStore.deleteUser(id);
-    } catch (err) {
-      alert('Error al eliminar el usuario');
-    }
+defineEmits<{
+  (e: 'edit', user: User): void
+  (e: 'delete', id: number): void
+}>()
+
+const defaultAvatar = '/static/defaults/icon_default.png'
+
+const getUserAvatar = (user: User) => {
+  if (!user.profile_picture_url) {
+    return defaultAvatar
   }
-};
 
-onMounted(() => {
-  userStore.fetchUsers();
-});
+  if (user.profile_picture_url.startsWith('/')) {
+    return `http://127.0.0.1:5000${user.profile_picture_url}`
+  }
+
+  return user.profile_picture_url
+}
+
+const getFullName = (user: User) => {
+  const name = [user.first_name, user.last_name]
+    .filter(Boolean)
+    .join(' ')
+
+  return name.length > 0 ? name : user.username
+}
 </script>
