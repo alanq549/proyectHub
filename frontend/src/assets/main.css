@@ -1,6 +1,12 @@
 /* ============================================================
    main.css — Sistema Unificado de Design Tokens ProjectHub
-   Versión 2.2 (Tailwind + Bootstrap Dual-Style 2026-08-05)
+   Versión 4.1 (Tailwind + Bootstrap Dual-Style 2026-08-11)
+   Paleta: "Tinta Académica" — tinta marino profundo como ancla
+   (antes azul marino más saturado), papel cálido para superficies
+   claras, y latón como ÚNICO acento cálido dominante (antes rosa
+   + melón competían entre sí). Rosa y cielo quedan atenuados,
+   reservados solo a variedad de tags/categorías, nunca como
+   color dominante ni de CTA.
    ============================================================ */
 
 /* ============================================================
@@ -12,105 +18,155 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tipografía: Fraunces (display, para títulos y hero) + IBM Plex Sans
+   (UI/cuerpo) + IBM Plex Mono (cifras, KPIs, datos tabulares, y
+   ahora también etiquetas tipo "cita académica" en hero/sidebar).
+   Cargar también en index.html con <link> a fonts.googleapis.com
+   para evitar FOUC. */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
 /* ============================================================
    [1/5] TOKENS GLOBALES — Modificar aquí para cambiar el tema
    ============================================================ */
 :root {
   /* ------------------------------
-     PALETA BASE (semántica - Blanco / Negro / Grises)
+     PALETA BASE (semántica - Tinta Académica)
+     Ancla: tinta marino profundo. Base: papel cálido + blanco.
+     Acento dominante (único, de uso puntual): latón.
+     Rosa y cielo: variedad de tags, atenuados, nunca dominantes.
      ------------------------------ */
-  --app-primary: #0f172a;               /* Slate 900 */
-  --app-primary-dark: #000000;          /* Negro */
-  --app-primary-light: #334155;         /* Slate 700 */
-  --app-secondary: #475569;           /* Slate 600 */
-  --app-secondary-light: #f1f5f9;     /* Slate 100 */
-  --app-black: #000000;
-  --app-slate-900: #0f172a;
-  --app-slate-800: #1e293b;
-  --app-slate-700: #334155;
-  --app-slate-600: #475569;
-  --app-slate-500: #64748b;
-  --app-slate-400: #94a3b8;
-  --app-slate-300: #cbd5e1;
-  --app-slate-200: #e2e8f0;
-  --app-slate-100: #f1f5f9;
-  --app-slate-50: #f8fafc;
+  --app-primary: #1B2E44;               /* Tinta marino (antes #2E5D8F, más saturado) */
+  --app-primary-dark: #14243A;          /* Tinta marino oscuro */
+  --app-primary-light: #3E5872;         /* Tinta marino claro/acerado */
+  --app-secondary: #7C93A8;             /* Azul-acero atenuado (antes #5FB8DE, cielo brillante) */
+  --app-secondary-light: #E4E9EE;       /* Azul-acero muy pálido */
+  --app-accent-pink: #E3B4BE;           /* Rosa atenuado — solo tags, no dominante */
+  --app-accent-pink-light: #F7E9EC;     /* Rosa muy pálido */
+  --app-accent-melon: #B8863B;          /* Ahora es LATÓN: el acento de una sola acción/CTA por vista */
+  --app-accent-melon-light: #E8D2A6;    /* Latón pálido */
+  --app-black: #14243A;                 /* Tinta marino (antes #16232F) */
+  --app-slate-900: #14243A;             /* Tinta marino */
+  --app-slate-800: #1B2E44;             /* Marino oscuro */
+  --app-slate-700: #2A4260;             /* Marino medio */
+  --app-slate-600: #4C6479;             /* Marino-acero */
+  --app-slate-500: #6C8299;             /* Marino-gris */
+  --app-slate-400: #93A6B8;             /* tinte intermedio */
+  --app-slate-300: #C1CFDA;             /* azul-gris claro */
+  --app-slate-200: #DCE5EC;             /* tinte claro derivado */
+  --app-slate-100: #EEF3F7;             /* tinte muy claro derivado */
+  --app-slate-50: #F8FAFC;              /* casi blanco, tinte azulado */
   --app-on-primary: #ffffff;
-  --app-on-surface: #0f172a;
-  --app-on-surface-variant: #475569;
-  --app-outline: #76777d;
-  --app-outline-variant: #c6c6cd;
-  --app-error: #ba1a1a;
-  --app-error-bg: rgba(254, 226, 226, 0.8);
-  --app-success: #15803d;
-  --app-success-bg: rgba(220, 252, 231, 0.8);
-  --app-warning: #b45309;
-  --app-warning-bg: rgba(254, 243, 199, 0.8);
+  --app-on-surface: #16232F;
+  --app-on-surface-variant: #4C6479;
+  --app-outline: #93A6B8;
+  --app-outline-variant: #DCE5EC;
+  --app-error: #C0392B;
+  --app-error-bg: rgba(250, 224, 219, 0.8);
+  --app-success: #2F8F5B;
+  --app-success-bg: rgba(214, 236, 220, 0.8);
+  --app-warning: #C67C2E;
+  --app-warning-bg: rgba(251, 217, 184, 0.6);
+
+  /* ------------------------------
+     TRÍO "TINTA ACADÉMICA" — nombres directos que ya usan
+     los paneles de registro/login. Antes solo existían como
+     fallback embebido en cada componente; ahora son tokens
+     reales del sistema, para que cualquier vista nueva los
+     pueda usar sin repetir valores hexadecimales sueltos.
+     ------------------------------ */
+  --app-ink-900: #14243A;
+  --app-ink-800: #1B2E44;
+  --app-ink-700: #2A4260;
+  --app-paper: #F7F4EC;
+  --app-paper-card: #FFFFFF;
+  --app-accent-brass: #B8863B;
+  --app-accent-brass-light: #E8D2A6;
 
   /* ------------------------------
      FONDO PRINCIPAL DE LA APLICACIÓN
      ------------------------------ */
-  --app-bg-main: #f1f5f9;
-  --app-bg-gradient: radial-gradient(at 0% 0%, rgba(241, 245, 249, 1) 0px, transparent 50%), 
-                      radial-gradient(at 100% 100%, rgba(226, 232, 240, 0.6) 0px, transparent 50%);
+  --app-bg-main: #F8FAFC;
+  --app-bg-gradient: radial-gradient(at 0% 0%, rgba(248, 250, 252, 1) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(184, 134, 59, 0.10) 0px, transparent 50%);
 
   /* Blobs decorativos de fondo (AppLayout) */
-  --app-bg-blob-primary: rgba(15, 23, 42, 0.18);      /* Slate oscuro más marcado */
-  --app-bg-blob-secondary: rgba(100, 116, 139, 0.25);  /* Slate medio para mayor contraste */
-  --app-bg-blob-blur: blur(90px);                     /* Blur sutil para retener la luz */
+  --app-bg-blob-primary: rgba(20, 36, 58, 0.14);       /* Tinta marino */
+  --app-bg-blob-secondary: rgba(184, 134, 59, 0.16);   /* Latón, muy tenue (antes azul cielo) */
+  --app-bg-blob-blur: blur(90px);
   --app-bg-blob-opacity: 0.85;
 
   /* ------------------------------
      SUPERFICIES / SURFACES (Material Design)
      ------------------------------ */
-  --app-surface: #f7f9fb;
+  --app-surface: #FFFFFF;
   --app-surface-container-lowest: #ffffff;
-  --app-surface-container-low: #f2f4f6;
-  --app-surface-container: #eceef0;
-  --app-surface-container-high: #e6e8ea;
-  --app-surface-container-highest: #e0e3e5;
+  --app-surface-container-low: #F5F8FA;
+  --app-surface-container: #EEF3F7;
+  --app-surface-container-high: #E6EDF3;
+  --app-surface-container-highest: #DCE5EC;
 
   /* ------------------------------
      ESTÁNDAR GLASSMORPHISM — Todas las tarjetas
      ------------------------------ */
-  --app-glass-bg: rgba(255, 255, 255, 0.72);
-  --app-glass-bg-hover: rgba(255, 255, 255, 0.88);
-  --app-glass-bg-light: rgba(255, 255, 255, 0.55);
-  --app-glass-blur: blur(20px);
-  --app-glass-blur-sm: blur(12px);
+  --app-glass-bg: rgba(255, 255, 255, 0.85);
+  --app-glass-bg-hover: rgba(255, 255, 255, 0.96);
+  --app-glass-bg-light: rgba(255, 255, 255, 0.65);
+  --app-glass-blur: blur(12px);
+  --app-glass-blur-sm: blur(7px);
   --app-glass-border: 1px solid rgba(255, 255, 255, 0.9);
-  --app-glass-border-subtle: 1px solid rgba(255, 255, 255, 0.5);
-  --app-glass-bottom-border: 1px solid rgba(0, 0, 0, 0.06);
+  --app-glass-border-subtle: 1px solid rgba(255, 255, 255, 0.55);
+  --app-glass-bottom-border: 1px solid rgba(22, 35, 47, 0.08);
   --app-glass-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.04),
-    0 2px 6px rgba(0, 0, 0, 0.02),
+    0 8px 20px -6px rgba(20, 36, 58, 0.08),
+    0 2px 5px rgba(20, 36, 58, 0.04),
     inset 0 1px 1px rgba(255, 255, 255, 0.9);
   --app-glass-shadow-hover:
-    0 16px 32px -6px rgba(15, 23, 42, 0.08),
-    0 4px 12px rgba(0, 0, 0, 0.03),
+    0 14px 28px -6px rgba(20, 36, 58, 0.16),
+    0 4px 10px rgba(20, 36, 58, 0.04),
     inset 0 1px 1px #ffffff;
-  --app-glass-radius-sm: 0.75rem;
-  --app-glass-radius-md: 1.1rem;
-  --app-glass-radius-lg: 1.25rem;
-  --app-glass-radius-xl: 1.5rem;
+  --app-glass-radius-sm: 0.5rem;
+  --app-glass-radius-md: 0.65rem;
+  --app-glass-radius-lg: 0.75rem;
+  --app-glass-radius-xl: 0.85rem;
   --app-glass-padding-md: 22px 24px;
   --app-glass-padding-lg: 28px 32px;
+
+  /* Acento de firma: barra superior tinta → latón, en la Hero Card
+     y tarjetas KPI (antes marino → cielo; el cielo brillante
+     competía con el nuevo acento único). */
+  --app-accent-bar: linear-gradient(90deg, var(--app-primary) 0%, var(--app-accent-melon) 100%);
+  --app-accent-bar-height: 4px;
+
+  /* Badge / pill de estado (p. ej. "Nueva versión académica 2.0") */
+  --app-badge-bg: var(--app-secondary-light);
+  --app-badge-text: var(--app-primary-dark);
+  --app-badge-border: 1px solid #C7D3DC;
+
+  /* Tags de categoría — para dar variedad sin salir de la paleta.
+     Se mantienen como variedad funcional, pero atenuados para no
+     competir con el latón, que es el único acento "fuerte". */
+  --app-tag-pink-bg: var(--app-accent-pink-light);
+  --app-tag-pink-text: #A1465A;
+  --app-tag-melon-bg: var(--app-accent-melon-light);
+  --app-tag-melon-text: #7A5A25;
+  --app-tag-sky-bg: var(--app-secondary-light);
+  --app-tag-sky-text: #3D5A70;
 
   /* ------------------------------
      ESTÁNDAR CARDS PLANO (sin glass) — Admin Users
      ------------------------------ */
   --app-flat-bg: #ffffff;
   --app-flat-border: 1px solid var(--app-slate-200);
-  --app-flat-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-  --app-flat-radius: 1rem;
+  --app-flat-shadow: 0 1px 3px 0 rgba(20, 36, 58, 0.06), 0 1px 2px -1px rgba(20, 36, 58, 0.04);
+  --app-flat-radius: 0.65rem;
 
   /* ------------------------------
      NAVBAR / RAIL / ELEMENTOS FLOTANTES
      ------------------------------ */
-  --app-topbar-bg: rgba(255, 255, 255, 0.82);
-  --app-bottomnav-bg: rgba(255, 255, 255, 0.90);
+  --app-topbar-bg: rgba(255, 255, 255, 0.9);
+  --app-bottomnav-bg: rgba(255, 255, 255, 0.95);
   --app-rail-bg: var(--app-surface-container-low);
-  --app-rail-border: 1px solid rgba(198, 198, 205, 0.3);
+  --app-rail-border: 1px solid rgba(220, 229, 236, 0.6);
 
   /* ------------------------------
      FORMULARIOS / INPUTS
@@ -118,25 +174,38 @@
   --app-input-bg: #ffffff;
   --app-input-border: var(--app-slate-200);
   --app-input-border-focus: var(--app-primary);
-  --app-input-focus-ring: 0 0 0 3px rgba(15, 23, 42, 0.12);
-  --app-input-radius: 0.5rem;
+  --app-input-focus-ring: 0 0 0 3px rgba(184, 134, 59, 0.20);
+  --app-input-radius: 0.4rem;
   --app-input-padding-y: 0.55rem;
   --app-input-padding-x: 0.75rem;
-  --app-input-focus-accent: #0f172a;
+  --app-input-focus-accent: #14243A;
 
   /* ------------------------------
-     BOTONES ESTÁNDAR (Blanco y Negro)
+     BOTONES ESTÁNDAR
      ------------------------------ */
-  --app-btn-primary-bg: #0f172a;
-  --app-btn-primary-bg-hover: #000000;
-  --app-btn-primary-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --app-btn-primary-bg: #14243A;
+  --app-btn-primary-bg-hover: #0B1826;
+  --app-btn-primary-shadow: 0 6px 16px rgba(20, 36, 58, 0.30);
   --app-btn-primary-height: 42px;
-  --app-btn-radius-md: 0.75rem;
+  --app-btn-radius-md: 0.5rem;
+
+  /* Botón de acento — el latón, para UNA sola acción de énfasis
+     por vista (p. ej. "Comenzar ahora", "Registrarse"); no combinar
+     con rosa/cielo en la misma vista. */
+  --app-btn-accent-bg: #B8863B;
+  --app-btn-accent-bg-hover: #9A6F2F;
+  --app-btn-accent-shadow: 0 6px 16px rgba(184, 134, 59, 0.35);
+
+  --app-btn-secondary-bg: #7C93A8;
+  --app-btn-secondary-bg-hover: #5F7A8E;
+  --app-btn-secondary-shadow: 0 6px 16px rgba(124, 147, 168, 0.30);
 
   /* ------------------------------
      TIPOGRAFÍA Y BORDES
      ------------------------------ */
-  --app-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --app-font-display: 'Fraunces', ui-serif, Georgia, serif; /* títulos, hero, cifras clave */
+  --app-font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif; /* UI / cuerpo */
+  --app-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace; /* KPIs, tablas, datos */
   --app-radius-pill: 9999px;
 
   /* ------------------------------
@@ -145,13 +214,13 @@
   --ph-surface: var(--app-surface);
   --ph-surface-container: var(--app-surface-container);
   --ph-primary: var(--app-slate-900);
-  --ph-primary-container: #131b2e;
+  --ph-primary-container: var(--app-ink-900);
   --ph-secondary: var(--app-primary);
-  --ph-on-primary-container: #7c839b;
+  --ph-on-primary-container: var(--app-accent-brass-light);
   --ph-outline-variant: var(--app-outline-variant);
   --ph-radius-lg: var(--app-glass-radius-sm);
   --ph-radius-xl: var(--app-glass-radius-md);
-  --ph-radius-2xl: 2rem;
+  --ph-radius-2xl: 1.25rem;
 
   --af-primary: var(--app-black);
   --af-secondary: var(--app-primary);
@@ -164,12 +233,12 @@
   --primary: var(--app-black);
   --secondary: var(--app-primary);
   --background: var(--app-bg-main);
-  --tertiary-fixed: var(--app-secondary-light);
-  --on-tertiary-container: var(--app-secondary);
+  --tertiary-fixed: var(--app-accent-pink-light);
+  --on-tertiary-container: var(--app-accent-pink);
   --surface-container-lowest: var(--app-surface-container-lowest);
   --on-surface-variant: var(--app-on-surface-variant);
   --surface-container-low: var(--app-surface-container-low);
-  --secondary-fixed: #e2dfff;
+  --secondary-fixed: #DCE5EC;
   --on-primary: var(--app-on-primary);
   --secondary-container: var(--app-primary-light);
   --outline-variant: var(--app-outline-variant);
@@ -178,7 +247,7 @@
   --on-surface: var(--app-on-surface);
   --surface-container: var(--app-surface-container);
   --surface-container-high: var(--app-surface-container-high);
-  --on-primary-container: #7c839b;
+  --on-primary-container: var(--app-accent-brass-light);
   --surface: var(--app-surface);
 }
 
@@ -188,12 +257,32 @@ body {
   background-color: var(--app-bg-main);
   background-image:
     var(--app-bg-gradient),
-    linear-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+    linear-gradient(rgba(20, 36, 58, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 36, 58, 0.03) 1px, transparent 1px);
   background-size: cover, 32px 32px, 32px 32px;
   color: var(--app-on-surface);
   margin: 0;
   padding: 0;
+}
+
+/* Jerarquía tipográfica: la display face solo en títulos de página,
+   hero y cifras KPI destacadas — nunca en botones ni texto de UI. */
+h1, h2, .app-display,
+.app-hero-title,
+.app-kpi-value {
+  font-family: var(--app-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--app-primary);
+}
+
+.app-kpi-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.app-data, table, .app-table-cell-numeric {
+  font-family: var(--app-font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================
@@ -217,25 +306,37 @@ body {
   box-shadow: var(--app-glass-shadow-hover);
 }
 
-/* Card más grande — Hero Card */
+/* Card más grande — Hero Card. Barra superior tinta → latón como
+   único elemento decorativo de firma. */
 .app-card-glass-xl {
+  position: relative;
   background: var(--app-glass-bg);
   backdrop-filter: var(--app-glass-blur);
   -webkit-backdrop-filter: var(--app-glass-blur);
   border: var(--app-glass-border);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+  border-bottom: 1px solid rgba(20, 36, 58, 0.12);
   box-shadow:
-    0 10px 30px -5px rgba(0, 0, 0, 0.05),
-    0 4px 12px rgba(0, 0, 0, 0.02),
+    0 10px 26px -6px rgba(20, 36, 58, 0.08),
+    0 4px 10px rgba(20, 36, 58, 0.03),
     inset 0 1px 1px rgba(255, 255, 255, 0.9);
   border-radius: var(--app-glass-radius-xl);
   padding: 30px 36px;
+  overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.app-card-glass-xl::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--app-accent-bar-height);
+  background: var(--app-accent-bar);
 }
 .app-card-glass-xl:hover {
   box-shadow:
-    0 14px 35px -5px rgba(0, 0, 0, 0.08),
-    0 6px 16px rgba(0, 0, 0, 0.03),
+    0 14px 32px -6px rgba(20, 36, 58, 0.16),
+    0 6px 14px rgba(20, 36, 58, 0.04),
     inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
@@ -262,7 +363,7 @@ body {
   transition: box-shadow 0.2s ease;
 }
 .app-card-glass-light:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 15px -3px rgba(20, 36, 58, 0.12);
 }
 
 /* Card Plano — Users CRUD (Bootstrap style, sin glass) */
@@ -273,15 +374,60 @@ body {
   border-radius: var(--app-flat-radius);
   overflow: hidden;
 }
+.app-card-flat > .app-card-flat-header {
+  border-bottom: 1px solid var(--app-slate-200);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
 
 /* Alias: clase .glass-card mantenida por compatibilidad */
 .glass-card {
   background: var(--app-glass-bg);
   backdrop-filter: var(--app-glass-blur-sm);
   -webkit-backdrop-filter: var(--app-glass-blur-sm);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(184, 134, 59, 0.35);
   border-radius: var(--app-glass-radius-md);
   box-shadow: var(--app-glass-shadow);
+}
+
+/* Badge / pill de estado, p. ej. "Nueva versión académica 2.0" */
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--app-badge-bg);
+  color: var(--app-badge-text);
+  border: var(--app-badge-border);
+  border-radius: var(--app-radius-pill);
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* Tags de categoría (variedad dentro de la paleta) */
+.app-tag-pink {
+  background: var(--app-tag-pink-bg);
+  color: var(--app-tag-pink-text);
+  border-radius: var(--app-radius-pill);
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.app-tag-melon {
+  background: var(--app-tag-melon-bg);
+  color: var(--app-tag-melon-text);
+  border-radius: var(--app-radius-pill);
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.app-tag-sky {
+  background: var(--app-tag-sky-bg);
+  color: var(--app-tag-sky-text);
+  border-radius: var(--app-radius-pill);
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 /* ============================================================
@@ -316,7 +462,54 @@ body {
 }
 
 /* ============================================================
-   [4/5] UTILIDADES GLOBALES (Material Icons & Traducción)
+   [4/5] BOTONES — Primario (Tinta), Secundario (Acero), Acento (Latón)
+   ============================================================ */
+.app-btn-primary {
+  background: var(--app-btn-primary-bg);
+  color: var(--app-on-primary);
+  border: none;
+  border-radius: var(--app-btn-radius-md);
+  height: var(--app-btn-primary-height);
+  box-shadow: var(--app-btn-primary-shadow);
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.app-btn-primary:hover {
+  background: var(--app-btn-primary-bg-hover);
+}
+
+.app-btn-secondary {
+  background: var(--app-btn-secondary-bg);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--app-btn-radius-md);
+  height: var(--app-btn-primary-height);
+  box-shadow: var(--app-btn-secondary-shadow);
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+.app-btn-secondary:hover {
+  background: var(--app-btn-secondary-bg-hover);
+}
+
+/* Uso puntual: una sola acción de énfasis por vista (p. ej. "Comenzar
+   ahora"). No combinar el latón con rosa/cielo en la misma vista. */
+.app-btn-accent {
+  background: var(--app-btn-accent-bg);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--app-btn-radius-md);
+  height: var(--app-btn-primary-height);
+  box-shadow: var(--app-btn-accent-shadow);
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+.app-btn-accent:hover {
+  background: var(--app-btn-accent-bg-hover);
+}
+
+/* ============================================================
+   [5/5] UTILIDADES GLOBALES (Material Icons & Traducción)
    ============================================================ */
 .material-symbols-outlined {
   vertical-align: middle;

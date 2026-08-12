@@ -41,12 +41,12 @@
                 <label class="form-label-custom tw-mb-1 tw-block">Correo Electrónico</label>
                 <div class="input-icon-wrap">
                   <span class="material-symbols-outlined notranslate">mail</span>
-                  <input 
-                    v-model.trim="email" 
-                    type="email" 
+                  <input
+                    v-model.trim="email"
+                    type="email"
                     class="form-control-custom tw-w-full"
                     :class="{ 'is-invalid': errors.email }"
-                    placeholder="correo@universidad.edu" 
+                    placeholder="correo@universidad.edu"
                     @input="clearFieldError('email')"
                   />
                 </div>
@@ -62,9 +62,9 @@
                 </div>
                 <div class="input-icon-wrap">
                   <span class="material-symbols-outlined notranslate">lock</span>
-                  <input 
-                    v-model="password" 
-                    :type="showPassword ? 'text' : 'password'" 
+                  <input
+                    v-model="password"
+                    :type="showPassword ? 'text' : 'password'"
                     class="form-control-custom has-toggle tw-w-full"
                     :class="{ 'is-invalid': errors.password }"
                     placeholder="••••••••"
@@ -96,7 +96,7 @@
                 </a>
               </p>
             </div>
-            
+
             <SSOButtons />
           </div>
         </div>
@@ -180,7 +180,7 @@ const triggerShakeAnimation = () => {
 // Petición Real al Backend Flask mediante el AuthStore
 const handleLogin = async () => {
   errorMessage.value = ''
-  
+
   if (!validateForm()) {
     triggerShakeAnimation()
     return
@@ -199,19 +199,39 @@ const handleLogin = async () => {
     } else {
       router.push({ name: 'dashboard' })
     }
-  } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || error.response?.data?.error || 'Correo o contraseña incorrectos. Inténtalo de nuevo.'
-    triggerShakeAnimation()
-  } finally {
-    isLoading.value = false
-  }
+  } catch (error: unknown) {
+  const axiosError = error as {
+    response?: {
+      data?: {
+        message?: string;
+        error?: string;
+      };
+    };
+  };
+
+  errorMessage.value =
+    axiosError.response?.data?.message ||
+    axiosError.response?.data?.error ||
+    'Correo o contraseña incorrectos. Inténtalo de nuevo.';
+
+  triggerShakeAnimation();
+} finally {
+  isLoading.value = false;
+}
 }
 </script>
 
 <style scoped>
-/* Variables moved to global CSS or handled by a theme */
-/* .login-wrapper background color */
+/* ============================================================
+   PALETA "PROJECTHUB" — combina con el panel izquierdo (navy + dorado)
+   Ajusta estos valores si tu AuthSidebar usa tonos ligeramente distintos.
+   ============================================================ */
 .login-wrapper {
+  --ph-navy: #10192B;        /* fondo del sidebar / botón principal */
+  --ph-navy-soft: #16233b;
+  --ph-gold: #C9974A;        /* acento dorado del logo/icono */
+  --ph-gold-soft: rgba(201, 151, 74, 0.12);
+
   background-color: var(--background, #f7f9fb);
 }
 
@@ -228,8 +248,8 @@ const handleLogin = async () => {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top right, rgba(75, 65, 225, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at bottom left, rgba(172, 237, 255, 0.05) 0%, transparent 40%);
+    radial-gradient(circle at top right, rgba(16, 25, 43, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at bottom left, rgba(201, 151, 74, 0.08) 0%, transparent 40%);
 }
 
 .blob-1 {
@@ -238,7 +258,7 @@ const handleLogin = async () => {
   right: -5%;
   width: 40%;
   height: 40%;
-  background: rgba(75, 65, 225, 0.05);
+  background: rgba(16, 25, 43, 0.05);
   border-radius: 50%;
   filter: blur(120px);
 }
@@ -249,7 +269,7 @@ const handleLogin = async () => {
   left: -5%;
   width: 30%;
   height: 30%;
-  background: rgba(76, 215, 246, 0.10);
+  background: rgba(201, 151, 74, 0.12);
   border-radius: 50%;
   filter: blur(100px);
 }
@@ -261,12 +281,9 @@ const handleLogin = async () => {
   width: 100%;
   border-radius: 2rem;
   overflow: hidden;
-  box-shadow: 0px 40px 100px rgba(0, 0, 0, 0.06);
+  box-shadow: 0px 40px 100px rgba(16, 25, 43, 0.12);
   background: #fff;
 }
-
-/* Left panel */
-
 
 /* Right panel (form) */
 .right-panel {
@@ -274,34 +291,52 @@ const handleLogin = async () => {
   padding: 64px;
 }
 
-
 @media (max-width: 767.98px) {
   .right-panel {
     padding: 2rem;
   }
 }
 
+.btn-back-home {
+  border: 1px solid var(--outline-variant, #d8dce3);
+  background: transparent;
+  color: var(--ph-navy, #10192B);
+  border-radius: 0.5rem;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.btn-back-home:hover {
+  background-color: #f4f5f7;
+  border-color: var(--ph-navy, #10192B);
+}
+
 .form-title {
-  color: var(--on-surface, #191c1e);
-  font-weight: 600;
+  /* Serif para que combine con el titular del sidebar */
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  color: var(--ph-navy, #10192B);
+  font-weight: 700;
   letter-spacing: -0.01em;
-  font-size: 24px;
+  font-size: 26px;
 }
 
 @media (min-width: 768px) {
   .form-title {
-    font-size: 32px;
+    font-size: 34px;
     letter-spacing: -0.015em;
   }
 }
 
 .form-subtitle {
-  color: var(--on-surface-variant, #45464d);
+  color: var(--on-surface-variant, #5b5f6b);
   font-size: 16px;
 }
 
 .form-label-custom {
-  color: var(--on-surface-variant, #45464d);
+  color: var(--on-surface-variant, #5b5f6b);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -311,16 +346,15 @@ const handleLogin = async () => {
   position: relative;
 }
 
-/* Icono izquierdo (candado) */
+/* Icono izquierdo (candado / correo) */
 .input-icon-wrap > .material-symbols-outlined {
   position: absolute;
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--outline, #76777d);
+  color: var(--outline, #8a8d97);
   pointer-events: none;
 }
-
 
 /* Botón de mostrar/ocultar contraseña */
 .toggle-icon {
@@ -340,20 +374,17 @@ const handleLogin = async () => {
   border: none;
 }
 
-
-/* Icono dentro del botón */
 .toggle-icon .material-symbols-outlined {
   font-size: 20px;
   line-height: 1;
 }
-
 
 .form-control-custom {
   height: 48px;
   padding-left: 48px;
   padding-right: 16px;
   background-color: var(--surface, #f7f9fb);
-  border: 1px solid var(--outline-variant, #c6c6cd);
+  border: 1px solid var(--outline-variant, #d8dce3);
   border-radius: 0.75rem;
   color: var(--on-surface, #191c1e);
   font-size: 16px;
@@ -365,8 +396,8 @@ const handleLogin = async () => {
 
 .form-control-custom:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(75, 65, 225, 0.10);
-  border-color: var(--secondary, #4b41e1);
+  box-shadow: 0 0 0 4px var(--ph-gold-soft, rgba(201, 151, 74, 0.12));
+  border-color: var(--ph-gold, #C9974A);
 }
 
 .form-control-custom.is-invalid {
@@ -378,25 +409,26 @@ const handleLogin = async () => {
   font-size: 0.75rem;
 }
 
+/* Botón principal — mismo tono navy que el sidebar de la imagen */
 .btn-primary-custom {
   height: 52px;
   width: 100%;
-  background-color: var(--primary, #000000);
-  color: var(--on-primary, #ffffff);
+  background-color: var(--ph-navy, #10192B);
+  color: #ffffff;
   border-radius: 0.75rem;
   font-size: 14px;
   font-weight: 600;
+  letter-spacing: 0.01em;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: opacity .15s ease, transform .1s ease;
+  transition: background-color .15s ease, transform .1s ease;
 }
 
 .btn-primary-custom:hover {
-  opacity: 0.9;
-  color: var(--on-primary, #ffffff);
+  background-color: var(--ph-navy-soft, #16233b);
 }
 
 .btn-primary-custom:active {
@@ -404,24 +436,18 @@ const handleLogin = async () => {
 }
 
 .btn-primary-custom:disabled {
-  opacity: 0.9;
+  opacity: 0.7;
 }
 
+/* Enlace "Crear cuenta" en dorado, combinando con el acento del logo */
+.tw-text-primary {
+  color: var(--ph-gold, #C9974A) !important;
+}
 
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-4px);
-  }
-
-  75% {
-    transform: translateX(4px);
-  }
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 .animate-shake {

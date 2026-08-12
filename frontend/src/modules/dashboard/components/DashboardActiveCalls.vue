@@ -87,7 +87,6 @@
 
 <script setup lang="ts">
 import AppCard from '@/shared/components/AppCard.vue'
-import AppButton from '@/shared/components/AppButton.vue'
 
 export interface ActiveCall {
   id?: string | number

@@ -28,42 +28,46 @@
 
 <style scoped>
 .divider-text {
-  color: var(--outline-variant, #c6c6cd);
-  font-size: 12px;
-  letter-spacing: 0.03em;
+  color: var(--app-on-surface-variant, #4C6479);
+  font-family: var(--app-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
   white-space: nowrap;
 }
 
 .divider-line {
   height: 1px;
   flex: 1;
-  background-color: var(--outline-variant, #c6c6cd);
+  background-color: var(--app-outline-variant, #DCE5EC);
 }
 
 .sso-btn {
   height: 48px;
-  border: 1px solid var(--outline-variant, #c6c6cd);
-  border-radius: 0.75rem;
-  background-color: var(--surface, #f7f9fb);
+  border: 1.5px solid var(--app-outline-variant, #DCE5EC);
+  border-radius: 0.5rem;
+  background-color: var(--app-surface, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  transition: background-color .15s ease;
-  color: var(--on-surface, #191c1e);
+  transition: background-color .15s ease, border-color .15s ease;
+  color: var(--app-primary, #1B2E44);
+  font-family: var(--app-font-family, 'IBM Plex Sans', sans-serif);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .sso-btn:hover {
-  background-color: var(--surface-container, #eceef0);
-  color: var(--on-surface, #191c1e);
+  background-color: var(--app-accent-melon-light, #E8D2A6);
+  border-color: var(--app-accent-melon, #B8863B);
+  color: var(--app-ink-900, #14243A);
 }
 
 .sso-btn svg,
 .sso-btn .material-symbols-outlined {
   transition: transform .15s ease;
+  color: var(--app-accent-melon, #B8863B);
 }
 
 .sso-btn:hover svg,

@@ -1,7 +1,7 @@
 <template>
   <!-- HEADER MOBILE -->
   <div class="tw-flex md:tw-hidden tw-justify-between tw-items-center tw-mb-5">
-    <span class="brand-name" style="color:var(--primary)">
+    <span class="brand-name">
       ProjectHub
     </span>
     <button class="btn-back-home" @click="router.push({ name: 'home' })">
@@ -22,7 +22,8 @@ const router = useRouter();
 .btn-back-home {
   border: none;
   background: transparent;
-  color: var(--secondary, #4b41e1);
+  color: var(--app-accent-melon, #B8863B);
+  font-family: var(--app-font-family, 'IBM Plex Sans', sans-serif);
   font-size: 14px;
   font-weight: 600;
   display: flex;
@@ -36,9 +37,11 @@ const router = useRouter();
 }
 
 .brand-name {
-  color: var(--primary, #000000);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  color: var(--app-primary, #1B2E44);
+  font-family: var(--app-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 </style>

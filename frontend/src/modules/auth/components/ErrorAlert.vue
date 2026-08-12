@@ -25,18 +25,18 @@ defineProps<{
   margin-bottom: 24px;
   padding: 1rem;
   border-radius: 0.5rem;
-  background-color: rgba(255, 218, 214, 0.5);
-  border: 1px solid rgba(186, 26, 26, 0.10);
+  background-color: rgba(242, 109, 120, 0.12);
+  border: 1px solid rgba(242, 109, 120, 0.25);
   align-items: center;
   gap: 0.75rem;
 }
 
 .error-alert .material-symbols-outlined {
-  color: var(--error, #ba1a1a);
+  color: var(--error, #F26D78);
 }
 
 .error-alert p {
-  color: var(--on-error-container, #93000a);
+  color: var(--on-error-container, #9A2530);
   font-size: 14px;
   margin: 0;
 }

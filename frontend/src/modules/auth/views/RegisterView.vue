@@ -386,7 +386,7 @@ const checkStrength = (pwd: string) => {
     strengthColor.value = 'var(--error, #dc3545)';
   } else if (score <= 75) {
     strengthText.value = 'Media';
-    strengthColor.value = 'var(--secondary, #ffc107)';
+    strengthColor.value = 'var(--ph-gold, #C9974A)';
   } else {
     strengthText.value = 'Fuerte';
     strengthColor.value = '#22c55e';
@@ -452,35 +452,50 @@ const handleRegistration = async () => {
     });
 
     registrationSuccess.value = true;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as {
+        response?: {
+            data?: {
+                message?: string;
+                error?: string;
+            };
+        };
+    };
+
     errorMessage.value =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      'Error al conectar con el servidor';
-  } finally {
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Error al conectar con el servidor';
+} finally {
     isLoading.value = false;
   }
 };
 </script>
 
 <style scoped>
-/* Mantén tus estilos exactamente como están */
+/* ============================================================
+   PALETA "PROJECTHUB" — misma paleta navy + dorado usada en Login.vue
+   ============================================================ */
 :global(:root) {
-  --outline: #76777d;
+  --outline: #8a8d97;
   --surface-container: #eceef0;
   --on-surface: #191c1e;
-  --secondary-container: #645efb;
+  --secondary-container: #10192B;
   --surface-container-low: #f2f4f6;
   --background: #f7f9fb;
-  --outline-variant: #c6c6cd;
+  --outline-variant: #d8dce3;
   --surface-container-lowest: #ffffff;
-  --secondary: #4b41e1;
+  --secondary: #C9974A;
   --error: #ba1a1a;
-  --on-surface-variant: #45464d;
+  --on-surface-variant: #5b5f6b;
   --surface-container-highest: #e0e3e5;
   --surface-dim: #d8dadc;
-  --primary: #000000;
+  --primary: #10192B;
   --on-primary: #ffffff;
+  --ph-navy: #10192B;
+  --ph-navy-soft: #16233b;
+  --ph-gold: #C9974A;
+  --ph-gold-soft: rgba(201, 151, 74, 0.12);
 }
 
 :global(html),
@@ -524,7 +539,7 @@ const handleRegistration = async () => {
   width: 60%;
   height: 60%;
   border-radius: 50%;
-  background: rgba(0, 0, 0, .05);
+  background: rgba(16, 25, 43, .05);
   filter: blur(120px);
 }
 
@@ -535,7 +550,7 @@ const handleRegistration = async () => {
   width: 50%;
   height: 50%;
   border-radius: 50%;
-  background: rgba(75, 65, 225, .05);
+  background: rgba(201, 151, 74, .12);
   filter: blur(120px);
 }
 
@@ -585,15 +600,17 @@ const handleRegistration = async () => {
 }
 
 .reg-title {
-  font-size: 24px;
-  font-weight: 600;
+  /* Serif para combinar con el titular del sidebar */
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 26px;
+  font-weight: 700;
   letter-spacing: -.01em;
   color: var(--primary);
 }
 
 @media(min-width: 768px) {
   .reg-title {
-    font-size: 32px;
+    font-size: 34px;
     letter-spacing: -.015em;
   }
 }
@@ -617,7 +634,7 @@ const handleRegistration = async () => {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--outline-variant);
+  color: var(--outline);
   pointer-events: none;
 }
 
@@ -652,8 +669,8 @@ const handleRegistration = async () => {
 
 .form-control-custom:focus {
   outline: none;
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 4px rgba(75, 65, 225, .10);
+  border-color: var(--ph-gold, #C9974A);
+  box-shadow: 0 0 0 4px var(--ph-gold-soft, rgba(201, 151, 74, .12));
 }
 
 .form-control-custom.is-invalid {
@@ -702,10 +719,11 @@ const handleRegistration = async () => {
   transition: .3s ease;
 }
 
+/* Botón principal — mismo tono navy del sidebar y de Login.vue */
 .btn-register {
   width: 100%;
   height: 48px;
-  background-color: var(--primary);
+  background-color: var(--ph-navy, #10192B);
   color: var(--on-primary);
   font-size: 14px;
   font-weight: 700;
@@ -715,15 +733,20 @@ const handleRegistration = async () => {
   justify-content: center;
   align-items: center;
   gap: .5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .12);
+  box-shadow: 0 10px 15px -3px rgba(16, 25, 43, .18);
+  transition: background-color .15s ease, transform .1s ease;
 }
 
 .btn-register:hover {
-  opacity: .9;
+  background-color: var(--ph-navy-soft, #16233b);
 }
 
 .btn-register:active {
   transform: scale(.98);
+}
+
+.btn-register:disabled {
+  opacity: .7;
 }
 
 .form-footer {
@@ -733,8 +756,9 @@ const handleRegistration = async () => {
   border-top: 1px solid rgba(198, 198, 205, .3);
 }
 
+/* Enlace "Inicia sesión" en dorado, combinando con el acento del logo */
 .form-footer a {
-  color: var(--primary);
+  color: var(--ph-gold, #C9974A);
   font-weight: 600;
   text-decoration: none;
 }

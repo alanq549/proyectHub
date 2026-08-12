@@ -289,11 +289,10 @@ defineEmits<{
 
 <style scoped>
 .dashboard-root {
-    background-color: var(--app-bg-main, #f1f5f9);
+    background-color: var(--app-bg-main, #F2F2F2);
     background-image: var(--app-bg-gradient);
     background-attachment: fixed;
-    /* Evita que el degradado se corte al hacer scroll */
-    color: var(--app-on-surface, #0f172a);
+    color: var(--app-on-surface, #1E3A40);
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
@@ -310,8 +309,8 @@ defineEmits<{
 }
 
 .app-dropdown-item:active {
-    background-color: var(--app-surface-container-high, #e6e8ea);
-    color: var(--app-on-surface, #191c1e);
+    background-color: var(--app-surface-container-high, #E5EEEF);
+    color: var(--app-on-surface, #1E3A40);
 }
 
 /* Top navbar — Ahora consume tokens globales --app-topbar-* */
@@ -334,7 +333,7 @@ defineEmits<{
 .brand-name {
     font-weight: 700;
     font-size: 20px;
-    color: var(--app-black, #000);
+    color: var(--app-black, #1E3A40);
 }
 
 .icon-btn {
@@ -347,11 +346,11 @@ defineEmits<{
 }
 
 .icon-btn:hover {
-    background-color: var(--app-surface-container-high, #e6e8ea);
+    background-color: var(--app-surface-container-high, #E5EEEF);
 }
 
 .icon-btn .material-symbols-outlined {
-    color: var(--app-on-surface-variant, #45464d);
+    color: var(--app-on-surface-variant, #4B6066);
 }
 
 .notif-dot {
@@ -360,7 +359,7 @@ defineEmits<{
     right: 8px;
     width: 8px;
     height: 8px;
-    background-color: var(--app-error, #ba1a1a);
+    background-color: var(--app-error, #F26D78);
     border-radius: 50%;
     border: 2px solid #fff;
 }
@@ -369,7 +368,7 @@ defineEmits<{
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: var(--app-surface-container-highest, #e0e3e5);
+    background-color: var(--app-surface-container-highest, #F2F2F2);
     overflow: hidden;
 }
 
@@ -402,7 +401,7 @@ defineEmits<{
     border: none;
     font-size: 16px;
     padding: 0.5rem 0;
-    color: var(--app-on-surface, #191c1e);
+    color: var(--app-on-surface, #1E3A40);
 }
 
 .search-overlay input:focus {
@@ -413,7 +412,7 @@ defineEmits<{
 .search-close-btn {
     background: none;
     border: none;
-    color: var(--app-primary, #4b41e1);
+    color: var(--app-primary, #63B6BF);
     font-size: 14px;
     font-weight: 500;
     padding: 0.5rem;
@@ -426,31 +425,31 @@ defineEmits<{
     top: 64px;
     bottom: 0;
     width: 64px;
-    background-color: var(--app-rail-bg, var(--app-surface-container-low, #f2f4f6));
+    background-color: var(--app-rail-bg, var(--app-surface-container-low, #F2F2F2));
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 24px 0;
     gap: 24px;
     z-index: 1040;
-    border-right: var(--app-rail-border, 1px solid rgba(198, 198, 205, 0.3));
+    border-right: var(--app-rail-border, 1px solid rgba(30, 58, 64, 0.12));
 }
 
 .rail-link {
     padding: 12px;
     border-radius: var(--app-glass-radius-sm, 0.75rem);
-    color: var(--app-on-surface-variant, #45464d);
+    color: var(--app-on-surface-variant, #4B6066);
     transition: background-color .2s ease;
     text-decoration: none;
 }
 
 .rail-link:hover {
-    background-color: var(--app-surface-container-high, #e6e8ea);
+    background-color: var(--app-surface-container-high, #E5EEEF);
 }
 
 .rail-link.active {
-    color: var(--app-primary, #4b41e1);
-    background-color: rgba(75, 65, 225, 0.08);
+    color: var(--app-primary, #63B6BF);
+    background-color: rgba(99, 182, 191, 0.12);
 }
 
 /* Main content */
@@ -485,7 +484,7 @@ defineEmits<{
     background-color: var(--app-bottomnav-bg, rgba(255, 255, 255, 0.90));
     backdrop-filter: var(--app-glass-blur-sm, blur(12px));
     -webkit-backdrop-filter: var(--app-glass-blur-sm, blur(12px));
-    border-top: 1px solid rgba(198, 198, 205, 0.2);
+    border-top: 1px solid rgba(30, 58, 64, 0.10);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -506,11 +505,11 @@ defineEmits<{
     gap: 0.25rem;
     background: none;
     border: none;
-    color: var(--app-on-surface-variant, #45464d);
+    color: var(--app-on-surface-variant, #4B6066);
 }
 
 .bnav-item.active {
-    color: var(--app-black, #000);
+    color: var(--app-black, #1E3A40);
 }
 
 .bnav-item .lbl {
@@ -521,14 +520,14 @@ defineEmits<{
 .bnav-fab {
     width: 56px;
     height: 56px;
-    background-color: var(--app-primary, #4b41e1);
+    background-color: var(--app-primary, #63B6BF);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--app-on-primary, #fff);
     border: none;
-    box-shadow: var(--app-btn-primary-shadow, 0 10px 15px -3px rgba(75, 65, 225, 0.3));
+    box-shadow: var(--app-btn-primary-shadow, 0 10px 15px -3px rgba(99, 182, 191, 0.35));
     position: relative;
     top: -16px;
     transition: transform .1s ease;
@@ -544,11 +543,8 @@ defineEmits<{
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    /* Queda justo sobre el fondo del layout, pero debajo del contenido */
     opacity: var(--app-bg-blob-opacity, 0.85);
 }
-
-
 
 .bg-blob-1 {
     position: absolute;
@@ -556,7 +552,7 @@ defineEmits<{
     right: -10%;
     width: 300px;
     height: 300px;
-    background-color: var(--app-bg-blob-primary, rgba(75, 65, 225, 0.25));
+    background-color: var(--app-bg-blob-primary, rgba(99, 182, 191, 0.28));
     border-radius: 50%;
     filter: var(--app-bg-blob-blur, blur(120px));
 }
@@ -567,7 +563,7 @@ defineEmits<{
     left: -10%;
     width: 300px;
     height: 300px;
-    background-color: var(--app-bg-blob-secondary, rgba(172, 237, 255, 0.30));
+    background-color: var(--app-bg-blob-secondary, rgba(242, 184, 114, 0.30));
     border-radius: 50%;
     filter: var(--app-bg-blob-blur, blur(120px));
 }

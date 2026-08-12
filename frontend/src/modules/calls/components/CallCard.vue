@@ -1,15 +1,15 @@
 <!-- src/modules/calls/components/CallCard.vue -->
 <template>
-  <AppCard 
-    hoverable 
-    variant="glass" 
+  <AppCard
+    hoverable
+    variant="glass"
     padding="md"
-    class="tw-flex tw-flex-col tw-h-full tw-transition-all hover:tw-shadow-lg hover:-tw-translate-y-0.5 tw-cursor-pointer" 
+    class="call-card tw-flex tw-flex-col tw-h-full tw-transition-all hover:tw-shadow-lg hover:-tw-translate-y-0.5 tw-cursor-pointer"
     @click="handleCardClick"
   >
     <!-- 1. ENCABEZADO -->
     <div class="tw-flex tw-items-center tw-justify-between tw-mb-4">
-      <div class="tw-inline-flex tw-items-center tw-gap-1.5 tw-px-3 tw-py-1 tw-rounded-full tw-bg-primary/10 tw-text-primary tw-text-xs tw-font-semibold">
+      <div class="tw-inline-flex tw-items-center tw-gap-1.5 tw-px-3 tw-py-1 tw-rounded-full badge-convocatoria tw-text-xs tw-font-semibold">
         <span class="material-symbols-outlined notranslate tw-text-sm">campaign</span>
         Convocatoria
       </div>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- 2. TÍTULO Y DESCRIPCIÓN -->
-    <h2 class="tw-text-lg tw-font-bold tw-leading-snug tw-text-on-surface tw-mb-2">
+    <h2 class="card-title tw-text-lg tw-leading-snug tw-mb-2">
       {{ call.title }}
     </h2>
 
@@ -29,7 +29,7 @@
     </p>
 
     <!-- 3. VIGENCIA -->
-    <div class="tw-mt-5 tw-rounded-xl tw-bg-surface-container-low tw-p-3.5 tw-border tw-border-outline-variant/40">
+    <div class="vigencia-box tw-mt-5 tw-rounded-xl tw-p-3.5">
       <div class="tw-flex tw-items-center tw-gap-1.5 tw-text-xs tw-text-outline tw-mb-2.5 tw-font-medium">
         <span class="material-symbols-outlined notranslate tw-text-base">schedule</span>
         Vigencia
@@ -55,10 +55,10 @@
     <!-- 4. SECCIÓN ESPECÍFICA DE USUARIO -->
     <template v-if="!isAdmin">
       <div class="tw-flex tw-items-center tw-justify-between tw-border-t tw-border-outline-variant/60 tw-pt-4 tw-mt-5 group-hover:tw-text-primary">
-        <span class="tw-text-sm tw-font-semibold tw-text-primary">
+        <span class="tw-text-sm tw-font-semibold cta-link">
           Entrar al espacio de trabajo
         </span>
-        <span class="material-symbols-outlined notranslate tw-text-primary tw-transition-transform hover:tw-translate-x-1">
+        <span class="material-symbols-outlined notranslate cta-link tw-transition-transform hover:tw-translate-x-1">
           arrow_forward
         </span>
       </div>
@@ -121,3 +121,42 @@ function formatDate(dateStr: string) {
   })
 }
 </script>
+
+<style scoped>
+/* ============================================================
+   Acentos "PROJECTHUB" — misma paleta navy #10192B + dorado #C9974A
+   usada en Login.vue y Register.vue. Se apoya en las variables
+   globales --ph-navy / --ph-gold ya definidas en :root.
+   ============================================================ */
+
+/* Badge "Convocatoria" en dorado, como acento distintivo del brand */
+.badge-convocatoria {
+  background-color: var(--ph-gold-soft, rgba(201, 151, 74, 0.12));
+  color: var(--ph-gold, #C9974A);
+}
+
+/* Título con la misma serif del resto de la marca */
+.card-title {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  color: var(--ph-navy, #10192B);
+}
+
+/* Caja de vigencia con un leve borde/acento dorado a la izquierda */
+.vigencia-box {
+  background-color: var(--surface-container-low, #f2f4f6);
+  border: 1px solid var(--outline-variant, #c6c6cd);
+  border-left: 3px solid var(--ph-gold, #C9974A);
+}
+
+/* CTA "Entrar al espacio de trabajo" en dorado, igual que los
+   enlaces de acento en Login/Register */
+.cta-link {
+  color: var(--ph-gold, #C9974A);
+}
+
+/* Sombra de hover con tono navy en vez de negro genérico */
+.call-card:hover {
+  box-shadow: 0 12px 24px -6px rgba(16, 25, 43, 0.16) !important;
+}
+</style>

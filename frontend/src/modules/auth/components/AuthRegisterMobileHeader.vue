@@ -23,7 +23,7 @@
 .mobile-logo-badge {
   width: 32px;
   height: 32px;
-  background-color: var(--primary, #000000);
+  background-color: var(--primary, #1E3A40);
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -35,6 +35,6 @@
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--primary, #000000);
+  color: var(--primary, #1E3A40);
 }
 </style>

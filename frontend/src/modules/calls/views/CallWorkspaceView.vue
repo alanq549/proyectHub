@@ -41,11 +41,15 @@ async function loadData(forceRefresh = false) {
   const callId = Number(route.params.id)
   if (Number.isInteger(callId)) {
     await workspaceStore.fetchWorkspace(callId, forceRefresh)
-    
-    // Solucionamos el tipado usando 'as any' para evitar el error de TypeScript
-    const workspaceData = currentWorkspace.value as any
+
+    // Tipamos con 'unknown' en vez de 'any' y acotamos la forma esperada
+    // antes de acceder a sus propiedades, para mantener la seguridad de tipos.
+    const workspaceData = currentWorkspace.value as unknown as {
+      project?: { id?: number }
+      project_id?: number
+    }
     const projectId = workspaceData?.project?.id || workspaceData?.project_id
-    
+
     if (projectId) {
       await fetchProjectHistory(projectId)
     }
@@ -71,8 +75,8 @@ watch(
       v-if="loading && !currentWorkspace"
       class="tw-flex tw-items-center tw-justify-center tw-py-16"
     >
-      <div class="tw-flex tw-items-center tw-gap-3 tw-text-on-surface-variant">
-        <span class="material-symbols-outlined notranslate tw-animate-spin">
+      <div class="loading-state tw-flex tw-items-center tw-gap-3">
+        <span class="material-symbols-outlined notranslate tw-animate-spin loading-icon">
           progress_activity
         </span>
         <span>Cargando espacio de trabajo...</span>
@@ -118,3 +122,20 @@ watch(
     </template>
   </div>
 </template>
+
+<style scoped>
+/* ============================================================
+   Acentos "PROJECTHUB" — misma paleta navy #10192B + dorado #C9974A
+   usada en Login.vue, Register.vue, CallCard.vue y CallFormModal.vue.
+   ============================================================ */
+
+/* Estado de carga: texto navy, spinner dorado como color de acento */
+.loading-state {
+  color: var(--ph-navy, #10192B);
+  font-weight: 500;
+}
+
+.loading-icon {
+  color: var(--ph-gold, #C9974A);
+}
+</style>

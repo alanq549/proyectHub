@@ -1,13 +1,37 @@
 <template>
   <div class="tw-col-span-1 md:tw-col-span-1 tw-hidden md:tw-flex tw-flex-col tw-justify-between left-panel">
-    <div class="left-panel-bg"></div>
+    <svg class="graph-bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <!-- La red termina en el grupo de avatares: los nodos son
+           investigadores reales, no puntos decorativos sueltos. -->
+      <g stroke="rgba(247,244,236,0.16)" stroke-width="0.18" vector-effect="non-scaling-stroke">
+        <line x1="16" y1="82" x2="33" y2="68" />
+        <line x1="33" y1="68" x2="52" y2="54" />
+        <line x1="33" y1="68" x2="25" y2="50" />
+        <line x1="52" y1="54" x2="70" y2="34" />
+        <line x1="52" y1="54" x2="66" y2="66" />
+        <line x1="70" y1="34" x2="62" y2="16" />
+        <line x1="70" y1="34" x2="86" y2="24" />
+      </g>
+      <g fill="var(--app-accent-brass, #B8863B)">
+        <circle cx="33" cy="68" r="0.5" opacity="0.55" />
+        <circle cx="52" cy="54" r="0.45" opacity="0.5" />
+        <circle cx="25" cy="50" r="0.4" opacity="0.5" />
+        <circle cx="70" cy="34" r="0.55" opacity="0.6" />
+        <circle cx="66" cy="66" r="0.4" opacity="0.45" />
+        <circle cx="62" cy="16" r="0.45" opacity="0.5" />
+        <circle cx="86" cy="24" r="0.4" opacity="0.45" />
+      </g>
+    </svg>
 
     <div class="tw-relative" style="z-index:1;">
-      <div class="tw-flex tw-items-center tw-gap-2 tw-mb-5">
-        <span class="brand-name">
-          ProjectHub
-        </span>
+      <div class="tw-flex tw-items-center tw-gap-3 tw-mb-16">
+        <div class="logo-badge">
+          <span class="material-symbols-outlined notranslate" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+        </div>
+        <span class="brand-name">ProjectHub</span>
       </div>
+
+      <p class="eyebrow-text">Acceso seguro &mdash; N.&ordm; 01</p>
       <h1 class="headline tw-mb-2">
         Garantizando la excelencia académica.
       </h1>
@@ -36,43 +60,70 @@
 </template>
 
 <style scoped>
-/* Left panel */
+/* Left panel — mismo lenguaje visual que el registro: tinta oscura,
+   red de nodos y acento latón, en vez del teal + captura de pantalla. */
 .left-panel {
-  background-color: var(--primary-container, #131b2e);
-    padding: 64px;
-    position: relative;
-    overflow: hidden;
-    min-height: 100%;
+  background-color: var(--app-ink-900, #14243A);
+  padding: 64px;
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
 }
 
-.left-panel-bg {
+.graph-bg {
   position: absolute;
   inset: 0;
-  opacity: 0.20;
-  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCH4uqecPcMA5KQArhVFrLB38slunRmcO372Ot3ruLesQFNdTmzhyifrVeUtz_SNt1BQCYyaRDmm14cQVPRB6bUEah7GMyCcQ5lHmVPiO3fCGo2DlG2ePA9-Joc3fOejmH060ryxUlGYz2sxpA1u_bfWrIcEi4qJRV4xz0h-EJ5QiBn_t_WwmymbAwkj7QvtgtOd2Qn1mLAbKkwNvezqfokmFLQK5ijFltQ9jsEeI-q_ThCLHF5I6WCSw');
-   background-size: cover;
-  background-position: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  background-color: var(--app-accent-brass, #B8863B);
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-ink-900, #14243A);
+  box-shadow: 0 10px 20px -6px rgba(184, 134, 59, 0.5);
 }
 
 .brand-name {
-  color: var(--secondary-fixed, #e2dfff);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--app-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-paper, #F7F4EC);
+}
+
+.eyebrow-text {
+  font-family: var(--app-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--app-accent-brass-light, #E8D2A6);
+  margin: 0 0 18px 0;
 }
 
 .headline {
-  color: #fff;
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.2;
+  font-family: var(--app-font-display, 'Fraunces', serif);
+  color: var(--app-paper, #F7F4EC);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.16;
+  max-width: 11em;
 }
 
 .subhead {
-  color: var(--on-primary-container, #7c839b);
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: var(--app-font-family, 'IBM Plex Sans', sans-serif);
+  color: rgba(247, 244, 236, 0.68);
+  font-size: 15.5px;
+  line-height: 1.65;
   max-width: 24rem;
 }
 
@@ -80,7 +131,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--primary-container, #131b2e);
+  border: 2px solid var(--app-ink-900, #14243A);
   object-fit: cover;
   margin-left: -12px;
 }
@@ -90,8 +141,9 @@
 }
 
 .caption-text {
-  color: var(--on-primary-container, #7c839b);
-  font-size: 12px;
-  letter-spacing: 0.03em;
+  font-family: var(--app-font-mono, 'IBM Plex Mono', monospace);
+  color: var(--app-accent-brass-light, #E8D2A6);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
 }
 </style>
