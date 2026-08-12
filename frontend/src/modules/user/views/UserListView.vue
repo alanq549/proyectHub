@@ -33,8 +33,11 @@
         </div>
       </AppCard>
 
+      <!-- Único ícono con el acento latón: es el dato más sensible
+           de la tabla (administradores), coherente con la regla de
+           "un solo acento, reservado para lo que de verdad importa". -->
       <AppCard variant="glass" padding="sm" class="tw-flex tw-items-center tw-gap-3">
-        <div class="tw-w-11 tw-h-11 tw-rounded-2xl tw-bg-surface-container tw-text-on-surface-variant tw-flex tw-items-center tw-justify-center tw-shrink-0">
+        <div class="tw-w-11 tw-h-11 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-shrink-0" style="background-color: rgba(184,134,59,0.12); color: var(--app-accent-melon, #B8863B);">
           <span class="material-symbols-outlined notranslate tw-text-2xl">admin_panel_settings</span>
         </div>
         <div>
